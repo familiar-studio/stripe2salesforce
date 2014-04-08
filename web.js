@@ -30,7 +30,7 @@ app.get('/', function(req, res) {
 app.post('/webhook', function(request, response){
 	console.log("RAW RESPONSE:", response.route);
 	response.send('OK');
-	resonse.end()
+	response.end()
 });
 
 var port = Number(process.env.PORT || 5000);
