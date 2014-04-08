@@ -3,7 +3,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-var stripe = require('stripe')(process.env.)
+var stripe = require('stripe');
 
 var emitter = new EventEmitter;
 var app = express();
@@ -23,11 +23,11 @@ app.get('/', function(req, res) {
   // fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
   // 	if (err) { console.log(err) } else { console.log('worked!') }
   // });
-	res.send('server is running')
+	res.send('server is running');
 });
 
 app.post('/stripe.webhook', function(request, response) {
-	console.log(request)
+	console.log(request);
 	// if (request.body.type === 'charge.succeded') {
 	// 	fs.appendFile('test.txt', JSON.stringify(request.body.data.object)), function(err) {
 	// 	if (err) {
