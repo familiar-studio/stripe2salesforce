@@ -43,7 +43,6 @@ app.get('/', function(req, res) {
 // LOAD BUT WILL LIVE IN APP.POST EVENTUALLY
 // =========================================
 
-
 });
 
 app.post('/webhook', function(request, response){
@@ -56,8 +55,6 @@ app.post('/webhook', function(request, response){
 	}else{
 		console.log('noooooooo!!!!')
 	}
-	// console.log("RAW RESPONSE:", response);
-	// console.log("request*******", request.body);
 	response.send('OK');
 	response.end()
 });
