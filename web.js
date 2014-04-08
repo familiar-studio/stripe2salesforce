@@ -3,7 +3,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-// var stripe = require('stripe');
+var stripe = require('stripe');
 
 // stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
@@ -28,8 +28,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log("RAW RESPONSE:", response);
-	console.log("request*******", request);
+	// console.log("RAW RESPONSE:", response);
+	console.log("request*******", request.body);
 	response.send('OK');
 	response.end()
 });
