@@ -28,8 +28,9 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log("RAW RESPONSE:", response);
+	console.log("RAW RESPONSE:", response.complete);
 	response.send('OK');
+	resonse.end()
 });
 
 var port = Number(process.env.PORT || 5000);
