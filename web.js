@@ -1,9 +1,12 @@
 // web.js
+app.use(express.static(__dirname));
+app.use(express.bodyParser())
 var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var stripe = require('stripe');
+
 
 // stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
