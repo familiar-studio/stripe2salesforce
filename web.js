@@ -28,16 +28,14 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log('HERE BE THE REQUEST =====================');
-	console.log(request);
 	console.log(response);
-	fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
-		if (err) {
-			console.log("REQUEST.BODY", request);
-		} else {
-			console.log(">>>>>>>>>REQUEST.BODY<<<<<<<<<<", request);
-		}
-	});
+	// fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
+	// 	if (err) {
+	// 		console.log("REQUEST.BODY", request);
+	// 	} else {
+	// 		console.log(">>>>>>>>>REQUEST.BODY<<<<<<<<<<", request);
+	// 	}
+	// });
 
 	response.send('OK');
 
