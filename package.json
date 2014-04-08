@@ -7,7 +7,8 @@
     "jsforce": "^1.1.2",
     "stripe": "^2.4.5",
     "dnode": "^1.2.0",
-    "mongodb": "^1.4.0"
+    "mongodb": "^1.4.0",
+    "mongoose": "^3.8.8"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

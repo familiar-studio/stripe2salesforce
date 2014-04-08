@@ -8,11 +8,11 @@ var stripe = require('stripe');
 
 
 
-// var mongo = require('mongo');
-// var databaseUrl = 'stripeLogs'
-// var collection = ['stripeReq']
+var mongo = require('mongodb');
+var databaseUrl = 'db.js'
+var collection = ['stripeReq']
 
-// var db = mongo.connect(databaseUrl, collection)
+var db = mongo.connect(databaseUrl, collection)
 
 
 // stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
@@ -26,15 +26,15 @@ app.use(logfmt.requestLogger());
 
 
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'localhost:5000/stripeLogs'
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/db'
 
 
 app.get('/', function(req, res) {
 	res.send('server is running');
 
 	mongo.Db.connect(mongoUri, function(err, db) {
-		console.log(db)
-		db.collection('stripeLogs', function(er, collection) {
+		console.log("DB===================", db)
+		db.collection('db', function(er, collection) {
 			collection.insert({'stripeReq':request.body})
 		})
 	});
