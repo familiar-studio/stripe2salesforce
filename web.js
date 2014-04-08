@@ -41,15 +41,6 @@ app.post('/webhook', function(request, response){
 	// });
 
 	response.send('OK');
-
-	// if (request.body.type === 'charge.succeded') {
-	// 	fs.appendFile('test.txt', JSON.stringify(request.body.data.object)), function(err) {
-	// 	if (err) {
-	// 		console.log(err);
-	// 	} else {
-	// 		console.log('worked!');
-	// 	}
-	// };
 });
 
 var port = Number(process.env.PORT || 5000);
