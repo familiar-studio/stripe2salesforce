@@ -28,7 +28,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log(response);
+	console.log(response.body);
 	// fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
 	// 	if (err) {
 	// 		console.log("REQUEST.BODY", request);
