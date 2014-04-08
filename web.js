@@ -5,12 +5,13 @@ var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var stripe = require('stripe');
 
-app.use(express.bodyParser())
+
 // stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
 var emitter = new EventEmitter;
 var app = express();
 
+app.use(express.bodyParser());
 
 app.use(logfmt.requestLogger());
 
