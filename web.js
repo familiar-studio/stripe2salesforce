@@ -1,6 +1,5 @@
 // web.js
-app.use(express.static(__dirname));
-app.use(express.bodyParser())
+
 var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
