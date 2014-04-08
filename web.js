@@ -3,7 +3,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-var stripe = require('stripe');
+// var stripe = require('stripe');
 
 stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
