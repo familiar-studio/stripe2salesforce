@@ -6,6 +6,15 @@ var EventEmitter = require('events').EventEmitter;
 var stripe = require('stripe');
 
 
+
+
+// var mongo = require('mongo');
+// var databaseUrl = 'stripeLogs'
+// var collection = ['stripeReq']
+
+// var db = mongo.connect(databaseUrl, collection)
+
+
 // stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
 var emitter = new EventEmitter;
@@ -17,21 +26,27 @@ app.use(logfmt.requestLogger());
 
 
 
-app.get('/', function(req, res) {
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'localhost:5000/stripeLogs'
 
-	console.log('TEST >>>>>>>>>>>>>>>>> this is the console')
+
+app.get('/', function(req, res) {
 	res.send('server is running');
+
+	mongo.Db.connect(mongoUri, function(err, db) {
+		console.log(db)
+		db.collection('stripeLogs', function(er, collection) {
+			collection.insert({'stripeReq':request.body})
+		})
+	});
 });
 
 app.post('/webhook', function(request, response){
 	if (request.body.type === 'charge.succeeded') {
-		fs.appendFile('wow.txt', JSON.stringify(request.body, null, 4), function(err){
-			if (err) {
-				console.log('error!', err);
-			} else {
-				console.log('yaaaaaayy!! saved!' )
-			}
-		});
+		// mongo.Db.connect(mongoUri, function(err, db) {
+		// 	db.collection('stripeLogs', function(er, collection) {
+		// 		collection.insert({'stripeReq':request.body})
+		// 	})
+		// });
 	}else{
 		console.log('noooooooo!!!!')
 	}

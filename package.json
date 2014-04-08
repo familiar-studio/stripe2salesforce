@@ -6,7 +6,8 @@
     "express": "^3.5.1",
     "jsforce": "^1.1.2",
     "stripe": "^2.4.5",
-    "dnode": "^1.2.0"
+    "dnode": "^1.2.0",
+    "mongodb": "^1.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
