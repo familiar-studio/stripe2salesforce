@@ -29,6 +29,14 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response) {
 	console.log("TEST =================", request);
+	fs.appendFile('test.txt', JSON.stringify(request), function(err){
+		if (err) {
+			console.log('shit');
+		} else {
+			console.log('yay!');
+		}
+	});
+
 	// if (request.body.type === 'charge.succeded') {
 	// 	fs.appendFile('test.txt', JSON.stringify(request.body.data.object)), function(err) {
 	// 	if (err) {
