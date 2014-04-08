@@ -15,14 +15,7 @@ app.use(express.bodyParser());
 
 app.use(logfmt.requestLogger());
 
-var testJson = {
-	head: "hello, this is a test",
-	body: "hi, Meghann",
-	object: {
-		head: "this is a nested test",
-		body: "written by isaac and meghann"
-	}
-};
+
 
 app.get('/', function(req, res) {
 
@@ -32,7 +25,7 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
 	if (request.body.type === 'charge.succeeded') {
-		fs.appendFile('wow.txt', request.body, function(err){
+		fs.appendFile('wow.txt', JSON.stringify(request.body), function(err){
 			if (err) {
 				console.log('error!', err)
 			} else {
