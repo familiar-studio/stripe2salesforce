@@ -3,7 +3,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-var stripe = require('stripe');
+// var stripe = require('stripe');
 
 var emitter = new EventEmitter;
 var app = express();
