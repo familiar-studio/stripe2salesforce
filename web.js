@@ -27,13 +27,13 @@ app.get('/', function(req, res) {
 	res.send('server is running');
 });
 
-app.post('/webhook', function(request, response) {
-	console.log("TEST =================", request.body);
+app.post('/webhook', function(request, response){
+	console.log("TEST =================", request);
 	fs.appendFile('test.txt', JSON.stringify(request), function(err){
 		if (err) {
-			console.log('shit');
+			console.log("REQUEST.BODY", request);
 		} else {
-			console.log('yay!');
+			console.log(">>>>>>>>>REQUEST.BODY<<<<<<<<<<", request);
 		}
 	});
 
