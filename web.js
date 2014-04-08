@@ -10,14 +10,14 @@ var app = express();
 
 app.use(logfmt.requestLogger());
 
-// var testJson = {
-// 	head: "hello, this is a test",
-// 	body: "hi, Meghann",
-// 	object: {
-// 		head: "this is a nested test",
-// 		body: "written by isaac and meghann"
-// 	}
-// };
+var testJson = {
+	head: "hello, this is a test",
+	body: "hi, Meghann",
+	object: {
+		head: "this is a nested test",
+		body: "written by isaac and meghann"
+	}
+};
 
 app.get('/', function(req, res) {
   // fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
@@ -28,8 +28,9 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log("TEST =================", request);
-	fs.appendFile('test.txt', JSON.stringify(request), function(err){
+	console.log('HERE BE THE REQUEST =====================')
+	console.log(request);
+	fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
 		if (err) {
 			console.log("REQUEST.BODY", request);
 		} else {
