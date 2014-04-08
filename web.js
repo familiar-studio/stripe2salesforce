@@ -3,7 +3,9 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-// var stripe = require('stripe');
+var stripe = require('stripe');
+
+stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
 var emitter = new EventEmitter;
 var app = express();
@@ -28,7 +30,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
-	console.log(response.body);
+	console.log("RAW RESPONSE:", response);
+	console.log("PARSED JSON:", JSON.parse(response));
 	// fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
 	// 	if (err) {
 	// 		console.log("REQUEST.BODY", request);
