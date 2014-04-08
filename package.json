@@ -1,7 +1,10 @@
 {
   "name": "stripe2salesforce",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "logfmt": "^1.1.2",
+    "express": "^3.5.1"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",
@@ -28,5 +31,22 @@
   },
   "engines": {
     "node": ">=0.8.0"
-  }
+  },
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/familiar-studio/stripe2salesforce.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/familiar-studio/stripe2salesforce/issues"
+  },
+  "homepage": "https://github.com/familiar-studio/stripe2salesforce"
 }
