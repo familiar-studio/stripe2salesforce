@@ -27,7 +27,7 @@ app.get('/', function(req, res) {
 	res.send('server is running');
 });
 
-app.post('/stripe.webhook', function(request, response) {
+app.post('/webhook', function(request, response) {
 	console.log("TEST =================", request);
 	// if (request.body.type === 'charge.succeded') {
 	// 	fs.appendFile('test.txt', JSON.stringify(request.body.data.object)), function(err) {
