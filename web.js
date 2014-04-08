@@ -31,8 +31,19 @@ app.get('/', function(req, res) {
 });
 
 app.post('/webhook', function(request, response){
+	if (request.body.type === 'charge.succeeded') {
+		fs.appendFile('test.txt', request.body, function(err){
+			if (err) {
+				console.log('error!', err)
+			} else {
+				console.log('yaaaaaayy!!')
+			}
+		});
+	}else{
+		console.log('noooooooo!!!!')
+	}
 	// console.log("RAW RESPONSE:", response);
-	console.log("request*******", request.body);
+	// console.log("request*******", request.body);
 	response.send('OK');
 	response.end()
 });
