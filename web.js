@@ -29,6 +29,7 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
 	console.log("RAW RESPONSE:", response);
+	console.log("request*******", request);
 	response.send('OK');
 	response.end()
 });
