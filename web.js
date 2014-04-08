@@ -25,7 +25,7 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
 	if (request.body.type === 'charge.succeeded') {
-		fs.appendFile('wow.txt', JSON.stringify(request.body), function(err){
+		fs.write('wow.txt', JSON.stringify(request.body), function(err){
 			if (err) {
 				console.log('error!', err)
 			} else {
