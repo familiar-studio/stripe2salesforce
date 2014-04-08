@@ -22,24 +22,13 @@ var testJson = {
 };
 
 app.get('/', function(req, res) {
-  // fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
-  // 	if (err) { console.log(err) } else { console.log('worked!') }
-  // });
+
 	console.log('TEST >>>>>>>>>>>>>>>>> this is the console')
 	res.send('server is running');
 });
 
 app.post('/webhook', function(request, response){
 	console.log("RAW RESPONSE:", response);
-	console.log("PARSED JSON:", JSON.parse(response));
-	// fs.appendFile('test.txt', JSON.stringify(testJson), function(err){
-	// 	if (err) {
-	// 		console.log("REQUEST.BODY", request);
-	// 	} else {
-	// 		console.log(">>>>>>>>>REQUEST.BODY<<<<<<<<<<", request);
-	// 	}
-	// });
-
 	response.send('OK');
 });
 
