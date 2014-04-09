@@ -52,14 +52,14 @@ app.post('/webhook', function(request, response){
 		db.collection('stripeLogs', function(er, collection) {
 			collection.insert({'stripeReq':request.body}, function(err, result){
 				console.log(err);
-        
+
 			});
 		});
 
-    
+
 	});
 //sales force insert
-  console.log('*********THIS IS THE REQUEST>BODY***************', request.body );
+  console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
   conn.sobject("Contact").create({ FirstName : 'OUR TEST', LastName: 'YUP', Stripe_Customer_Id__c: 'cus_3oiBOE7BELbxj2', Email: 'ME@ME.com' }, function(err, ret) {
     if (err || !ret.success) { return console.error(err, ret); }
     console.log("-----Created record id------ : " + ret.id);
