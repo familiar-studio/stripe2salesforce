@@ -6,12 +6,8 @@
     "express": "^3.5.1",
     "jsforce": "^1.1.2",
     "stripe": "^2.4.5",
-<<<<<<< HEAD
-    "dnode": "^1.2.0"
-=======
     "dnode": "^1.2.0",
     "mongodb": "^1.4.0"
->>>>>>> parent of ef01b5f... added prelim work for mongo db, much more to come... hopefully.
   },
   "devDependencies": {
     "grunt": "~0.4.1",
