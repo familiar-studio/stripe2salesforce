@@ -50,24 +50,20 @@ var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb:/
 
 
 app.get('/', function(req, res) {
-	mongo.Db.connect(mongoUri, function(err, db) {
-		console.log(db)
-		db.collection('stripeLogs', function(er, collection) {
-			collection.insert({'stripeReq':request.body})
-		})
-	});
-console.log('connected');
+	
+console.log('****************___________________connected_______________________**********************');
 });
 
 app.post('/webhook', function(request, response){
 	if (request.body.type === 'charge.succeeded') {
-		fs.appendFile('wow.txt', JSON.stringify(request.body, null, 4), function(err){
-			if (err) {
-				console.log('error!', err);
-			} else {
-				console.log('yaaaaaayy!! saved!' )
-			}
-		});
+		
+		mongo.Db.connect(mongoUri, function(err, db) {
+		console.log("This is the DB YO", db)
+		db.collection('stripeLogs', function(er, collection) {
+			collection.insert({'stripeReq':request.body})
+		})
+	});
+
 	}else{
 		console.log('noooooooo!!!!')
 	}
