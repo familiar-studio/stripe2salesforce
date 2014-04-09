@@ -115,12 +115,12 @@ app.post('/webhook', function(request, response){
 
 
 app.get('/salesforce/read', function(request, response) {
-  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3p2nTR84gq9rqi' }, function(err, res) {
-  //   if (err) { return console.error(err); }
-  //   console.log(res[0].Id)
+  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3oiI4C121' }, function(err, res) {
+    if (err) { return console.error(err); }
+    console.log(res[0].Email)
 
-  //   // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-  // });
+    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+  });
 
 
 	
