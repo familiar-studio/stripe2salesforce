@@ -90,7 +90,7 @@ app.post('/webhook', function(request, response){
             var first_name = "N/A"
             var last_name = "N/A"
           }
-    	    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+    	    conn.sobject("Contact").create({ FirstName : first_name, LastName: last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
     	      if (err || !ret.success) { return console.error(err, ret); }
     	      console.log("-----Created record id------ : " + ret.id);
     	      
