@@ -100,6 +100,15 @@ app.post('/webhook', function(request, response){
           conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
             if (err) { return console.error(err); }
             console.log("THIS IS THE ID HAHAHAHAHAHAHAHA", res[0].Id)
+            var sf_cust_id = res[0].Id
+            conn.sobject("Contact").update({
+              Id: sf_cust_id,
+              Email: customer.email
+            }, function (err, ret) {
+              if (err || !ret.success) { return console.error(err, ret); }
+              console.log('Updated Successfully!!!!!!!!!!!!!! : ' + ret.id);
+              
+            })
           });
 
         } 
