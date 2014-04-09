@@ -56,9 +56,6 @@ app.get('/', function(req, res) {
 	// 		collection.insert({'stripeReq':request.body})
 	// 	})
 	// });
-
-
-
 });
 
 app.post('/webhook', function(request, response){
