@@ -50,7 +50,7 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
   //grabbing customer object
-  stripe.customers.retrieve(request.body.data.object.id, function(err, customer) {
+  stripe.customers.retrieve(request.body.data.object, function(err, customer) {
     console.log('********************************THIS IS IT __________EMAIL', customer)
     // console.log('********************************THIS IS IT _______ID', customer.id)
 });
