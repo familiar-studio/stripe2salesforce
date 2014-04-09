@@ -54,7 +54,7 @@ app.post('/webhook', function(request, response){
   // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
   stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 
-    console.log('********************************THIS IS IT __________EMAIL', customer.email)
+    // console.log('********************************THIS IS IT __________EMAIL', customer.email)
     //if no email logges as null
 
 
@@ -66,6 +66,14 @@ app.post('/webhook', function(request, response){
       console.log("-----Created record id------ : " + ret.id);
       
     });
+
+	  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+	    if (err) { return console.error(err); }
+	    console.log("HERE BE WHAT WE WANT ?>>>>>>>>>>>", res[0].Id)
+
+	    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+	  });
+
 
   });
 	// on post from stripe webhook, dump json transaction in mongodb
@@ -105,12 +113,12 @@ app.post('/webhook', function(request, response){
 
 
 app.get('/salesforce/read', function(request, response) {
-  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3p2nTR84gq9rqi' }, function(err, res) {
-    if (err) { return console.error(err); }
-    console.log(res[0].Id)
+  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3p2nTR84gq9rqi' }, function(err, res) {
+  //   if (err) { return console.error(err); }
+  //   console.log(res[0].Id)
 
-    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-  });
+  //   // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+  // });
 
 
 	
