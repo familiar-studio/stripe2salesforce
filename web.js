@@ -49,6 +49,8 @@ app.get('/', function(req, res) {
 
 
 app.post('/webhook', function(request, response){
+
+	 if (request.body.type === 'charge.succeeded') {
   //grabbing customer object
   // console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
   // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
@@ -108,16 +110,41 @@ app.post('/webhook', function(request, response){
 	// } else {
 	// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
 	// }
-
+	}
 	response.send('OK');
 	response.end();
 });
 
 
 app.get('/salesforce/read', function(request, response) {
-  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3oiI4C121' }, function(err, res) {
-    if (err) { return console.error(err); }
-    console.log("hello!")
+	var real = 'cus_3oiBOE7BELbxj2'
+	var fake = 'cus_3oiBOE7XYZbxj6'
+
+  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
+    // if (err) { return console.error(err); }
+
+    // console.log(typeof res)
+ 		console.log(res.length)
+
+    if ( res.length == 0 ) {
+    	console.log('GRR')
+    } else {
+    	console.log('yaaaaaaaaaaaay!!!!!!')
+    } 
+    // if (res.isArray()) {
+
+    // 	// customer exists
+    // 	// update customer
+    // } else {
+
+    // 	//customer doesnt exist
+
+    // 	// if email is in salesforce
+
+    // 	// update customer
+
+    // 	// else create new customer
+    // }
 
     // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
   });
