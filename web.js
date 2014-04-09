@@ -50,12 +50,13 @@ var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb:/
 
 
 app.get('/', function(req, res) {
-	// mongo.Db.connect(mongoUri, function(err, db) {
-	// 	console.log(db)
-	// 	db.collection('stripeLogs', function(er, collection) {
-	// 		collection.insert({'stripeReq':request.body})
-	// 	})
-	// });
+	mongo.Db.connect(mongoUri, function(err, db) {
+		console.log(db)
+		db.collection('stripeLogs', function(er, collection) {
+			collection.insert({'stripeReq':request.body})
+		})
+	});
+console.log('connected');
 });
 
 app.post('/webhook', function(request, response){
