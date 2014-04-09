@@ -74,7 +74,7 @@ app.post('/webhook', function(request, response){
 	});
 //sales force insert
   // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
-  conn.sobject("Contact").create({ FirstName : request.body.data.object.card, LastName: 'FAKER', Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
+  conn.sobject("Contact").create({ FirstName : request.body.data.object.card.name, LastName: 'OUR FAKER', Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
     if (err || !ret.success) { return console.error(err, ret); }
     console.log("-----Created record id------ : " + ret.id);
     
