@@ -121,15 +121,11 @@ app.get('/salesforce/read', function(request, response) {
 	var fake = 'cus_3oiBOE7XYZbxj6'
 
   conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
-    // if (err) { return console.error(err); }
-
-    // console.log(typeof res)
- 		console.log(res.length)
 
     if ( res.length == 0 ) {
-    	console.log('GRR')
+    	// customer does not exist
     } else {
-    	console.log('yaaaaaaaaaaaay!!!!!!')
+    	// customer exists
     } 
     // if (res.isArray()) {
 
