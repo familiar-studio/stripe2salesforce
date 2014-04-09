@@ -51,7 +51,8 @@ app.get('/', function(req, res) {
 app.post('/webhook', function(request, response){
   //grabbing customer object
   stripe.customers.retrieve(request.body.data.object.id, function(err, customer) {
-    console.log('********************************THIS IS IT __________customer', customer)
+    console.log('********************************THIS IS IT __________EMAIL', customer.email)
+    console.log('********************************THIS IS IT _______ID', customer.id)
 });
 	// on post from stripe webhook, dump json transaction in mongodb
 	mongo.Db.connect(mongoUri, function(err, db) {
