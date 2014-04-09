@@ -53,7 +53,7 @@ app.post('/webhook', function(request, response){
   // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
   stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 
-    console.log('********************************THIS IS IT __________OBJECT', customer)
+    console.log('********************************THIS IS IT __________EMAIL', customer.email)
     // console.log('********************************THIS IS IT _______ID', customer.id)
 });
 	// on post from stripe webhook, dump json transaction in mongodb
