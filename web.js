@@ -9,7 +9,7 @@ var jsforce = require('jsforce');
 // requires mongo db for logging transactions
 var mongo = require('mongodb');
 // sets link to mongodb on heroku (and localhost???)
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs'
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs';
 
 
 var emitter = new EventEmitter;
@@ -51,20 +51,20 @@ app.post('/webhook', function(request, response){
 		// may be viewed at bash$ heroku addons:open mongolab
 		db.collection('stripeLogs', function(er, collection) {
 			collection.insert({'stripeReq':request.body}, function(err, result){
-				console.log(err)
+				console.log(err);
 			});
 		});
 	});
 
 	// TODO parse incoming types to route them separately
 	if (request.body.type === 'charge.succeeded') {
-		console.log("CHARGE.SUCCEEDED",response.body)
+		console.log("CHARGE.SUCCEEDED",response.body);
 	} else {
-		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", response.body.type)
+		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", response.body.type);
 	}
 
 	response.send('OK');
-	response.end()
+	response.end();
 });
 
 
