@@ -58,9 +58,9 @@ app.post('/webhook', function(request, response){
 
 	// TODO parse incoming types to route them separately
 	if (request.body.type === 'charge.succeeded') {
-		console.log("CHARGE.SUCCEEDED",response.body);
+		console.log("CHARGE.SUCCEEDED", request.body);
 	} else {
-		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", response.body.type);
+		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
 	}
 
 	response.send('OK');
