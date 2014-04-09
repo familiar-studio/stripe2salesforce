@@ -62,16 +62,16 @@ app.post('/webhook', function(request, response){
 
 
     // TODO IF NAME IS NULL, .SPLIT WILL BREAK
-    var cus_name_array = (request.body.data.object.card.name).split(' ')
-    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
-      if (err || !ret.success) { return console.error(err, ret); }
-      console.log("-----Created record id------ : " + ret.id);
+    // var cus_name_array = (request.body.data.object.card.name).split(' ')
+    // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+    //   if (err || !ret.success) { return console.error(err, ret); }
+    //   console.log("-----Created record id------ : " + ret.id);
       
-    });
+    // });
 
 	  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 	    if (err) { return console.error(err); }
-	    console.log("HERE BE WHAT WE WANT ?>>>>>>>>>>>", res[0].Id)
+	    console.log("HERE BE WHAT WE WANT ?>>>>>>>>>>>", res[0].Id) 
 
 	    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
 	  });
@@ -122,8 +122,6 @@ app.get('/salesforce/read', function(request, response) {
     // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
   });
 
-
-	
 });
 
 // app.get('/salesforce/insert', function(request, response) {
