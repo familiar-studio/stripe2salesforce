@@ -42,7 +42,7 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 
 app.get('/', function(req, res) {
 
-};
+});
 	
 
 app.post('/webhook', function(request, response){
