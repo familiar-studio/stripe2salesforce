@@ -72,12 +72,23 @@ app.post('/webhook', function(request, response){
 
 
 	    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
-	    // var cus_name_array = (request.body.data.object.card.name).split(' ')
-	    // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
-	    //   if (err || !ret.success) { return console.error(err, ret); }
-	    //   console.log("-----Created record id------ : " + ret.id);
+	    // console.log(res)
+      // customer does not exist
+      if (name !== null) {
+        var cus_name_array = request.body.data.object.card.name
+        var first_name = cus_name_array[0]
+        var last_name = cus_name_array[cus_name_array.length-1]
+        console.log("FIRST NAME", first_name)
+        console.log("LAST NAME", last_name)
+      } else {
+        var first_name = "N/A"
+        var last_name = "N/A"
+      }
+	    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+	      if (err || !ret.success) { return console.error(err, ret); }
+	      console.log("-----Created record id------ : " + ret.id);
 	      
-	    // });
+	    });
 
 		  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 		  //   if (err) { return console.error(err); }
@@ -138,18 +149,22 @@ app.get('/salesforce/read', function(request, response) {
 
   conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
 
+    name = "Meghann PLunkett"
     if ( res.length == 0 ) {
     	console.log(res)
     	// customer does not exist
-    	// if (request.body.data.object.card.name !== null) {
-    		var cus_name_array = ['meghann', 'plunkett']
-    	// 	var first_name = cus_name_array[0]
-    	// 	var last_name = cus_name_array
-    	// } else {
+    	if (name !== null) {
+    		var cus_name_array = name.split(' ')
+    		var first_name = cus_name_array[0]
+    		var last_name = cus_name_array[cus_name_array.length-1]
+        console.log("FIRST NAME", first_name)
+        console.log("LAST NAME", last_name)
+    	} else {
+        var first_name = "N/A"
+        var last_name = "N/A"
+    	}
 
-    	// }
-
-    	conn.sobject("Contact").create({ FirstName : 'hedgehog', LastName: 'hedgehog', Stripe_Customer_Id__c: real, Email: 'hedgehog@gmail.com'}, function(err, ret) {
+    	conn.sobject("Contact").create({ FirstName : first_name  , LastName: last_name, Stripe_Customer_Id__c: real, Email: 'hedgehog@gmail.com'}, function(err, ret) {
     	  if (err || !ret.success) { return console.error(err, ret); }
     	  console.log("-----Created record id------ : " + ret.id);
     	  
