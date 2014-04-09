@@ -59,7 +59,15 @@ app.post('/webhook', function(request, response){
 
 
     // console.log('********************************THIS IS IT _______ID', customer.id)
-});
+
+    var cus_name_array = (request.body.data.object.card.name).split(' ')
+    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+      if (err || !ret.success) { return console.error(err, ret); }
+      console.log("-----Created record id------ : " + ret.id);
+      
+    });
+
+  });
 	// on post from stripe webhook, dump json transaction in mongodb
 	mongo.Db.connect(mongoUri, function(err, db) {
 		// may be viewed at bash$ heroku addons:open mongolab
@@ -74,11 +82,13 @@ app.post('/webhook', function(request, response){
 	});
 //sales force insert
   // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
-  conn.sobject("Contact").create({ FirstName : request.body.data.object.card.name, LastName: 'OUR FAKER', Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
-    if (err || !ret.success) { return console.error(err, ret); }
-    console.log("-----Created record id------ : " + ret.id);
+
+  // var cus_name_array = (request.body.data.object.card.name).split(' ')
+  // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
+  //   if (err || !ret.success) { return console.error(err, ret); }
+  //   console.log("-----Created record id------ : " + ret.id);
     
-  });
+  // });
 
 
 
