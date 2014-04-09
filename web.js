@@ -117,7 +117,7 @@ app.post('/webhook', function(request, response){
 app.get('/salesforce/read', function(request, response) {
   conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3oiI4C121' }, function(err, res) {
     if (err) { return console.error(err); }
-    console.log(res[0].Email)
+    console.log("hello!")
 
     // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
   });
