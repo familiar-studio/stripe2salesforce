@@ -88,12 +88,15 @@ app.post('/webhook', function(request, response){
 
 
 app.get('/salesforce/read', function(request, response) {
-  console.log('Read!' );
-  conn.query('SELECT Id, FirstName, LastName FROM Contact limit 10', function(err, res) {
+  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : 'cus_3p2nTR84gq9rqi' }, function(err, res) {
     if (err) { return console.error(err); }
-    console.log(res);
+    console.log(res[0].Id)
+
+    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
   });
 
+
+	
 });
 
 // app.get('/salesforce/insert', function(request, response) {
