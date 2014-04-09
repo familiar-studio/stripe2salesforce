@@ -81,7 +81,7 @@ app.post('/webhook', function(request, response){
           console.log(res)
 
           if (request.body.data.object.card.name !== null) {
-            var cus_name_array = request.body.data.object.card.name
+            var cus_name_array = request.body.data.object.card.name.split(" ")
             var first_name = cus_name_array[0]
             var last_name = cus_name_array[cus_name_array.length-1]
             console.log("FIRST NAME", first_name)
