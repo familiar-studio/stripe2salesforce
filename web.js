@@ -50,66 +50,74 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
 
-	 if (request.body.type === 'charge.succeeded') {
-  //grabbing customer object
-  // console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
-  // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
-  stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
-
-    // console.log('********************************THIS IS IT __________EMAIL', customer.email)
-    //if no email logges as null
-
-
-    // console.log('********************************THIS IS IT _______ID', customer.id)
-
-
-    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
-    // var cus_name_array = (request.body.data.object.card.name).split(' ')
-    // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
-    //   if (err || !ret.success) { return console.error(err, ret); }
-    //   console.log("-----Created record id------ : " + ret.id);
-      
-    // });
-
-	  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-	    if (err) { return console.error(err); }
-	    console.log("HERE BE WHAT WE WANT ?>>>>>>>>>>>", res[0].Id) 
-
-	    // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-	  });
-
-
-  });
-	// on post from stripe webhook, dump json transaction in mongodb
-	mongo.Db.connect(mongoUri, function(err, db) {
-		// may be viewed at bash$ heroku addons:open mongolab
-		db.collection('stripeLogs', function(er, collection) {
-			collection.insert({'stripeReq':request.body}, function(err, result){
-				console.log(err);
-
-			});
-		});
-
-
-	});
-//sales force insert
-  // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
-
-  // var cus_name_array = (request.body.data.object.card.name).split(' ')
-  // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
-  //   if (err || !ret.success) { return console.error(err, ret); }
-  //   console.log("-----Created record id------ : " + ret.id);
-    
-  // });
-
-
-
-	// TODO parse incoming types to route them separately
-	// if (request.body.type === 'charge.succeeded') {
-	// 	console.log("CHARGE.SUCCEEDED", request.body);
-	// } else {
-	// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
+	// getSfId: function(){
+	// 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+	// 	  if (err) { return console.error(err); }
+	// 	  return res[0].Id
+	// 	  // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+	// 	});
 	// }
+
+	if (request.body.type === 'charge.succeeded') {
+	  //grabbing customer object
+	  // console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
+	  // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
+	  stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+
+	    // console.log('********************************THIS IS IT __________EMAIL', customer.email)
+	    //if no email logges as null
+
+
+	    // console.log('********************************THIS IS IT _______ID', customer.id)
+
+
+	    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
+	    // var cus_name_array = (request.body.data.object.card.name).split(' ')
+	    // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+	    //   if (err || !ret.success) { return console.error(err, ret); }
+	    //   console.log("-----Created record id------ : " + ret.id);
+	      
+	    // });
+
+		  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+		  //   if (err) { return console.error(err); }
+		  //   return res[0].Id
+
+		  //   // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+		  // });
+
+
+	  });
+		// on post from stripe webhook, dump json transaction in mongodb
+		mongo.Db.connect(mongoUri, function(err, db) {
+			// may be viewed at bash$ heroku addons:open mongolab
+			db.collection('stripeLogs', function(er, collection) {
+				collection.insert({'stripeReq':request.body}, function(err, result){
+					console.log(err);
+
+				});
+			});
+
+
+		});
+	//sales force insert
+	  // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
+
+	  // var cus_name_array = (request.body.data.object.card.name).split(' ')
+	  // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
+	  //   if (err || !ret.success) { return console.error(err, ret); }
+	  //   console.log("-----Created record id------ : " + ret.id);
+	    
+	  // });
+
+
+
+		// TODO parse incoming types to route them separately
+		// if (request.body.type === 'charge.succeeded') {
+		// 	console.log("CHARGE.SUCCEEDED", request.body);
+		// } else {
+		// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
+		// }
 	}
 	response.send('OK');
 	response.end();
@@ -120,12 +128,35 @@ app.get('/salesforce/read', function(request, response) {
 	var real = 'cus_3oiBOE7BELbxj2'
 	var fake = 'cus_3oiBOE7XYZbxj6'
 
+	// getSfId: function(){
+	// 	return conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : real }, function(err, res) {
+	// 	  if (err) { return console.error(err); }
+	// 	  return res[0].Id
+	// 	  // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
+	// 	});
+	// }
+
   conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
 
     if ( res.length == 0 ) {
+    	console.log(res)
     	// customer does not exist
+    	// if (request.body.data.object.card.name !== null) {
+    		var cus_name_array = ['meghann', 'plunkett']
+    	// 	var first_name = cus_name_array[0]
+    	// 	var last_name = cus_name_array
+    	// } else {
+
+    	// }
+
+    	conn.sobject("Contact").create({ FirstName : 'hedgehog', LastName: 'hedgehog', Stripe_Customer_Id__c: real, Email: 'hedgehog@gmail.com'}, function(err, ret) {
+    	  if (err || !ret.success) { return console.error(err, ret); }
+    	  console.log("-----Created record id------ : " + ret.id);
+    	  
+    	});
     } else {
-    	// customer exists
+    	console.log(getSfId())
+
     } 
     // if (res.isArray()) {
 
