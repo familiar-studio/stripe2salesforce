@@ -157,32 +157,32 @@ app.get('/salesforce/read', function(request, response) {
 	// 	});
 	// }
 
-  conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
+  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
 
-    name = "Meghann PLunkett"
-    if ( res.length == 0 ) {
-    	console.log(res)
-    	// customer does not exist
-    	if (name !== null) {
-    		var cus_name_array = name.split(' ')
-    		var first_name = cus_name_array[0]
-    		var last_name = cus_name_array[cus_name_array.length-1]
-        console.log("FIRST NAME", first_name)
-        console.log("LAST NAME", last_name)
-    	} else {
-        var first_name = "N/A"
-        var last_name = "N/A"
-    	}
+  //   name = "Meghann PLunkett"
+  //   if ( res.length == 0 ) {
+  //   	console.log(res)
+  //   	// customer does not exist
+  //   	if (name !== null) {
+  //   		var cus_name_array = name.split(' ')
+  //   		var first_name = cus_name_array[0]
+  //   		var last_name = cus_name_array[cus_name_array.length-1]
+  //       console.log("FIRST NAME", first_name)
+  //       console.log("LAST NAME", last_name)
+  //   	} else {
+  //       var first_name = "N/A"
+  //       var last_name = "N/A"
+  //   	}
 
-    	conn.sobject("Contact").create({ FirstName : first_name  , LastName: last_name, Stripe_Customer_Id__c: real, Email: 'hedgehog@gmail.com'}, function(err, ret) {
-    	  if (err || !ret.success) { return console.error(err, ret); }
-    	  console.log("-----Created record id------ : " + ret.id);
+  //   	conn.sobject("Contact").create({ FirstName : first_name  , LastName: last_name, Stripe_Customer_Id__c: real, Email: 'hedgehog@gmail.com'}, function(err, ret) {
+  //   	  if (err || !ret.success) { return console.error(err, ret); }
+  //   	  console.log("-----Created record id------ : " + ret.id);
     	  
-    	});
-    } else {
-    	console.log(getSfId())
+  //   	});
+  //   } else {
+  //   	console.log(getSfId())
 
-    } 
+  //   } 
     // if (res.isArray()) {
 
     // 	// customer exists
