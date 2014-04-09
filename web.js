@@ -79,7 +79,7 @@ app.post('/webhook', function(request, response){
       
         if ( res.length == 0 ) {
           console.log(res)
-
+            /// if user does not exist we make a new user
           if (request.body.data.object.card.name !== null) {
             var cus_name_array = request.body.data.object.card.name.split(" ")
             var first_name = cus_name_array[0]
@@ -96,7 +96,7 @@ app.post('/webhook', function(request, response){
     	      
       	   });
         } else {
-
+          /// if user exists then we update their email address
           conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
             if (err) { return console.error(err); }
             console.log("THIS IS THE ID HAHAHAHAHAHAHAHA", res[0].Id)
