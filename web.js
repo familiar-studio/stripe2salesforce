@@ -50,29 +50,31 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
   //grabbing customer object
-  stripe.customers.retrieve(request.body.data.object, function(err, customer) {
-    console.log('********************************THIS IS IT __________EMAIL', customer)
+  console.log("THIS IS THE ID_____", request.body.data.object.id )
+  stripe.customers.retrieve(request.body.data.object.id, function(err, customer) {
+
+    // console.log('********************************THIS IS IT __________EMAIL', customer)
     // console.log('********************************THIS IS IT _______ID', customer.id)
 });
 	// on post from stripe webhook, dump json transaction in mongodb
-	mongo.Db.connect(mongoUri, function(err, db) {
-		// may be viewed at bash$ heroku addons:open mongolab
-		db.collection('stripeLogs', function(er, collection) {
-			collection.insert({'stripeReq':request.body}, function(err, result){
-				console.log(err);
+// 	mongo.Db.connect(mongoUri, function(err, db) {
+// 		// may be viewed at bash$ heroku addons:open mongolab
+// 		db.collection('stripeLogs', function(er, collection) {
+// 			collection.insert({'stripeReq':request.body}, function(err, result){
+// 				console.log(err);
 
-			});
-		});
+// 			});
+// 		});
 
 
-	});
-//sales force insert
-  // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
-  conn.sobject("Contact").create({ FirstName : 'OUR TEST', LastName: 'YUP', Stripe_Customer_Id__c: 'cus_3oiBOE7BELbxj2', Email: 'ME@ME.com' }, function(err, ret) {
-    if (err || !ret.success) { return console.error(err, ret); }
-    console.log("-----Created record id------ : " + ret.id);
+// 	});
+// //sales force insert
+//   // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
+//   conn.sobject("Contact").create({ FirstName : 'OUR TEST', LastName: 'YUP', Stripe_Customer_Id__c: 'cus_3oiBOE7BELbxj2', Email: 'ME@ME.com' }, function(err, ret) {
+//     if (err || !ret.success) { return console.error(err, ret); }
+//     console.log("-----Created record id------ : " + ret.id);
     
-  });
+//   });
 
 
 
