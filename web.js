@@ -96,7 +96,7 @@ app.post('/webhook', function(request, response){
     	      
       	   });
         } else {
-          console.log(getSfId())
+          console.log("HELLLLOOOOOOOOOOO!!!!!! I AM HERE"))
 
         } 
 
@@ -199,7 +199,7 @@ app.get('/salesforce/read', function(request, response) {
     // }
 
     // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-  });
+  // });
 
 });
 
