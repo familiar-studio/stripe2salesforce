@@ -49,31 +49,10 @@ app.get('/', function(req, res) {
 
 
 app.post('/webhook', function(request, response){
-
-	// getSfId: function(){
-	// 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-	// 	  if (err) { return console.error(err); }
-	// 	  return res[0].Id
-	// 	  // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-	// 	});
-	// }
-
+	// parse post type
 	if (request.body.type === 'charge.succeeded') {
-	  //grabbing customer object
-	  // console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
-	  // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
+		// 
 	  stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
-
-	    // console.log('********************************THIS IS IT __________EMAIL', customer.email)
-	    //if no email logges as null
-
-
-	    // console.log('********************************THIS IS IT _______ID', customer.id)
-
-
-	    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
-	    // console.log(res)
-      // customer does not exist
       conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer}, function(err, res) {
 
       
@@ -84,44 +63,38 @@ app.post('/webhook', function(request, response){
             var cus_name_array = request.body.data.object.card.name.split(" ")
             var first_name = cus_name_array[0]
             var last_name = cus_name_array[cus_name_array.length-1]
-            console.log("FIRST NAME", first_name)
-            console.log("LAST NAME", last_name)
           } else {
             var first_name = "N/A"
             var last_name = "N/A"
           }
     	    conn.sobject("Contact").create({ FirstName : first_name, LastName: last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
     	      if (err || !ret.success) { return console.error(err, ret); }
-    	      console.log("-----Created record id------ : " + ret.id);
+    	      console.log("Created record id: " + ret.id);
     	      
       	   });
         } else {
           /// if user exists then we update their email address
           conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
             if (err) { return console.error(err); }
-            console.log("THIS IS THE ID HAHAHAHAHAHAHAHA", res[0].Id)
+
+            console.log("Fetched SF id:", res[0].Id)
+
             var sf_cust_id = res[0].Id
             conn.sobject("Contact").update({
               Id: sf_cust_id,
               Email: customer.email
             }, function (err, ret) {
               if (err || !ret.success) { return console.error(err, ret); }
-              console.log('Updated Successfully!!!!!!!!!!!!!! : ' + ret.id);
+              console.log('Updated Email Successfully:' + customer.email);
               
             })
           });
-
         } 
-
-		  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-		  //   if (err) { return console.error(err); }
-		  //   return res[0].Id
-
-		  //   // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
-		  // });
       });
 
 	  });
+
+
 		// on post from stripe webhook, dump json transaction in mongodb
 		mongo.Db.connect(mongoUri, function(err, db) {
 			// may be viewed at bash$ heroku addons:open mongolab
@@ -131,19 +104,7 @@ app.post('/webhook', function(request, response){
 
 				});
 			});
-
-
 		});
-	//sales force insert
-	  // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
-
-	  // var cus_name_array = (request.body.data.object.card.name).split(' ')
-	  // conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: request.body.data.object.customer.email }, function(err, ret) {
-	  //   if (err || !ret.success) { return console.error(err, ret); }
-	  //   console.log("-----Created record id------ : " + ret.id);
-	    
-	  // });
-
 
 
 		// TODO parse incoming types to route them separately
