@@ -74,21 +74,31 @@ app.post('/webhook', function(request, response){
 	    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
 	    // console.log(res)
       // customer does not exist
-      if (name !== null) {
-        var cus_name_array = request.body.data.object.card.name
-        var first_name = cus_name_array[0]
-        var last_name = cus_name_array[cus_name_array.length-1]
-        console.log("FIRST NAME", first_name)
-        console.log("LAST NAME", last_name)
+    conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : fake }, function(err, res) {
+
+    
+      if ( res.length == 0 ) {
+        console.log(res)
+
+        if (request.body.data.object.card.name !== null) {
+          var cus_name_array = request.body.data.object.card.name
+          var first_name = cus_name_array[0]
+          var last_name = cus_name_array[cus_name_array.length-1]
+          console.log("FIRST NAME", first_name)
+          console.log("LAST NAME", last_name)
+        } else {
+          var first_name = "N/A"
+          var last_name = "N/A"
+        }
+  	    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+  	      if (err || !ret.success) { return console.error(err, ret); }
+  	      console.log("-----Created record id------ : " + ret.id);
+  	      
+    	   });
       } else {
-        var first_name = "N/A"
-        var last_name = "N/A"
-      }
-	    conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
-	      if (err || !ret.success) { return console.error(err, ret); }
-	      console.log("-----Created record id------ : " + ret.id);
-	      
-	    });
+        console.log(getSfId())
+
+      } 
 
 		  // conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 		  //   if (err) { return console.error(err); }
