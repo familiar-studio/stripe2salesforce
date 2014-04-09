@@ -60,7 +60,9 @@ app.post('/webhook', function(request, response){
 		mongo.Db.connect(mongoUri, function(err, db) {
 		console.log("This is the DB YO", db)
 		db.collection('stripeLogs', function(er, collection) {
-			collection.insert({'stripeReq':request.body})
+			collection.insert({'stripeReq':request.body}, function(err, result){
+				console.log("&&&&&&&&&&&&&7THIS IS THE CALL BACK &&&&&&&&&&&&&&&&&&&&&",request.body);
+			})
 		})
 	});
 
