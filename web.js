@@ -6,20 +6,16 @@ var EventEmitter = require('events').EventEmitter;
 var stripe = require('stripe');
 var jsforce = require('jsforce');
 
-
-
+// requires mongo db for logging transactions
 var mongo = require('mongodb');
-// var databaseUrl = 'stripeLogs'
-// var collection = ['stripeReq']
+// sets link to mongodb on heroku (and localhost???)
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs'
 
-// var db = mongo.connect(databaseUrl, collection)
-
-
-// stripe.setApiKey('sk_test_bY22es5dN0RpWmJoJ5VlBQ5E')
 
 var emitter = new EventEmitter;
 var app = express();
 
+// converts json metadata into stripe transaction object
 app.use(express.bodyParser());
 
 app.use(app.router);
@@ -44,34 +40,29 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 });
 
 
-
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs'
-
-
-
 app.get('/', function(req, res) {
+
+};
 	
-console.log('****************___________________connected_______________________**********************');
-});
 
 app.post('/webhook', function(request, response){
-	if (request.body.type === 'charge.succeeded') {
-		
-		mongo.Db.connect(mongoUri, function(err, db) {
-		console.log("This is the DB YO", db)
+	// on post from stripe webhook, dump json transaction in mongodb
+	mongo.Db.connect(mongoUri, function(err, db) {
+		// may be viewed at bash$ heroku addons:open mongolab
 		db.collection('stripeLogs', function(er, collection) {
 			collection.insert({'stripeReq':request.body}, function(err, result){
-				console.log("&&&&&&&&&&&&&7THIS IS THE CALL BACK &&&&&&&&&&&&&&&&&&&&&",request.body);
-				console.log(collection)
-			})
-		})
+				console.log(err)
+			});
+		});
 	});
 
-	}else{
-		console.log('noooooooo!!!!')
+	// TODO parse incoming types to route them separately
+	if (request.body.type === 'charge.succeeded') {
+		console.log("CHARGE.SUCCEEDED",response.body)
+	} else {
+		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", response.body.type)
 	}
-	// console.log("RAW RESPONSE:", response);
-	// console.log("request*******", request.body);
+
 	response.send('OK');
 	response.end()
 });
