@@ -50,7 +50,7 @@ app.get('/', function(req, res) {
 
 app.post('/webhook', function(request, response){
   //grabbing customer object
-  console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
+  // console.log("THIS IS THE CARD DEATILS*******", request.body.data.object.card)
   // console.log("THIS IS THE ID_____", (request.body.data.object.customer))
   stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 
@@ -60,6 +60,8 @@ app.post('/webhook', function(request, response){
 
     // console.log('********************************THIS IS IT _______ID', customer.id)
 
+
+    // TODO IF NAME IS NULL, .SPLIT WILL BREAK
     var cus_name_array = (request.body.data.object.card.name).split(' ')
     conn.sobject("Contact").create({ FirstName : cus_name_array[0], LastName: cus_name_array[cus_name_array.length -1], Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
       if (err || !ret.success) { return console.error(err, ret); }
