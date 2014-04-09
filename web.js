@@ -106,7 +106,7 @@ app.post('/webhook', function(request, response){
 
 		  //   // if the Stripe ID exists, we'll be in this closure, will grab the account ID, and then update  
 		  // });
-
+      });
 
 	  });
 		// on post from stripe webhook, dump json transaction in mongodb
