@@ -51,8 +51,8 @@ app.get('/', function(req, res) {
 app.post('/webhook', function(request, response){
   //grabbing customer object
   stripe.customers.retrieve(request.body.data.object.id, function(err, customer) {
-    console.log('********************************THIS IS IT __________EMAIL', customer.email)
-    console.log('********************************THIS IS IT _______ID', customer.id)
+    console.log('********************************THIS IS IT __________EMAIL', customer)
+    // console.log('********************************THIS IS IT _______ID', customer.id)
 });
 	// on post from stripe webhook, dump json transaction in mongodb
 	mongo.Db.connect(mongoUri, function(err, db) {
@@ -67,7 +67,7 @@ app.post('/webhook', function(request, response){
 
 	});
 //sales force insert
-  console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
+  // console.log('*********THIS IS THE REQUEST>BODY***************', request.body.data.object.amount );
   conn.sobject("Contact").create({ FirstName : 'OUR TEST', LastName: 'YUP', Stripe_Customer_Id__c: 'cus_3oiBOE7BELbxj2', Email: 'ME@ME.com' }, function(err, ret) {
     if (err || !ret.success) { return console.error(err, ret); }
     console.log("-----Created record id------ : " + ret.id);
@@ -77,11 +77,11 @@ app.post('/webhook', function(request, response){
 
 
 	// TODO parse incoming types to route them separately
-	if (request.body.type === 'charge.succeeded') {
-		console.log("CHARGE.SUCCEEDED", request.body);
-	} else {
-		console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
-	}
+	// if (request.body.type === 'charge.succeeded') {
+	// 	console.log("CHARGE.SUCCEEDED", request.body);
+	// } else {
+	// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
+	// }
 
 	response.send('OK');
 	response.end();
