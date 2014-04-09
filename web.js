@@ -62,6 +62,7 @@ app.post('/webhook', function(request, response){
 		db.collection('stripeLogs', function(er, collection) {
 			collection.insert({'stripeReq':request.body}, function(err, result){
 				console.log("&&&&&&&&&&&&&7THIS IS THE CALL BACK &&&&&&&&&&&&&&&&&&&&&",request.body);
+				console.log(collection)
 			})
 		})
 	});
