@@ -3,7 +3,10 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-var stripe = require('stripe');
+
+var stripe = require("stripe")(
+ "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
+);
 var jsforce = require('jsforce');
 
 // requires mongo db for logging transactions
@@ -46,6 +49,10 @@ app.get('/', function(req, res) {
 
 
 app.post('/webhook', function(request, response){
+  //grabbing customer object
+  stripe.customers.retrieve(request.body.data.object.id, function(err, customer) {
+    console.log('********************************THIS IS IT __________customer', customer)
+});
 	// on post from stripe webhook, dump json transaction in mongodb
 	mongo.Db.connect(mongoUri, function(err, db) {
 		// may be viewed at bash$ heroku addons:open mongolab
