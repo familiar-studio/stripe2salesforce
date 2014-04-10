@@ -135,9 +135,9 @@ app.post('/webhook', function(request, response){
 		};
 	};
 
-	var getStripeEmail = function(customerEmail, stripe_id){
+	function getStripeEmail(stripe_id){
 		console.log("hi")
-		var email = (stripe.customers.retrieve( stripe_id, function(err, customer) {
+		return stripe.customers.retrieve( stripe_id, function(err, customer) {
 			
 			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 			var customerEmail = customer.email;
@@ -146,9 +146,9 @@ app.post('/webhook', function(request, response){
 		
 		});
     console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", email)
-    console.log("this is the new try", customerEmail)
+    
     ///////////////////////BUG!!!!!! RETURNING EMAIL AS [object, object]
-		return email;
+		
 	};
 
 	var getStripeCustomer = function(stripe_id){
