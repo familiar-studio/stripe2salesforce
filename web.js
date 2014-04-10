@@ -184,60 +184,60 @@ app.get('/salesforce/read', function(request, response) {
 // ====================================================
 // STATIC LOCAL VARIABLES FOR TESTING:
 
-	var stripe_customer_id = 'cus_3oi2355bxj2',
-			name = 'isaac woodruff',
-			no_name = null,
-			email = 'isaac@familiar-studio.com';
+// 	var stripe_customer_id = 'cus_3oi2355bxj2',
+// 			name = 'isaac woodruff',
+// 			no_name = null,
+// 			email = 'isaac@familiar-studio.com';
 
-// ====================================================
+// // ====================================================
 
-	var checkName = function(){
-		// ========================
-		// LOCAL VARIABLE: NAME
-		if (name !== null) {
-			var name_array = name.split(' ');
-		// ========================
-			return {
-				first_name: name_array[0], 
-				last_name: name_array[name_array.length - 1]
-			};
-		} else {
-			return {
-				first_name: 'no name listed',
-				last_name: 'no name listed'
-			};
-		};
-	};
+// 	var checkName = function(){
+// 		// ========================
+// 		// LOCAL VARIABLE: NAME
+// 		if (name !== null) {
+// 			var name_array = name.split(' ');
+// 		// ========================
+// 			return {
+// 				first_name: name_array[0], 
+// 				last_name: name_array[name_array.length - 1]
+// 			};
+// 		} else {
+// 			return {
+// 				first_name: 'no name listed',
+// 				last_name: 'no name listed'
+// 			};
+// 		};
+// 	};
 
-	var createNewContact = function(){
-		conn.sobject("Contact").create({ FirstName : checkName().first_name, LastName: checkName().last_name, Stripe_Customer_Id__c: stripe_customer_id, Email: email }, function(err, ret) {
-      if (err || !ret.success) { return console.error(err, ret); }
-      console.log("Created Contact With ID: " + ret.id);
-	  });
-	};
+// 	var createNewContact = function(){
+// 		conn.sobject("Contact").create({ FirstName : checkName().first_name, LastName: checkName().last_name, Stripe_Customer_Id__c: stripe_customer_id, Email: email }, function(err, ret) {
+//       if (err || !ret.success) { return console.error(err, ret); }
+//       console.log("Created Contact With ID: " + ret.id);
+// 	  });
+// 	};
 
-	var updateContactEmail = function(sf_id){
-		conn.sobject('Contact').update({
-			Id: sf_id,
-			// ==============
-			// LOCAL VARIABLE
-			Email: email
-			// ==============
-		}, function(error, result){
-			if (error || !ret.success) { return console.error(err, ret); }
-			console.log('Updated Contact Email to:' + email);
-		});
-	};
+// 	var updateContactEmail = function(sf_id){
+// 		conn.sobject('Contact').update({
+// 			Id: sf_id,
+// 			// ==============
+// 			// LOCAL VARIABLE
+// 			Email: email
+// 			// ==============
+// 		}, function(error, result){
+// 			if (error || !ret.success) { return console.error(err, ret); }
+// 			console.log('Updated Contact Email to:' + email);
+// 		});
+// 	};
 
-	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
-		if (res.length == 0) {
-			createNewContact();
-		} else {
-			console.log('Current User, ID: ' + res[0].Id)
-			updateContactEmail(res[0].Id);
-		};
-	});
-});
+// 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
+// 		if (res.length == 0) {
+// 			createNewContact();
+// 		} else {
+// 			console.log('Current User, ID: ' + res[0].Id)
+// 			updateContactEmail(res[0].Id);
+// 		};
+// 	});
+// });
 
 
 // app.get('/salesforce/read', function(request, response) {
@@ -307,7 +307,7 @@ app.get('/salesforce/read', function(request, response) {
 //     // ...
 //   });
 
-// });
+});
 
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function()
