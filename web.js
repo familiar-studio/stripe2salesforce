@@ -106,6 +106,7 @@ app.post('/webhook', function(request, response){
 	// 			});
 	// 		});
 	// 	});
+//}
 
 
 
@@ -151,7 +152,7 @@ app.post('/webhook', function(request, response){
 					console.log('Updated Contact Email to:' + email);
 				});
 			};
-
+		if (request.body.type === 'charge.succeeded') {
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 			if (res.length == 0) {
 				createNewSFContact();
@@ -160,7 +161,7 @@ app.post('/webhook', function(request, response){
 				updateSFContactEmail(res[0].Id);
 			};
 		});
-
+	};
 
 
 
@@ -174,12 +175,12 @@ app.post('/webhook', function(request, response){
 		// } else {
 		// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
 		// }
-	}
+
 	response.send('OK');
 	response.end();
 });
 
-app.get('/salesforce/read', function(request, response) {
+// app.get('/salesforce/read', function(request, response) {
 
 // ====================================================
 // STATIC LOCAL VARIABLES FOR TESTING:
@@ -307,7 +308,7 @@ app.get('/salesforce/read', function(request, response) {
 //     // ...
 //   });
 
-});
+// });
 
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function()
