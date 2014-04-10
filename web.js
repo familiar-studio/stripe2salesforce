@@ -129,15 +129,18 @@ app.post('/webhook', function(request, response){
 		};
 
 		var createNewSFContact = function(){
+			console.log('EMAIL%%%%%%%%%', getStripeCustomer())
 			conn.sobject("Contact").create({ FirstName : stripCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer().email }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
+
 		  });
 		};
 
 		var getStripeCustomer = function (){
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				return customer
+
 			})
 		}
 
@@ -152,8 +155,9 @@ app.post('/webhook', function(request, response){
 					console.log('Updated Contact Email to:' + email);
 				});
 			};
+
 		if (request.body.type === 'charge.succeeded') {
-			console.log('THIS IS IT********', request.body)
+			console.log('THIS IS IT******** the ID', request.body.data.object.customer)
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 			if (res.length == 0) {
 				createNewSFContact();
