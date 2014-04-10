@@ -135,7 +135,7 @@ app.post('/webhook', function(request, response){
 		};
 	};
 
-	var getStripeEmail = function(var customerEmail, stripe_id){
+	var getStripeEmail = function(customerEmail, stripe_id){
 		console.log("hi")
 		var email = (stripe.customers.retrieve( stripe_id, function(err, customer) {
 			setTimeout(function(){
