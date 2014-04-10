@@ -43,69 +43,129 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 
 
 
-app.get('/', function(req, res) {
+// app.get('/', function(req, res) {
 
-});
+// });
 
 
 app.post('/webhook', function(request, response){
-	// parse post type, TODO: OTHER POST TRANSACTIONS
-	if (request.body.type === 'charge.succeeded') {
-		// fetches customer information (email address: customer.email)
-	  stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
-	  	// finds specific SalesForce contact matching stripe customer id
-      conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer}, function(err, res) {
+	// // parse post type, TODO: OTHER POST TRANSACTIONS
+	// if (request.body.type === 'charge.succeeded') {
+	// 	// fetches customer information (email address: customer.email)
+	//   stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+	//   	// finds specific SalesForce contact matching stripe customer id
+ //      conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer}, function(err, res) {
       
-      	// tests whether user exists in SalesForce DB
-        if ( res.length == 0 ) {
-        	// if new customer, a record is created:
-          if (request.body.data.object.card.name !== null) {
-            var cus_name_array = request.body.data.object.card.name.split(" ")
-            var first_name = cus_name_array[0]
-            var last_name = cus_name_array[cus_name_array.length-1]
-          } else {
-            var first_name = "N/A"
-            var last_name = "N/A"
-          }
+ //      	// tests whether user exists in SalesForce DB
+ //        if ( res.length == 0 ) {
+ //        	// if new customer, a record is created:
+ //          if (request.body.data.object.card.name !== null) {
+ //            var cus_name_array = request.body.data.object.card.name.split(" ")
+ //            var first_name = cus_name_array[0]
+ //            var last_name = cus_name_array[cus_name_array.length-1]
+ //          } else {
+ //            var first_name = "N/A"
+ //            var last_name = "N/A"
+ //          }
 
-    	    conn.sobject("Contact").create({ FirstName : first_name, LastName: last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
-    	      if (err || !ret.success) { return console.error(err, ret); }
-    	      console.log("Created record id: " + ret.id);
+ //    	    conn.sobject("Contact").create({ FirstName : first_name, LastName: last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: customer.email }, function(err, ret) {
+ //    	      if (err || !ret.success) { return console.error(err, ret); }
+ //    	      console.log("Created record id: " + ret.id);
     	      
-      	  });
-        } else {
-          // if user exists then we update their email address
-          conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-            if (err) { return console.error(err); }
+ //      	  });
+ //        } else {
+ //          // if user exists then we update their email address
+ //          conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+ //            if (err) { return console.error(err); }
 
-            console.log("Fetched SF id:", res[0].Id);
+ //            console.log("Fetched SF id:", res[0].Id);
 
-            var sf_cust_id = res[0].Id;
-            conn.sobject("Contact").update({
-              Id: sf_cust_id,
-              Email: customer.email
-            }, function (err, ret) {
-              if (err || !ret.success) { return console.error(err, ret); }
-              console.log('Updated Email Successfully:' + customer.email);
+ //            var sf_cust_id = res[0].Id;
+ //            conn.sobject("Contact").update({
+ //              Id: sf_cust_id,
+ //              Email: customer.email
+ //            }, function (err, ret) {
+ //              if (err || !ret.success) { return console.error(err, ret); }
+ //              console.log('Updated Email Successfully:' + customer.email);
               
-            });
-          });
-        } 
-      });
+ //            });
+ //          });
+ //        } 
+ //      });
 
-	  });
+	//   });
 
 
-		// on post from stripe webhook, dump json transaction in mongodb
-		mongo.Db.connect(mongoUri, function(err, db) {
-			// may be viewed at bash$ heroku addons:open mongolab
-			db.collection('stripeLogs', function(er, collection) {
-				collection.insert({'stripeReq':request.body}, function(err, result){
-					console.log(err);
+	// 	// on post from stripe webhook, dump json transaction in mongodb
+	// 	mongo.Db.connect(mongoUri, function(err, db) {
+	// 		// may be viewed at bash$ heroku addons:open mongolab
+	// 		db.collection('stripeLogs', function(er, collection) {
+	// 			collection.insert({'stripeReq':request.body}, function(err, result){
+	// 				console.log(err);
 
+	// 			});
+	// 		});
+	// 	});
+
+
+
+
+		var stripeCheckName = function(){
+			var name = request.body.data.object.card.name;
+			if (name !== null) {
+				var name_array = name.split(' ');
+			// ========================
+				return {
+					first_name: name_array[0], 
+					last_name: name_array[name_array.length - 1]
+				};
+			} else {
+				return {
+					first_name: 'no name listed',
+					last_name: 'no name listed'
+				};
+			};
+		};
+
+		var createNewSFContact = function(){
+			conn.sobject("Contact").create({ FirstName : stripCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer().email }, function(err, ret) {
+		      if (err || !ret.success) { return console.error(err, ret); }
+		      console.log("Created Contact With ID: " + ret.id);
+		  });
+		};
+
+		var getStripeCustomer = function (){
+			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+				return customer
+			})
+		})
+
+			var updateSFContactEmail = function(sf_id){
+				var email = getStripeCustomer().email
+				conn.sobject('Contact').update({
+					Id: sf_id,
+					Email: email
+					
+				}, function(error, result){
+					if (error || !ret.success) { return console.error(err, ret); }
+					console.log('Updated Contact Email to:' + email);
 				});
-			});
+			};
+
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+			if (res.length == 0) {
+				createNewSFContact();
+			} else {
+				console.log('Current User, ID: ' + res[0].Id)
+				updateSFContactEmail(res[0].Id);
+			};
 		});
+
+
+
+
+
+
 
 
 		// TODO parse incoming types to route them separately
