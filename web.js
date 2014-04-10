@@ -158,9 +158,9 @@ app.post('/webhook', function(request, response){
 	};
 
 	var getStripeCustomer = function(stripe_id){
-		var customer_obj = stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+		var customer_obj = stripe.customers.retrieve(request.body.data.object.customer, function getCustomer(err, customer) {
 			return customer;
-		});
+		}){ return getCustomer };
     return customer_obj;
 	}
 
