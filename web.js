@@ -137,7 +137,7 @@ app.post('/webhook', function(request, response){
 
 	var getStripeEmail = function(stripe_id){
 		console.log("hi")
-		var email = stripe.customers.retrieve(customerId, function(err, customer) {
+		var email = stripe.customers.retrieve(stripe_id, function(err, customer) {
 			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 			var customerEmail = customer.email;
 			return customerEmail;
@@ -162,7 +162,7 @@ app.post('/webhook', function(request, response){
     var email = getStripeEmail(stripe_id);
 
 		
-		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: customerId, Email: email }, function(err, ret) {
+		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: stripe_id, Email: email }, function(err, ret) {
 	      if (err || !ret.success) { return console.error(err, ret); }
 	      console.log("Created Contact With ID: " + ret.id);
 
