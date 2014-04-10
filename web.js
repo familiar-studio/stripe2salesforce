@@ -133,10 +133,11 @@ app.post('/webhook', function(request, response){
 
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				console.log("#####################################THIS IS THE CUST EAMIL", customer.email)
-				return customer.email
+				var customerEmail = customer.email
+				return customerEmail 
 
-			})
-		}
+			});
+		};
 
 		var createNewSFContact = function(){
 			console.log("hellos there i am broke?")
