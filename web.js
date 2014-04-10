@@ -135,6 +135,7 @@ app.post('/webhook', function(request, response){
 				console.log("#####################################THIS IS THE CUST EAMIL", customer.email)
 				var customerEmail = customer.email
 				return customerEmail 
+				console.log('AGAIN', customerEmail)
 
 			});
 		};
@@ -144,11 +145,13 @@ app.post('/webhook', function(request, response){
 			console.log("THIS IS THE CUST ID", request.body.data.object.customer)
 			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer())
 			console.log("THIS IS THE NAMR)))))))))#%@*^#&@^*#&@^#*&^@#*&^@#*&^#", stripeCheckName().first_name)
+			setTimeout(function(){
 			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer() }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
 
 		  });
+		}, 1000)
 		};
 
 		
