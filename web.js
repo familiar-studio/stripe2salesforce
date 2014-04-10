@@ -153,7 +153,7 @@ app.post('/webhook', function(request, response){
 		
 
 			var updateSFContactEmail = function(sf_id){
-				var email = getStripeCustomer().email
+				var email = getStripeCustomer()
 				conn.sobject('Contact').update({
 					Id: sf_id,
 					Email: email
