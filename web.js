@@ -118,7 +118,7 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 
 
 app.post('/webhook', function(request, response){
-	
+
 		var stripeCheckName = function(){
 			var name = request.body.data.object.card.name;
 			if (name !== null) {
@@ -136,14 +136,14 @@ app.post('/webhook', function(request, response){
 			};
 		};
 
-		var getStripeEmail = function (){
+		var getStripeEmail = function (customerId){
 			// console.log("hi")
-
-			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+			var email= stripe.customers.retrieve(customerId, function(err, customer) {
 				console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 				var customerEmail = customer.email
 				return customerEmail 
 			});
+			return email;
 		};
 
 		var testGet = function(){
@@ -155,7 +155,7 @@ app.post('/webhook', function(request, response){
 			});
 		}
 
-		var createNewSFContact = function(){
+		var createNewSFContact = function(customerId){
 			// console.log("hellos there i am broke?")
 			// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
 			console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail())
@@ -165,7 +165,7 @@ app.post('/webhook', function(request, response){
 			var email = getStripeCustomer();
 
 			
-			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: email }, function(err, ret) {
+			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: customerId, Email: email }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
 
