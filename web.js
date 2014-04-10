@@ -48,7 +48,12 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 // });
 
 
-app.post('/webhook', function(request, response){
+// app.post('/webhook', function(request, response){
+
+
+// 	____________________________________________________________________
+// ***************BELOW HERE IS A WOKRING COPY OF UGLY CODE BUT IT WORKS*************************
+// 	____________________________________________________________________
 	// // parse post type, TODO: OTHER POST TRANSACTIONS
 	// if (request.body.type === 'charge.succeeded') {
 	// 	// fetches customer information (email address: customer.email)
@@ -107,10 +112,13 @@ app.post('/webhook', function(request, response){
 	// 		});
 	// 	});
 //}
+// 	____________________________________________________________________
+// ***************ABOVE HERE IS A WOKRING COPY OF UGLY CODE BUT IT WORKS*************************
+// 	____________________________________________________________________
 
 
-
-
+app.post('/webhook', function(request, response){
+	
 		var stripeCheckName = function(){
 			var name = request.body.data.object.card.name;
 			if (name !== null) {
@@ -128,11 +136,11 @@ app.post('/webhook', function(request, response){
 			};
 		};
 
-		var getStripeCustomer = function (){
+		var getStripeEmail = function (){
 			// console.log("hi")
 
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
-				console.log("#####################################THIS IS THE CUST EAMIL", customer.email)
+				console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 				var customerEmail = customer.email
 				return customerEmail 
 			});
@@ -142,7 +150,7 @@ app.post('/webhook', function(request, response){
 			console.log('yesssss????')
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				var customer_obj = customer
-				console.log('WORK, DAMN YOU!', customer_obj)
+				// console.log('WORK, DAMN YOU!', customer_obj)
 				return customer_obj
 			});
 		}
@@ -150,25 +158,25 @@ app.post('/webhook', function(request, response){
 		var createNewSFContact = function(){
 			// console.log("hellos there i am broke?")
 			// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
-			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer())
-			console.log("THIS IS THE NAMR)))))))))#%@*^#&@^*#&@^#*&^@#*&^@#*&^#", stripeCheckName().first_name)
+			console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail())
+			console.log("THIS IS THE NAMR)))))))))____________________________", stripeCheckName().first_name)
 
-			console.log('ISAAC TEST', testGet(), testGet().email)
-			var email = 'blah@test.com'
+		
+			var email = getStripeCustomer();
 
-			setTimeout(function(){
+			
 			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: email }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
 
 		  });
-		}, 1000)
+		
 		};
 
 		
 
 		var updateSFContactEmail = function(sf_id){
-			var email = "OSCAR@GMAIL.com"
+			var email = getStripeEmail();
 			conn.sobject('Contact').update({
 				Id: sf_id,
 				Email: email
@@ -190,22 +198,15 @@ app.post('/webhook', function(request, response){
 			});
 		};
 
-
-
-
-
-
-
-		// TODO parse incoming types to route them separately
-		// if (request.body.type === 'charge.succeeded') {
-		// 	console.log("CHARGE.SUCCEEDED", request.body);
-		// } else {
-		// 	console.log("CHARGE NOT 'CHARGE.SUCCEEDED'", request.body.type);
-		// }
-
 	response.send('OK');
 	response.end();
 });
+
+
+
+
+
+
 
 // app.get('/salesforce/read', function(request, response) {
 
