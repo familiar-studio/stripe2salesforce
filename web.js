@@ -133,7 +133,7 @@ app.post('/webhook', function(request, response){
 
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				console.log("#####################################THIS IS THE CUST EAMIL", customer.email)
-				return customer
+				return customer.email
 
 			})
 		}
@@ -141,9 +141,9 @@ app.post('/webhook', function(request, response){
 		var createNewSFContact = function(){
 			console.log("hellos there i am broke?")
 			console.log("THIS IS THE CUST ID", request.body.data.object.customer)
-			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer().email)
+			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer())
 			console.log("THIS IS THE NAMR)))))))))#%@*^#&@^*#&@^#*&^@#*&^@#*&^#", stripeCheckName().first_name)
-			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer().email }, function(err, ret) {
+			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer() }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
 
