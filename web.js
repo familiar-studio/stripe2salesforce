@@ -129,29 +129,27 @@ app.post('/webhook', function(request, response){
 		};
 
 		var getStripeCustomer = function (){
-			console.log("hi")
+			// console.log("hi")
 
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				console.log("#####################################THIS IS THE CUST EAMIL", customer.email)
 				var customerEmail = customer.email
 				return customerEmail 
-				console.log('AGAIN', customerEmail)
-
 			});
 		};
 
 		var testGet = function(){
+			console.log('yesssss????')
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				var customer_obj = customer
+				console.log('WORK, DAMN YOU!', customer_obj)
 				return customer_obj
-				console.log('AGAIN', customerEmail)
-
 			});
 		}
 
 		var createNewSFContact = function(){
-			console.log("hellos there i am broke?")
-			console.log("THIS IS THE CUST ID", request.body.data.object.customer)
+			// console.log("hellos there i am broke?")
+			// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
 			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer())
 			console.log("THIS IS THE NAMR)))))))))#%@*^#&@^*#&@^#*&^@#*&^@#*&^#", stripeCheckName().first_name)
 
