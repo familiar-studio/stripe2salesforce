@@ -142,7 +142,7 @@ app.post('/webhook', function(request, response){
 			var customerEmail = customer.email;
 			return customerEmail;
 		});
-    console.log("THIS IS THE EMAIL______IS IT AN OBJECT?", email)
+    console.log("THIS IS THE EMAIL______IS IT AN OBJECT?", email[0])
 		return email;
 	};
 
