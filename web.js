@@ -133,7 +133,7 @@ app.get('/salesforce/read', function(request, response) {
 
 	var checkName = function(){
 		// ========================
-		// LOCAL VARIABLE NAME
+		// LOCAL VARIABLE: NAME
 		if (name !== null) {
 			var name_array = name.split(' ');
 		// ========================
