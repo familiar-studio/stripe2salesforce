@@ -140,12 +140,24 @@ app.post('/webhook', function(request, response){
 			});
 		};
 
+		var testGet = function(){
+			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+				var customer_obj = customer
+				return customer_obj
+				console.log('AGAIN', customerEmail)
+
+			});
+		}
+
 		var createNewSFContact = function(){
 			console.log("hellos there i am broke?")
 			console.log("THIS IS THE CUST ID", request.body.data.object.customer)
 			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer())
 			console.log("THIS IS THE NAMR)))))))))#%@*^#&@^*#&@^#*&^@#*&^@#*&^#", stripeCheckName().first_name)
-			var email = "test@email.com"
+
+			console.log('ISAAC TEST', testGet(), testGet().email)
+			var email = 'blah@test.com'
+
 			setTimeout(function(){
 			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: email }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
@@ -157,29 +169,28 @@ app.post('/webhook', function(request, response){
 
 		
 
-			var updateSFContactEmail = function(sf_id){
-				var email = "OSCAR@GMAIL.com"
-				conn.sobject('Contact').update({
-					Id: sf_id,
-					Email: email
-					
-				}, function(error, result){
-					if (error || !ret.success) { return console.error(err, ret); }
-					console.log('Updated Contact Email to:' + email);
-				});
-			};
+		var updateSFContactEmail = function(sf_id){
+			var email = "OSCAR@GMAIL.com"
+			conn.sobject('Contact').update({
+				Id: sf_id,
+				Email: email
+				
+			}, function(error, result){
+				if (error || !ret.success) { return console.error(err, ret); }
+				console.log('Updated Contact Email to:' + email);
+			});
+		};
 
 		if (request.body.type === 'charge.succeeded') {
-			
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-			if (res.length == 0) {
-				createNewSFContact();
-			} else {
-				console.log('Current User, ID: ' + res[0].Id)
-				updateSFContactEmail(res[0].Id);
-			};
-		});
-	};
+			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
+				if (res.length == 0) {
+					createNewSFContact();
+				} else {
+					console.log('Current User, ID: ' + res[0].Id)
+					updateSFContactEmail(res[0].Id);
+				};
+			});
+		};
 
 
 
