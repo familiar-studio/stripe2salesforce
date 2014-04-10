@@ -142,8 +142,8 @@ app.post('/webhook', function(request, response){
 			var customerEmail = customer.email;
 			return customerEmail;
 		})());
-    console.log("THIS IS THE EMAIL______IS IT AN OBJECT?", email.customerEmail)
-		return email.customerEmail;
+    console.log("THIS IS THE EMAIL______IS IT AN OBJECT?", email.stripe.customer.retrieve())
+		return email.stripe.customer.retrieve();
 	};
 
 	var getStripeCustomer = function(stripe_id){
