@@ -138,7 +138,10 @@ app.post('/webhook', function(request, response){
 		};
 
 		var getStripeCustomer = function (){
+			console.log("hi")
+
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+				console.log("#####################################THIS IS THE CUST", customer)
 				return customer
 
 			})
@@ -157,7 +160,7 @@ app.post('/webhook', function(request, response){
 			};
 
 		if (request.body.type === 'charge.succeeded') {
-			console.log('THIS IS IT******** the ID!!!!!!!!!!!!!!!', request.body.data.object.customer)
+			
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 			if (res.length == 0) {
 				createNewSFContact();
