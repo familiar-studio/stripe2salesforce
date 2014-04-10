@@ -190,7 +190,7 @@ app.post('/webhook', function(request, response){
 		if (request.body.type === 'charge.succeeded') {
 			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 				if (res.length == 0) {
-					createNewSFContact();
+					createNewSFContact(request.body.data.object.customer);
 				} else {
 					console.log('Current User, ID: ' + res[0].Id)
 					updateSFContactEmail(res[0].Id);
