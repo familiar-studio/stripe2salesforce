@@ -149,8 +149,9 @@ app.post('/webhook', function(request, response){
 			
 			
 		
-		} );
-    console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", customerEmail)
+		} ).then(function(){
+			console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", customerEmail)
+		})
     
     ///////////////////////BUG!!!!!! RETURNING EMAIL AS [object, object]
 		return customerEmail;
