@@ -119,84 +119,82 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 
 app.post('/webhook', function(request, response){
 
-		var stripeCheckName = function(){
-			var name = request.body.data.object.card.name;
-			if (name !== null) {
-				var name_array = name.split(' ');
-			// ========================
-				return {
-					first_name: name_array[0], 
-					last_name: name_array[name_array.length - 1]
-				};
-			} else {
-				return {
-					first_name: 'no name listed',
-					last_name: 'no name listed'
-				};
+	var stripeCheckName = function(){
+		var name = request.body.data.object.card.name;
+		if (name !== null) {
+			var name_array = name.split(' ');
+			return {
+				first_name: name_array[0], 
+				last_name: name_array[name_array.length - 1]
+			};
+		} else {
+			return {
+				first_name: 'no name listed',
+				last_name: 'no name listed'
 			};
 		};
+	};
 
-		var getStripeEmail = function (customerId){
-			// console.log("hi")
-			var email= stripe.customers.retrieve(customerId, function(err, customer) {
-				console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
-				var customerEmail = customer.email
-				return customerEmail 
-			});
-			return email;
-		};
+	var getStripeEmail = function(stripe_id){
+		// console.log("hi")
+		var email = stripe.customers.retrieve(customerId, function(err, customer) {
+			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
+			var customerEmail = customer.email;
+			return customerEmail;
+		});
+		return email;
+	};
 
-		var testGet = function(){
-			console.log('yesssss????')
-			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
-				var customer_obj = customer
-				// console.log('WORK, DAMN YOU!', customer_obj)
-				return customer_obj
-			});
-		}
+	var getStripeCustomer = function(stripe_id){
+		var customer_obj = stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
+			return customer;
+		});
+    return customer_obj;
+	}
 
-		var createNewSFContact = function(customerId){
-			// console.log("hellos there i am broke?")
-			// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
-			console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail())
-			console.log("THIS IS THE NAMR)))))))))____________________________", stripeCheckName().first_name)
+	var createNewSFContact = function(stripe_id){
+		// console.log("hellos there i am broke?")
+		// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
+		console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail())
+		console.log("THIS IS THE NAMR)))))))))____________________________", stripeCheckName().first_name)
+
+		// var email = getStripeCustomer(stripe_id).email;
+    var email = getStripeEmail(stripe_id);
 
 		
-			var email = getStripeCustomer();
+		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: customerId, Email: email }, function(err, ret) {
+	      if (err || !ret.success) { return console.error(err, ret); }
+	      console.log("Created Contact With ID: " + ret.id);
 
+	  });
+	
+	};
+
+
+	var updateSFContactEmail = function(sf_id, stripe_id){
+		var email = getStripeEmail(stripe_id);
+		conn.sobject('Contact').update({
+			Id: sf_id,
+			Email: email
 			
-			conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: customerId, Email: email }, function(err, ret) {
-		      if (err || !ret.success) { return console.error(err, ret); }
-		      console.log("Created Contact With ID: " + ret.id);
+		}, function(error, result){
+			if (error || !ret.success) { return console.error(err, ret); }
+			console.log('Updated Contact Email to:' + email);
+		});
+	};
 
-		  });
-		
-		};
-
-		
-
-		var updateSFContactEmail = function(sf_id){
-			var email = getStripeEmail();
-			conn.sobject('Contact').update({
-				Id: sf_id,
-				Email: email
-				
-			}, function(error, result){
-				if (error || !ret.success) { return console.error(err, ret); }
-				console.log('Updated Contact Email to:' + email);
-			});
-		};
-
-		if (request.body.type === 'charge.succeeded') {
-			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
-				if (res.length == 0) {
-					createNewSFContact(request.body.data.object.customer);
-				} else {
-					console.log('Current User, ID: ' + res[0].Id)
-					updateSFContactEmail(res[0].Id);
-				};
-			});
-		};
+	if (request.body.type === 'charge.succeeded') {
+    var stripe_customer_id = request.body.data.object.customer;
+    
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
+			if (res.length == 0) {
+				createNewSFContact(stripe_customer_id);
+			} else {
+				console.log('Current SF User, ID: ' + res[0].Id)
+				updateSFContactEmail(res[0].Id, stripe_customer_id);
+			};
+		});
+	};
 
 	response.send('OK');
 	response.end();
