@@ -139,7 +139,7 @@ app.post('/webhook', function(request, response){
 			stripe.customers.retrieve(request.body.data.object.customer, function(err, customer) {
 				return customer
 			})
-		})
+		}
 
 			var updateSFContactEmail = function(sf_id){
 				var email = getStripeCustomer().email
