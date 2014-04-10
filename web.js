@@ -129,7 +129,7 @@ app.post('/webhook', function(request, response){
 		};
 
 		var createNewSFContact = function(){
-			console.log('EMAIL%%%%%%%%%', getStripeCustomer())
+			console.log('%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%', getStripeCustomer().email)
 			conn.sobject("Contact").create({ FirstName : stripCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: request.body.data.object.customer, Email: getStripeCustomer().email }, function(err, ret) {
 		      if (err || !ret.success) { return console.error(err, ret); }
 		      console.log("Created Contact With ID: " + ret.id);
@@ -157,7 +157,7 @@ app.post('/webhook', function(request, response){
 			};
 
 		if (request.body.type === 'charge.succeeded') {
-			console.log('THIS IS IT******** the ID', request.body.data.object.customer)
+			console.log('THIS IS IT******** the ID', request.body.data.object)
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : request.body.data.object.customer }, function(err, res) {
 			if (res.length == 0) {
 				createNewSFContact();
