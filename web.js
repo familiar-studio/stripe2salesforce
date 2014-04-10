@@ -136,7 +136,7 @@ app.post('/webhook', function(request, response){
 	};
 
 	var getStripeEmail = function(stripe_id){
-		// console.log("hi")
+		console.log("hi")
 		var email = stripe.customers.retrieve(customerId, function(err, customer) {
 			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 			var customerEmail = customer.email;
@@ -155,7 +155,7 @@ app.post('/webhook', function(request, response){
 	var createNewSFContact = function(stripe_id){
 		// console.log("hellos there i am broke?")
 		// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
-		console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail())
+		console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail(stripe_id))
 		console.log("THIS IS THE NAMR)))))))))____________________________", stripeCheckName().first_name)
 
 		// var email = getStripeCustomer(stripe_id).email;
@@ -185,9 +185,10 @@ app.post('/webhook', function(request, response){
 
 	if (request.body.type === 'charge.succeeded') {
     var stripe_customer_id = request.body.data.object.customer;
-    
+
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (res.length == 0) {
+        console.log('new user')
 				createNewSFContact(stripe_customer_id);
 			} else {
 				console.log('Current SF User, ID: ' + res[0].Id)
