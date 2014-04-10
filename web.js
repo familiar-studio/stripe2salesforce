@@ -135,15 +135,20 @@ app.post('/webhook', function(request, response){
 		};
 	};
 
-	var getStripeEmail = function(stripe_id){
+	var getStripeEmail = function(var customerEmail, stripe_id){
 		console.log("hi")
-		var email = (stripe.customers.retrieve(stripe_id, function(err, customer) {
+		var email = (stripe.customers.retrieve( stripe_id, function(err, customer) {
+			setTimeout(function(){
 			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
 			var customerEmail = customer.email;
 			return customerEmail;
-		})());
-    console.log("THIS IS THE EMAIL______IS IT AN OBJECT?", email.stripe.customer.retrieve())
-		return email.stripe.customer.retrieve();
+			}, 0);
+		
+		}) ();
+    console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", email)
+    console.log("this is the new try", customerEmail)
+    ///////////////////////BUG!!!!!! RETURNING EMAIL AS [object, object]
+		return email;
 	};
 
 	var getStripeCustomer = function(stripe_id){
