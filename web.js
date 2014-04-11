@@ -65,8 +65,6 @@ app.post('/webhook', function(request, response){
 		};
 	}
 
-	
-
 
 	var getStripeCustomer = function(option, stripe_id, sf_id) {
 		console.log('GET STRIPE CUSTOMER', option)
@@ -81,7 +79,6 @@ app.post('/webhook', function(request, response){
 			}
 
 		});
-
 	}
 
 	var createNewSFContact = function(stripe_id, customer){
@@ -92,7 +89,6 @@ app.post('/webhook', function(request, response){
 
 	  });
 	}
-
 
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
 		// console.log(">>>>>>>>> UPDATE SF CONTACT", customer.email)
@@ -107,16 +103,36 @@ app.post('/webhook', function(request, response){
 		});
 	}
 
-	if (request.body.type === 'charge.succeeded') {
-    var stripe_customer_id = request.body.data.object.customer;
 
+	var createSFOpportunity = function(stripe_info, ){
+		var stripe_id = request.body.data.object.customer
+		var amount = request.body.data.object.amount
+		conn.sobject("Opportunity").create({ 
+			Amount: amount, 
+			Stripe_Customer_Id__c: stripe_id, 
+			chargeName: "OUR Stripe Charge" , 
+			CloseDate: 
+		}, function(err, ret){
+			if (err || !ret.success) { return console.error(err, ret); }
+			console.log("created record id :" + ret.id);
+		});
+	}
+
+
+
+
+
+	if (request.body.type === 'charge.succeeded') {
+		var stripe_info = request.body.data.object 
+    	var stripe_customer_id = request.body.data.object.customer;
+    	var invoice = request.data.object.invoice
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
-			if (res.length == 0) {
-				// creates new user -- option 0
-				// getStripeCustomer(0, stripe_customer_id)
+			if (invoice !== null) {
+				console.log("HEY SAILOR!")
+
 			} else {
-				// updates existing user -- option 1
-				// getStripeCustomer(1, stripe_customer_id, res[0].Id)
+				createSFOpportunity(stripe_customer_id)
+
 			};
 		});
 	};
@@ -128,10 +144,8 @@ app.post('/webhook', function(request, response){
 		var customer = request.body.data.object
 
 		console.log('========= CONTACT OBJECT:', customer)
-
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
-
 
 
 			if (res.length == 0) {
