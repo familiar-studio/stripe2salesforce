@@ -129,7 +129,9 @@ app.post('/webhook', function(request, response){
  	var findSFSubscription = function(subscription_id, customer_id){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
  		  if (res.length === 0) {
- 		  	findSFAccount(customer_id)
+ 		  	console.log("==============================================")
+ 		  	console.log(customer_id)
+ 		  	findSFAccount(customer_id, subscription_id)
  		  	// createNewSFContract(subscription_id);
  		  } else {
  		  	console.log('Subscription for' + res[0].Id + 'Exists');
@@ -137,15 +139,16 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
- 	var findSFAccount = function(customer_id){
+ 	var findSFAccount = function(customer_id, subscription_id){
+ 		console.log(customer_id, subscription_id)
  		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
  			console.log(res[0].AccountId)
  			createNewSFContract(res[0].AccountId)
  		});
  	} 	
 
- 	var createNewSFContract = function(account_id){
- 		console.log(account_id)
+ 	var createNewSFContract = function(account_id, subscription_id){
+ 		console.log(account_id, subscription_id)
  		conn.sobject('Contract').create({ Account : account_id }, function(err, ret){
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log('Created record id : ' + ret.id);
