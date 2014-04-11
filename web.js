@@ -50,10 +50,7 @@ app.post('/webhook', function(request, response){
 
 	var stripeCheckName = function(){
 		//adding swtich case
-		// if ( request.body.data.object.metadata.Name){ console.log("&&&&&&&THIS IS HERE")}
 		var name = request.body.data.object.metadata.Name;
-		
-
 		if (typeof name == 'string') {
 			var name_array = name.split(' ');
 			return {
@@ -61,7 +58,6 @@ app.post('/webhook', function(request, response){
 				last_name: name_array[name_array.length - 1]
 			};
 		} else {
-			// console.log("___________________________Hello")
 			return {
 				first_name: 'no first name listed',
 				last_name: 'no last name listed'
@@ -95,9 +91,6 @@ app.post('/webhook', function(request, response){
 	}
 
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
-		// console.log(">>>>>>>>> UPDATE SF CONTACT", customer.email)
-		// console.log('>>>>>>>>> STRIPE_ID', stripe_id)
-		// console.log('>>>>>>>>> SF_ID', sf_id)
 		conn.sobject('Contact').update({
 			Id: sf_id,
 			Email: customer.email
@@ -108,12 +101,10 @@ app.post('/webhook', function(request, response){
 	}
 
 
-	var createSFSingleOpportunity = function(stripe_info){
+	var createSFOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.id
 		var amount = request.body.data.object.amount/100
 		var date = moment.unix(stripe_info.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
-		console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
-		console.log('THIS IS THE id *********************', request.body.data.object.customer)
 
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
@@ -121,81 +112,68 @@ app.post('/webhook', function(request, response){
 			Name: "OUR Stripe Charge",
 			StageName: "Closed Won",
 			CloseDate: date
+			// Contract__c: 
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
-			console.log("created!!!!!!!!!!!! record id :" + ret.id);
-		});
-	}
-
-
-	var createSFSubOpportunity = function(stripe_info){
-		var stripe_id = stripe_info.id
-		var amount = stripe_info.amount/100
-		var date = moment.unix(stripe_info.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
-		conn.sobject("Opportunity").create({ 
-			Amount: amount, 
-			Stripe_Charge_Id__c: stripe_id, 
-			Name: "OUR Stripe Charge",
-			StageName: "Closed Won",
-			CloseDate: date,
-			Contract__c: ""
-		
-		}, function(error, ret){
-			if (err || !ret.success) { return console.error(err, ret); }
-			console.log("created!!!!!!!!!!!! record id :" + ret.id);
+			console.log("created record id :" + ret.id);
 		});
 	}
  	
  	var getStripeInvoice = function(invoice){
  		stripe.invoices.retrieve( invoice, function(err, response){
- 			findSFSubscription(response.subscription);
+ 			findSFSubscription(response.subscription, response.customer);
  		});
  	}
 
- 	var findSFSubscription = function(subscription_id){
- 		console.log(subscription_id)
+ 	var findSFSubscription = function(subscription_id, customer_id){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
- 		  console.log(res);
+ 		  if (res.length === 0) {
+ 		  	findSFAccount(customer_id)
+ 		  	// createNewSFContract(subscription_id);
+ 		  } else {
+ 		  	console.log('Subscription for' + res[0].Id + 'Exists');
+ 		  };
  		});
  	}
 
+ 	var createNewSFContract(subscription_id){
+
+ 	}
+
+ 	var findSFAccount(customer_id){
+ 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
+ 			console.log(res[0])
+ 		});
+ 	}
 
 
 	if (request.body.type === 'charge.succeeded') {
 		var stripe_info = request.body.data.object;
   	var invoice = request.body.data.object.invoice;
 
-  	console.log(invoice)
+		if (invoice !== null) {
+			getStripeInvoice(invoice)
+		} else {
+			createSFOpportunity(stripe_info);
 
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }, function(err, res) {
-			if (invoice !== null) {
-				getStripeInvoice(invoice)
-			} else {
-				createSFSingleOpportunity(stripe_info);
-
-			};
-		});
+		};
 	};
 
 
  
-	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
-	// 	var stripeCustomerId = request.body.data.object.id
-	// 	var customer = request.body.data.object
+	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
+		var stripeCustomerId = request.body.data.object.id
+		var customer = request.body.data.object
 
-		
-		
-	// 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
-
-
-	// 		if (res.length == 0) {
-	// 			createNewSFContact(stripeCustomerId, customer);
-	// 		} else {
-	// 			updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
-	// 		};
-	// 	});
-	// };
+		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+			if (res.length == 0) {
+				createNewSFContact(stripeCustomerId, customer);
+			} else {
+				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+			};
+		});
+	};
 
 	response.send('OK');
 	response.end();
