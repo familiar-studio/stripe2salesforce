@@ -127,25 +127,6 @@ app.post('/webhook', function(request, response){
 
 console.log('request', request.body)
 
-	// if (request.body.type === 'charge.succeeded') {
-	// 	var stripe_info = request.body.data.object 
-	// 	console.log("hello?")
-	// 	console.log("REQUEST.BODY.DATA:", request.body.data )
-
- //    	var stripe_customer_id = request.body.data.object.customer;
- //    	var invoice = request.data.object.invoice
- //    	console.log("This is the invoice:", invoice)
-	// 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
-	// 		if (invoice !== null) {
-	// 			console.log("******HEY SAILOR!******")
-
-	// 		} else {
-	// 			console.log("Am I HERE?!?!")
-	// 			createSFOpportunity(stripe_customer_id);
-
-	// 		};
-	// 	});
-	// };
 
 
  
