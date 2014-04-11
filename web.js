@@ -125,7 +125,7 @@ app.post('/webhook', function(request, response){
 
 
 
-
+console.log('request', request.body)
 
 	if (request.body.type === 'charge.succeeded') {
 		var stripe_info = request.body.data.object 
