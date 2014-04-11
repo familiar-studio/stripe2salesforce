@@ -135,43 +135,49 @@ app.post('/webhook', function(request, response){
 		};
 	};
 
-	function getStripeEmail(stripe_id){
-		console.log("hi")
+	// function getStripeEmail(stripe_id){
+	// 	console.log("hi")
 
-		var customerEmail;
+	// 	var customerEmail;
 
-		stripe.customers.retrieve( stripe_id, function(err, customer) {
+	// 	stripe.customers.retrieve( stripe_id, function(err, customer) {
 			
-			console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
-			//var customerEmail = customer.email;
+	// 		console.log("THIS WORKS____________________#####################################THIS IS THE CUST EAMIL", customer.email)
+	// 		//var customerEmail = customer.email;
 
-			customerEmail = customer.email;
+	// 		customerEmail = customer.email;
 			
 			
 		
-		} ).then(function(){
-			console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", customerEmail)
-		})
+	// 	} ).then(function(){
+	// 		console.log("no work.............THIS IS THE EMAIL______IS IT AN OBJECT?", customerEmail)
+	// 	})
     
-    ///////////////////////BUG!!!!!! RETURNING EMAIL AS [object, object]
-		return customerEmail;
-	};
+ //    ///////////////////////BUG!!!!!! RETURNING EMAIL AS [object, object]
+	// 	return customerEmail;
+	// };
 
-	var getStripeCustomer = function(stripe_id){
-		var customer_obj = stripe.customers.retrieve(request.body.data.object.customer, function getCustomer(err, customer) {
-			return customer;
-		}){ return getCustomer };
-    return customer_obj;
+
+	var getStripeCustomer = function(option, stripe_id, sf_id) {
+		console.log('GET STRIPE CUSTOMER', option)
+		stripe.customers.retrieve(stripe_id, function(err, customer){
+			var email = customer.email
+			console.log('EMAIL OBJECT', email)
+			if (option === 0){
+				createNewSFContact(stripe_id, email)
+				break
+			} else if (option === 1) {
+				updateSFContactEmail(sf_id, stripe_id, email)
+				break
+			}
+
+		});
+
 	}
 
-	var createNewSFContact = function(stripe_id){
-		// console.log("hellos there i am broke?")
-		// console.log("THIS IS THE CUST ID", request.body.data.object.customer)
-		console.log('THIS DOES NOT_________%%%%%%%%%%%%%%%%%%%EMAIL%%%%%%%%%__________________________', getStripeEmail(stripe_id))
-		console.log("THIS IS THE NAMR)))))))))____________________________", stripeCheckName().first_name)
-
-		// var email = getStripeCustomer(stripe_id).email;
-    var email = getStripeEmail(stripe_id);
+	var createNewSFContact = function(stripe_id, email){
+		console.log("CREATE NEW SF CONTACT", email)
+  
 
 		
 		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: stripe_id, Email: email }, function(err, ret) {
@@ -183,8 +189,8 @@ app.post('/webhook', function(request, response){
 	};
 
 
-	var updateSFContactEmail = function(sf_id, stripe_id){
-		var email = getStripeEmail(stripe_id);
+	var updateSFContactEmail = function(sf_id, stripe_id, email){
+		console.log("UPDATE SF CONTACT", email)
 		conn.sobject('Contact').update({
 			Id: sf_id,
 			Email: email
@@ -200,11 +206,17 @@ app.post('/webhook', function(request, response){
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (res.length == 0) {
+				// creates new user -- option 0
+				getStripeCustomer(0, stripe_customer_id)
         console.log('new user')
 				createNewSFContact(stripe_customer_id);
+				break
 			} else {
+				// updates existing user -- option 1
+				getStripeCustomer(1, stripe_customer_id, res[0.Id])
 				console.log('Current SF User, ID: ' + res[0].Id)
-				updateSFContactEmail(res[0].Id, stripe_customer_id);
+				// updateSFContactEmail(res[0].Id, stripe_customer_id);
+				break
 			};
 		});
 	};
