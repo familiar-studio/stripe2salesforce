@@ -156,15 +156,15 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
- 	var getStripeSubscription = function(stripe_info, subscription_id){
- 		console.log(subscription_id)
- 		stripe.customers.retrieveSubscription({
- 			stripe_info.customer,
- 			subscription_id
- 		}, function(subscription){
- 			console.log(subscription)
- 		});
- 	}
+ 	// var getStripeSubscription = function(stripe_info, subscription_id){
+ 	// 	console.log(subscription_id)
+ 	// 	stripe.customers.retrieveSubscription({
+ 	// 		,
+ 	// 		subscription_id
+ 	// 	}, function(subscription){
+ 	// 		console.log(subscription)
+ 	// 	});
+ 	// }
 
 
 
