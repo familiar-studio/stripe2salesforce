@@ -54,8 +54,8 @@ app.post('/webhook', function(request, response){
 			};
 		} else {
 			return {
-				first_name: 'no name listed',
-				last_name: 'no name listed'
+				first_name: 'no first name listed',
+				last_name: 'no last name listed'
 			};
 		};
 	}
@@ -115,6 +115,8 @@ app.post('/webhook', function(request, response){
 	if (request.body.type === 'customer.created' && request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
+
+		console.log('CONTACT OBJECT:', contact)
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			var salesForceId = res[0].Id;
