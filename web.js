@@ -149,9 +149,9 @@ app.post('/webhook', function(request, response){
 
  	var createNewSFContract = function(account_id, subscription_id){
  		console.log(account_id, subscription_id)
- 		conn.sobject('Contract').create({ Account : account_id }, function(err, ret){
+ 		conn.sobject('Contract').create({ AccountId : account_id }, function(err, ret){
  			if (err || !ret.success) { return console.error(err, ret); }
- 			console.log('Created record id : ' + ret.id);
+ 			console.log(ret)
  		});
  	}
 
