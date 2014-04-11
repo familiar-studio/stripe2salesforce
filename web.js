@@ -167,6 +167,8 @@ app.post('/webhook', function(request, response){
 		var stripe_info = request.body.data.object;
   	var invoice = request.body.data.object.invoice;
 
+  	console.log(invoice)
+
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }, function(err, res) {
 			if (invoice !== null) {
 				getStripeSubscription(stripe_info, invoice)
