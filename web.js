@@ -117,7 +117,9 @@ app.post('/webhook', function(request, response){
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Customer_Id__c: stripe_id, 
-			Name: "OUR Stripe Charge" 
+			Name: "OUR Stripe Charge",
+			Stage: "Closed Won",
+			CloseDate: "2011-02-13T20:30:00.000Z"
 			
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
