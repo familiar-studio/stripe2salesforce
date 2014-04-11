@@ -79,7 +79,7 @@ app.post('/webhook', function(request, response){
 
 	var createNewSFContact = function(stripe_id, customer){
 		console.log("CREATE NEW SF CONTACT", customer.email)
-		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+		conn.sobject("Contact").create({ /* FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, */ Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
 	      if (err || !ret.success) { return console.error(err, ret); }
 	      console.log("Created Contact With ID: " + ret.id);
 
