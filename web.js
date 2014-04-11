@@ -137,9 +137,9 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
- 	var createNewSFContract(subscription_id){
+ 	// var createNewSFContract = function(subscription_id){
 
- 	}
+ 	// }
 
  	var findSFAccount(customer_id){
  		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
