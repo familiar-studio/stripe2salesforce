@@ -48,7 +48,8 @@ app.post('/webhook', function(request, response){
 		//adding swtich case
 		// if ( request.body.data.object.metadata.Name){ console.log("&&&&&&&THIS IS HERE")}
 		var name = request.body.data.object.metadata.Name;
-		console.log("THIS IS THE NAME", request.body.data.object.metadata.Name )
+		console.log("THIS IS THE NAME", typeof request.body.data.object.metadata.Name )
+
 		if (typeof name !== 'string') {
 			var name_array = name.split(' ');
 			return {
@@ -56,6 +57,7 @@ app.post('/webhook', function(request, response){
 				last_name: name_array[name_array.length - 1]
 			};
 		} else {
+			console.log("___________________________Hello")
 			return {
 				first_name: 'no first name listed',
 				last_name: 'no last name listed'
