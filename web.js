@@ -88,7 +88,9 @@ app.post('/webhook', function(request, response){
 
 
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
-		console.log("UPDATE SF CONTACT", customer.email)
+		console.log(">>>>>>>>> UPDATE SF CONTACT", customer.email)
+		console.log('>>>>>>>>> STRIPE_ID', stripe_id)
+		console.log('>>>>>>>>> SF_ID', sf_id)
 		conn.sobject('Contact').update({
 			Id: sf_id,
 			Email: customer.email
@@ -131,8 +133,6 @@ app.post('/webhook', function(request, response){
 			} else {
 				console.log('UPDATE CONTACT >>>>>>>>>>>>')
 				updateSFContactEmail(salesForceId, stripeCustomerId, customer);
-			};
-
 		});
 	};
 
