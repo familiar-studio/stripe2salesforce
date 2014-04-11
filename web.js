@@ -143,7 +143,7 @@ console.log('request:::::::::::::::::::::::', request.body.data.object)
 
 			} else {
 				console.log("Am I HERE?!?!")
-				createSFOpportunity(stripe_customer_id);
+				createSFOpportunity(stripe_info);
 
 			};
 		});
