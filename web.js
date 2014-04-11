@@ -154,6 +154,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFSubscription = function(subscription_id){
+ 		console.log(subscription_id)
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
  		  console.log(res);
  		});
