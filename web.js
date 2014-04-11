@@ -148,8 +148,11 @@ app.post('/webhook', function(request, response){
 	}
  	
  	var getStripeInvoice = function(stripe_info, invoice){
+ 		console.log(stripe_info)
+
  		stripe.invoices.retrieve( invoice, function(err, response){
- 			getStripeSubscription(stripe_info, response.subscription)
+ 			console.log(response.subscription)
+ 			// getStripeSubscription(stripe_info, response.subscription)
  		});
  	}
 
