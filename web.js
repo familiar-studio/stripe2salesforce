@@ -50,7 +50,7 @@ app.post('/webhook', function(request, response){
 		//adding swtich case
 		// if ( request.body.data.object.metadata.Name){ console.log("&&&&&&&THIS IS HERE")}
 		var name = request.body.data.object.metadata.Name;
-		// console.log("THIS IS THE NAME", typeof request.body.data.object.metadata.Name )
+		
 
 		if (typeof name == 'string') {
 			var name_array = name.split(' ');
@@ -149,22 +149,22 @@ app.post('/webhook', function(request, response){
 
 
  
-	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
-		var stripeCustomerId = request.body.data.object.id
-		var customer = request.body.data.object
+	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
+	// 	var stripeCustomerId = request.body.data.object.id
+	// 	var customer = request.body.data.object
 
-		// console.log('========= CONTACT OBJECT:', customer)
 		
-		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+		
+	// 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
 
 
-			if (res.length == 0) {
-				createNewSFContact(stripeCustomerId, customer);
-			} else {
-				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
-			};
-		});
-	};
+	// 		if (res.length == 0) {
+	// 			createNewSFContact(stripeCustomerId, customer);
+	// 		} else {
+	// 			updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+	// 		};
+	// 	});
+	// };
 
 	response.send('OK');
 	response.end();
