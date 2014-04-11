@@ -147,8 +147,14 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeSub = function(invoice){
+ 	var getStripeSubscription = function(stripe_info, invoice){
+ 		console.log(invoice)
 
+ 		stripe.invoices.retrieve( invoice, function(err, response){
+ 			console.log(response)
+ 		})
+
+ 		// stripe.customers.retrieveSubscription({ stripe_info, invoice })
  		
 
  		
@@ -158,19 +164,13 @@ app.post('/webhook', function(request, response){
 
 
 	if (request.body.type === 'charge.succeeded') {
-		var stripe_info = request.body.data.object 
-		console.log("hello?")
-		console.log("REQUEST.BODY.DATA:", request.body.data )
+		var stripe_info = request.body.data.object;
+  	var invoice = request.body.data.object.invoice;
 
-    	var stripe_customer_id = request.body.data.object.customer;
-    	var invoice = request.body.data.object.invoice
-    	console.log("This is the invoice:", invoice)
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }, function(err, res) {
 			if (invoice !== null) {
-				console.log("******HEY SAILOR!******")
-				getStripeSub(invoice)
+				getStripeSubscription(stripe_info, invoice)
 			} else {
-				console.log("Am I HERE?!?!")
 				createSFSingleOpportunity(stripe_info);
 
 			};
