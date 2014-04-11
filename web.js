@@ -108,9 +108,9 @@ app.post('/webhook', function(request, response){
 	}
 
 
-	var createSFOpportunity = function(stripe_info){
+	var createSFSingleOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.id
-		var amount = request.body.data.object.amount
+		var amount = request.body.data.object.amount/100
 		var date = moment.unix(stripe_info.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 		console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
 		console.log('THIS IS THE id *********************', request.body.data.object.customer)
@@ -129,8 +129,33 @@ app.post('/webhook', function(request, response){
 	}
 
 
- 
-console.log('request:::::::::::::::::::::::', request.body.data.object)
+	var createSFSubOpportunity = function(stripe_info){
+		var stripe_id = stripe_info.id
+		var amount = stripe_info.amount/100
+		var date = moment.unix(stripe_info.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+		conn.sobject("Opportunity").create({ 
+			Amount: amount, 
+			Stripe_Charge_Id__c: stripe_id, 
+			Name: "OUR Stripe Charge",
+			StageName: "Closed Won",
+			CloseDate: date,
+			Contract__c: ""
+		
+		}, function(error, ret){
+			if (err || !ret.success) { return console.error(err, ret); }
+			console.log("created!!!!!!!!!!!! record id :" + ret.id);
+		});
+	}
+ 	
+ 	var getStripeSub = function(invoice){
+
+ 		
+
+ 		
+ 	}
+
+
+
 
 	if (request.body.type === 'charge.succeeded') {
 		var stripe_info = request.body.data.object 
@@ -143,10 +168,10 @@ console.log('request:::::::::::::::::::::::', request.body.data.object)
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (invoice !== null) {
 				console.log("******HEY SAILOR!******")
-
+				getStripeSub(invoice)
 			} else {
 				console.log("Am I HERE?!?!")
-				createSFOpportunity(stripe_info);
+				createSFSingleOpportunity(stripe_info);
 
 			};
 		});
