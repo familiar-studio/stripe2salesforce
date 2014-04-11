@@ -78,7 +78,7 @@ app.post('/webhook', function(request, response){
 	}
 
 	var createNewSFContact = function(stripe_id, customer){
-		console.log("CREATE NEW SF CONTACT", email)
+		console.log("CREATE NEW SF CONTACT", customer.email)
 		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name, Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
 	      if (err || !ret.success) { return console.error(err, ret); }
 	      console.log("Created Contact With ID: " + ret.id);
@@ -88,10 +88,10 @@ app.post('/webhook', function(request, response){
 
 
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
-		console.log("UPDATE SF CONTACT", email)
+		console.log("UPDATE SF CONTACT", customer.email)
 		conn.sobject('Contact').update({
 			Id: sf_id,
-			Email: email
+			Email: customer.email
 		}, function(error, result){
 			if (error || !ret.success) { return console.error(err, ret); }
 			console.log('Updated Contact Email to:' + email);
@@ -112,18 +112,24 @@ app.post('/webhook', function(request, response){
 		});
 	};
 
+	console.log('========= REQUEST TYPE:', request.body.type)
+
 	if (request.body.type === 'customer.created' && request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
-		console.log('CONTACT OBJECT:', contact)
+		console.log('========= CONTACT OBJECT:', contact)
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			var salesForceId = res[0].Id;
 
+			console.log('========== RESPONSE EXISTENCE:', res.length)
+
 			if (res.length == 0) {
+				console.log('CREATE CONTACT >>>>>>>>>>>>')
 				createNewSFContact(stripeCustomerId, customer);
 			} else {
+				console.log('UPDATE CONTACT >>>>>>>>>>>>')
 				updateSFContactEmail(salesForceId, stripeCustomerId, customer);
 			};
 
