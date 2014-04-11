@@ -141,7 +141,7 @@ app.post('/webhook', function(request, response){
 
  	// }
 
- 	var findSFAccount(customer_id){
+ 	var findSFAccount = function(customer_id){
  		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
  			console.log(res[0])
  		});
@@ -156,7 +156,6 @@ app.post('/webhook', function(request, response){
 			getStripeInvoice(invoice)
 		} else {
 			createSFOpportunity(stripe_info);
-
 		};
 	};
 
