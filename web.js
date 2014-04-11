@@ -53,7 +53,6 @@ app.post('/webhook', function(request, response){
 				last_name: name_array[name_array.length - 1]
 			};
 		} else {
-			var meta_name = 
 			return {
 				first_name: 'no name listed',
 				last_name: 'no name listed'
@@ -113,7 +112,7 @@ app.post('/webhook', function(request, response){
 		});
 	};
 
-	if (request.body.type === 'customer.created' /* && request.body.type === 'customer.updated' */) {
+	if (request.body.type === 'customer.created' && request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
@@ -127,7 +126,7 @@ app.post('/webhook', function(request, response){
 			};
 
 		});
-	}
+	};
 
 	response.send('OK');
 	response.end();
