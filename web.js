@@ -46,9 +46,10 @@ app.post('/webhook', function(request, response){
 
 	var stripeCheckName = function(){
 		//adding swtich case
+		// if ( request.body.data.object.metadata.Name){ console.log("&&&&&&&THIS IS HERE")}
 		var name = request.body.data.object.metadata.Name;
 		console.log("THIS IS THE NAME", request.body.data.object.metadata.Name )
-		if (name !== null) {
+		if (name !== null || 'undefined') {
 			var name_array = name.split(' ');
 			return {
 				first_name: name_array[0], 
@@ -116,7 +117,7 @@ app.post('/webhook', function(request, response){
 		});
 	};
 
-	
+
  
 	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
