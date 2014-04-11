@@ -45,7 +45,8 @@ conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu'
 app.post('/webhook', function(request, response){
 
 	var stripeCheckName = function(){
-		var name = request.body.data.object.card.name;
+		//adding swtich case
+		var name = request.body.data.object.metadata.name;
 		if (name !== null) {
 			var name_array = name.split(' ');
 			return {
@@ -118,15 +119,12 @@ app.post('/webhook', function(request, response){
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
-		// console.log('========= CONTACT OBJECT:', customer)
+		console.log('========= CONTACT OBJECT:', customer)
 
-		// conn.query("SELECT Id FROM CONTACT where Stripe_Customer_Id__c = "+stripeCustomerId+"", function(err, res) {
-		// conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }, function(err, res) {
+		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
 
-			console.log('SALES FORCE RESPONSE:', res )
 
-			// console.log('========== RESPONSE EXISTENCE:', res.length)
 
 			if (res.length == 0) {
 				createNewSFContact(stripeCustomerId, customer);
