@@ -147,19 +147,21 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeSubscription = function(stripe_info, invoice){
- 		console.log(invoice)
-
+ 	var getStripeInvoice = function(stripe_info, invoice){
  		stripe.invoices.retrieve( invoice, function(err, response){
- 			console.log(response)
- 		})
-
- 		// stripe.customers.retrieveSubscription({ stripe_info, invoice })
- 		
-
- 		
+ 			getStripeSubscription(stripe_info, response.subscription)
+ 		});
  	}
 
+ 	var getStripeSubscription = function(stripe_info, subscription_id){
+ 		console.log(subscription_id)
+ 		stripe.customers.retrieveSubscription({
+ 			stripe_info.customer,
+ 			subscription_id
+ 		}, function(subscription){
+ 			console.log(subscription)
+ 		});
+ 	}
 
 
 
@@ -171,7 +173,7 @@ app.post('/webhook', function(request, response){
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }, function(err, res) {
 			if (invoice !== null) {
-				getStripeSubscription(stripe_info, invoice)
+				getStripeInvoice(stripe_info, invoice)
 			} else {
 				createSFSingleOpportunity(stripe_info);
 
