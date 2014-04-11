@@ -109,12 +109,13 @@ app.post('/webhook', function(request, response){
 		var amount = request.body.data.object.amount
 		console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
 		console.log('THIS IS THE id *********************', request.body.data.object.customer)
+
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Customer_Id__c: stripe_id, 
-			chargeName: "OUR Stripe Charge" 
+			Name: "OUR Stripe Charge" 
 			
-		}, function(err, ret){
+		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
 			console.log("created record id :" + ret.id);
 		});
