@@ -212,7 +212,7 @@ app.post('/webhook', function(request, response){
 				createNewSFContact(stripe_customer_id);
 			} else {
 				// updates existing user -- option 1
-				getStripeCustomer(1, stripe_customer_id, res[0.Id])
+				getStripeCustomer(1, stripe_customer_id, res[0].Id])
 				console.log('Current SF User, ID: ' + res[0].Id)
 				// updateSFContactEmail(res[0].Id, stripe_customer_id);
 			};
