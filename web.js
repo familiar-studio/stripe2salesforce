@@ -108,10 +108,10 @@ app.post('/webhook', function(request, response){
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (res.length == 0) {
 				// creates new user -- option 0
-				getStripeCustomer(0, stripe_customer_id)
+				// getStripeCustomer(0, stripe_customer_id)
 			} else {
 				// updates existing user -- option 1
-				getStripeCustomer(1, stripe_customer_id, res[0].Id)
+				// getStripeCustomer(1, stripe_customer_id, res[0].Id)
 			};
 		});
 	};
