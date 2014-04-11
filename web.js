@@ -88,9 +88,9 @@ app.post('/webhook', function(request, response){
 
 
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
-		console.log(">>>>>>>>> UPDATE SF CONTACT", customer.email)
-		console.log('>>>>>>>>> STRIPE_ID', stripe_id)
-		console.log('>>>>>>>>> SF_ID', sf_id)
+		// console.log(">>>>>>>>> UPDATE SF CONTACT", customer.email)
+		// console.log('>>>>>>>>> STRIPE_ID', stripe_id)
+		// console.log('>>>>>>>>> SF_ID', sf_id)
 		conn.sobject('Contact').update({
 			Id: sf_id,
 			Email: customer.email
@@ -118,13 +118,13 @@ app.post('/webhook', function(request, response){
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
-		console.log('========= CONTACT OBJECT:', customer)
+		// console.log('========= CONTACT OBJECT:', customer)
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 
-			console.log('SALES FORCE RESPONSE:', res[0].Id )
+			console.log('SALES FORCE RESPONSE:', res )
 
-			console.log('========== RESPONSE EXISTENCE:', res.length)
+			// console.log('========== RESPONSE EXISTENCE:', res.length)
 
 			if (res.length == 0) {
 				createNewSFContact(stripeCustomerId, customer);
