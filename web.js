@@ -121,16 +121,15 @@ app.post('/webhook', function(request, response){
 		console.log('========= CONTACT OBJECT:', customer)
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
-			var salesForceId = res[0].Id;
 
-			console.log('SALES FORCE RESPONSE:', salesForceId)
+			console.log('SALES FORCE RESPONSE:', )
 
 			console.log('========== RESPONSE EXISTENCE:', res.length)
 
 			if (res.length == 0) {
 				createNewSFContact(stripeCustomerId, customer);
 			} else {
-				updateSFContactEmail(salesForceId, stripeCustomerId, customer);
+				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
 			};
 		});
 	};
