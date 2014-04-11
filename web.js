@@ -65,6 +65,8 @@ app.post('/webhook', function(request, response){
 		};
 	}
 
+	
+
 
 	var getStripeCustomer = function(option, stripe_id, sf_id) {
 		console.log('GET STRIPE CUSTOMER', option)
