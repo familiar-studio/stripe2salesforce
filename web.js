@@ -104,7 +104,7 @@ app.post('/webhook', function(request, response){
 	}
 
 
-	var createSFOpportunity = function(stripe_info, ){
+	var createSFOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.customer
 		var amount = request.body.data.object.amount
 		conn.sobject("Opportunity").create({ 
