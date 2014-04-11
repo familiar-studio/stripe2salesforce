@@ -158,8 +158,8 @@ app.post('/webhook', function(request, response){
 
  	var getStripeSubscription = function(customer_id, subscription_id){
  		console.log(subscription_id)
- 		stripe.customers.retrieveSubscription( customer_id, subscription_id, function(subscription){
- 			console.log(subscription)
+ 		stripe.customers.retrieveSubscription( customer_id, subscription_id, function(err, response){
+ 			console.log(response)
  		});
  	}
 
