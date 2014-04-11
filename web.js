@@ -165,10 +165,10 @@ app.post('/webhook', function(request, response){
 			console.log('EMAIL OBJECT', email)
 			if (option === 0){
 				createNewSFContact(stripe_id, email)
-				break
+				// exit
 			} else if (option === 1) {
 				updateSFContactEmail(sf_id, stripe_id, email)
-				break
+				// exit
 			}
 
 		});
@@ -186,7 +186,7 @@ app.post('/webhook', function(request, response){
 
 	  });
 	
-	};
+	}
 
 
 	var updateSFContactEmail = function(sf_id, stripe_id, email){
@@ -199,7 +199,7 @@ app.post('/webhook', function(request, response){
 			if (error || !ret.success) { return console.error(err, ret); }
 			console.log('Updated Contact Email to:' + email);
 		});
-	};
+	}
 
 	if (request.body.type === 'charge.succeeded') {
     var stripe_customer_id = request.body.data.object.customer;
@@ -210,20 +210,18 @@ app.post('/webhook', function(request, response){
 				getStripeCustomer(0, stripe_customer_id)
         console.log('new user')
 				createNewSFContact(stripe_customer_id);
-				break
 			} else {
 				// updates existing user -- option 1
 				getStripeCustomer(1, stripe_customer_id, res[0.Id])
 				console.log('Current SF User, ID: ' + res[0].Id)
 				// updateSFContactEmail(res[0].Id, stripe_customer_id);
-				break
 			};
 		});
 	};
 
 	response.send('OK');
 	response.end();
-});
+})
 
 
 
