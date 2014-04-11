@@ -120,7 +120,7 @@ app.post('/webhook', function(request, response){
 
 		// console.log('========= CONTACT OBJECT:', customer)
 
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
+		conn.sobject('Contact').query("SELECT Id, Name FROM Contact where Stripe_Customer_Id__c = "+stripeCustomerId+"", function(err, res) {
 
 			console.log('SALES FORCE RESPONSE:', res )
 
