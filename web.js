@@ -114,7 +114,7 @@ app.post('/webhook', function(request, response){
 
 	console.log('========= REQUEST TYPE:', request.body.type)
 
-	if (request.body.type === 'customer.created' && request.body.type === 'customer.updated') {
+	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
