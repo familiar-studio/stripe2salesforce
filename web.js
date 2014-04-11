@@ -133,6 +133,7 @@ app.post('/webhook', function(request, response){
 			} else {
 				console.log('UPDATE CONTACT >>>>>>>>>>>>')
 				updateSFContactEmail(salesForceId, stripeCustomerId, customer);
+			};
 		});
 	};
 
