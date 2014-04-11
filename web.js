@@ -9,6 +9,8 @@ var stripe = require("stripe")(
 );
 var jsforce = require('jsforce');
 
+var moment = require('moment');
+
 // requires mongo db for logging transactions
 var mongo = require('mongodb');
 // sets link to mongodb on heroku (and localhost???)
