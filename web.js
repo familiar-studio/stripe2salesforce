@@ -147,24 +147,21 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeInvoice = function(stripe_info, invoice){
+ 	var getStripeInvoice = function(invoice){
  		console.log(stripe_info)
 
  		stripe.invoices.retrieve( invoice, function(err, response){
  			console.log(response.subscription)
- 			// getStripeSubscription(stripe_info, response.subscription)
+ 			getStripeSubscription(response.customer, response.subscription)
  		});
  	}
 
- 	// var getStripeSubscription = function(stripe_info, subscription_id){
- 	// 	console.log(subscription_id)
- 	// 	stripe.customers.retrieveSubscription({
- 	// 		,
- 	// 		subscription_id
- 	// 	}, function(subscription){
- 	// 		console.log(subscription)
- 	// 	});
- 	// }
+ 	var getStripeSubscription = function(customer_id, subscription_id){
+ 		console.log(subscription_id)
+ 		stripe.customers.retrieveSubscription( customer_id, subscription_id, function(subscription){
+ 			console.log(subscription)
+ 		});
+ 	}
 
 
 
@@ -176,7 +173,7 @@ app.post('/webhook', function(request, response){
 
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }, function(err, res) {
 			if (invoice !== null) {
-				getStripeInvoice(stripe_info, invoice)
+				getStripeInvoice(invoice)
 			} else {
 				createSFSingleOpportunity(stripe_info);
 
