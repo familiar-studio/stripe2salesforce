@@ -3,6 +3,18 @@ var stripe = require("stripe")(
 );
 
 
+var moment = require('moment');
+
+var unix_time = 1397243760
+
+var date = moment.unix(unix_time);
+
+var d = date._d
+
+var f = moment(d, "YYYY-MM-DD HH:mm:ss:ZZ")
+
+console.log('date:', f)
+
 
 // app.get('/', function(req, res) {
 
