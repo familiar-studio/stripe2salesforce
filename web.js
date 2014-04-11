@@ -137,16 +137,19 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
- 	// var createNewSFContract = function(subscription_id){
-
- 	// }
-
  	var findSFAccount = function(customer_id){
  		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
- 			console.log(res[0])
+ 			console.log(res[0].AccountId)
+ 			createNewSFContract(account_id)
  		});
- 	}
+ 	} 	
 
+ 	var createNewSFContract = function(account_id){
+ 		conn.sobject('Contract').create({ Account : account_id }, function(err, ret){
+ 			if (err || !ret.success) { return console.error(err, ret); }
+ 			console.log('Created record id : ' + ret.id)
+ 		})
+ 	}
 
 	if (request.body.type === 'charge.succeeded') {
 		var stripe_info = request.body.data.object;
