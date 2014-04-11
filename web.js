@@ -113,7 +113,7 @@ app.post('/webhook', function(request, response){
 		});
 	};
 
-	if (request.body.type === 'customer.created' && request.body.type === 'customer.updated') {
+	if (request.body.type === 'customer.created' /* && request.body.type === 'customer.updated' */) {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
