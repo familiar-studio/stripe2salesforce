@@ -114,11 +114,11 @@ app.post('/webhook', function(request, response){
 		console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
 		console.log('THIS IS THE id *********************', request.body.data.object.customer)
 
-		conn.sobject("Opportunities").create({ 
+		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Customer_Id__c: stripe_id, 
 			Name: "OUR Stripe Charge",
-			Stage: "Closed Won",
+			StageName: "Closed Won",
 			CloseDate: "2011-02-13T20:30:00.000Z"
 		
 		}, function(error, ret){
