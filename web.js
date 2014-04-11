@@ -107,6 +107,8 @@ app.post('/webhook', function(request, response){
 	var createSFOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.customer
 		var amount = request.body.data.object.amount
+		console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
+		console.log('THIS IS THE id *********************', request.body.data.object.customer)
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Customer_Id__c: stripe_id, 
@@ -131,7 +133,7 @@ app.post('/webhook', function(request, response){
 				console.log("HEY SAILOR!")
 
 			} else {
-				createSFOpportunity(stripe_customer_id)
+				createSFOpportunity(stripe_customer_id);
 
 			};
 		});
