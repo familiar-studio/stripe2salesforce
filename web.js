@@ -50,7 +50,7 @@ app.post('/webhook', function(request, response){
 		var name = request.body.data.object.metadata.Name;
 		console.log("THIS IS THE NAME", typeof request.body.data.object.metadata.Name )
 
-		if (typeof name !== 'string') {
+		if (typeof name == 'string') {
 			var name_array = name.split(' ');
 			return {
 				first_name: name_array[0], 
