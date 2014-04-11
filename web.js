@@ -148,18 +148,14 @@ app.post('/webhook', function(request, response){
 	}
  	
  	var getStripeInvoice = function(invoice){
- 		console.log(stripe_info)
-
  		stripe.invoices.retrieve( invoice, function(err, response){
- 			console.log(response.subscription)
- 			getStripeSubscription(response.customer, response.subscription)
+ 			findSFSubscription(response.subscription);
  		});
  	}
 
- 	var getStripeSubscription = function(customer_id, subscription_id){
- 		console.log(subscription_id)
- 		stripe.customers.retrieveSubscription( customer_id, subscription_id, function(err, response){
- 			console.log(response)
+ 	var findSFSubscription = function(subscription_id){
+ 		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
+ 		  console.log(res);
  		});
  	}
 
