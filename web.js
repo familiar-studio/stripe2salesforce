@@ -114,8 +114,6 @@ app.post('/webhook', function(request, response){
 		});
 	};
  
-	console.log('========= REQUEST TYPE:', request.body.type)
-
 	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
@@ -125,13 +123,13 @@ app.post('/webhook', function(request, response){
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			var salesForceId = res[0].Id;
 
+			console.log('SALES FORCE RESPONSE:', res)
+
 			console.log('========== RESPONSE EXISTENCE:', res.length)
 
 			if (res.length == 0) {
-				console.log('CREATE CONTACT >>>>>>>>>>>>')
 				createNewSFContact(stripeCustomerId, customer);
 			} else {
-				console.log('UPDATE CONTACT >>>>>>>>>>>>')
 				updateSFContactEmail(salesForceId, stripeCustomerId, customer);
 			};
 		});
