@@ -123,7 +123,7 @@ app.post('/webhook', function(request, response){
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			var salesForceId = res[0].Id;
 
-			console.log('SALES FORCE RESPONSE:', res)
+			console.log('SALES FORCE RESPONSE:', salesForceId)
 
 			console.log('========== RESPONSE EXISTENCE:', res.length)
 
