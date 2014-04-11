@@ -50,7 +50,7 @@ app.post('/webhook', function(request, response){
 		//adding swtich case
 		// if ( request.body.data.object.metadata.Name){ console.log("&&&&&&&THIS IS HERE")}
 		var name = request.body.data.object.metadata.Name;
-		console.log("THIS IS THE NAME", typeof request.body.data.object.metadata.Name )
+		// console.log("THIS IS THE NAME", typeof request.body.data.object.metadata.Name )
 
 		if (typeof name == 'string') {
 			var name_array = name.split(' ');
@@ -59,7 +59,7 @@ app.post('/webhook', function(request, response){
 				last_name: name_array[name_array.length - 1]
 			};
 		} else {
-			console.log("___________________________Hello")
+			// console.log("___________________________Hello")
 			return {
 				first_name: 'no first name listed',
 				last_name: 'no last name listed'
@@ -131,11 +131,13 @@ app.post('/webhook', function(request, response){
 		var stripe_info = request.body.data.object 
     	var stripe_customer_id = request.body.data.object.customer;
     	var invoice = request.data.object.invoice
+    	console.log("This is the invoice:", invoice)
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (invoice !== null) {
 				console.log("******HEY SAILOR!******")
 
 			} else {
+				console.log("Am I HERE?!?!")
 				createSFOpportunity(stripe_customer_id);
 
 			};
@@ -148,7 +150,7 @@ app.post('/webhook', function(request, response){
 		var stripeCustomerId = request.body.data.object.id
 		var customer = request.body.data.object
 
-		console.log('========= CONTACT OBJECT:', customer)
+		// console.log('========= CONTACT OBJECT:', customer)
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
 
