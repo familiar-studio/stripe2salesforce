@@ -114,8 +114,8 @@ app.post('/webhook', function(request, response){
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Customer_Id__c: stripe_id, 
-			chargeName: "OUR Stripe Charge" , 
-			CloseDate: 
+			chargeName: "OUR Stripe Charge" 
+			
 		}, function(err, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
 			console.log("created record id :" + ret.id);
@@ -132,7 +132,7 @@ app.post('/webhook', function(request, response){
     	var invoice = request.data.object.invoice
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (invoice !== null) {
-				console.log("HEY SAILOR!")
+				console.log("******HEY SAILOR!******")
 
 			} else {
 				createSFOpportunity(stripe_customer_id);
