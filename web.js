@@ -107,12 +107,6 @@ app.post('/webhook', function(request, response){
 		});
 	}
 
-	var translateDate = function(){
-		// must change =========================
-		var date = request.body.data.object.created
-		moment.unix(date).format("YYYY-MM-DDTHH:mm:ss:ZZ")
-	}
-
 
 	var createSFOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.id
