@@ -135,7 +135,7 @@ console.log('request:::::::::::::::::::::::', request.body.data.object)
 		console.log("REQUEST.BODY.DATA:", request.body.data )
 
     	var stripe_customer_id = request.body.data.object.customer;
-    	var invoice = request.data.object.invoice
+    	var invoice = request.body.data.object.invoice
     	console.log("This is the invoice:", invoice)
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_customer_id }, function(err, res) {
 			if (invoice !== null) {
