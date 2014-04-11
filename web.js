@@ -120,28 +120,29 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeInvoice = function(invoice){
- 		stripe.invoices.retrieve( invoice, function(err, response){
- 			findSFSubscription(response.subscription, response.customer);
+ 	var getStripeInvoice = function(stripe_info){
+ 		stripe.invoices.retrieve( stripe_info.invoice, function(err, response){
+ 			findSFSubscription(response.subscription, stripe_info);
  		});
  	}
 
- 	var findSFSubscription = function(subscription_id, customer_id){
+ 	var findSFSubscription = function(subscription_id, stripe_info){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
  		  if (res.length === 0) {
- 		  	console.log("==============================================")
- 		  	console.log(customer_id)
- 		  	findSFAccount(customer_id, subscription_id)
- 		  	// createNewSFContract(subscription_id);
+ 		  	findSFAccount(stripe_info.customer, subscription_id)
  		  } else {
  		  	console.log('Subscription for' + res[0].Id + 'Exists');
  		  };
  		});
  	}
 
- 	var findSFAccount = function(customer_id, subscription_id){
- 		console.log(customer_id, subscription_id)
- 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : customer_id }).limit(1).execute(function(err, res) { 
+ 	var findSFAccount = function(stripe_info){
+ 		console.log(stripe_info)
+ 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }).limit(1).execute(function(err, res) { 
+ 			if (res.length === 0) {
+ 				createNewSFContact(stripe_info)
+ 			}
+ 			console.log('=============================')
  			console.log(res[0].AccountId)
  			createNewSFContract(res[0].AccountId)
  		});
@@ -160,11 +161,13 @@ app.post('/webhook', function(request, response){
 		var stripe_info = request.body.data.object;
   	var invoice = request.body.data.object.invoice;
 
-		if (invoice !== null) {
-			getStripeInvoice(invoice)
-		} else {
-			createSFOpportunity(stripe_info);
-		};
+  	console.log(stripe_info)
+
+		// if (invoice !== null) {
+		// 	getStripeInvoice(stripe_info) // invoice)
+		// } else {
+		// 	createSFOpportunity(stripe_info);
+		// };
 	};
 
 
