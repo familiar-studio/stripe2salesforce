@@ -137,7 +137,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFAccount = function(charge, subscription_id){
- 		console.log(charge, subscription_id)
+ 		console.log("CREATE ACCOUNT", charge, subscription_id)
  		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
  			console.log('=============================')
  			console.log(res[0].AccountId)
@@ -153,6 +153,8 @@ app.post('/webhook', function(request, response){
  			console.log(ret)
  		});
  	}
+
+
 
  
 	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
@@ -173,7 +175,7 @@ app.post('/webhook', function(request, response){
 	if (request.body.type === 'charge.succeeded') {
 		var charge = request.body.data.object;
 
-		if (invoice !== null) {
+		if (charge.invoice !== null) {
 			getStripeInvoice(charge)
 		} else {
 			createSFOpportunity(charge);
