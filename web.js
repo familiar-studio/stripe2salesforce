@@ -105,6 +105,7 @@ app.post('/webhook', function(request, response){
 
 
 	var createSFOpportunity = function(charge, contract_num){
+		console.log(charge)
 		var stripe_id = request.body.data.object.id
 		var amount = request.body.data.object.amount/100
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
@@ -163,9 +164,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFContract = function(charge, contract_id) {
- 		console.log(contract_id)
  		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, ret) { 
- 			console.log('YIS YIS YIS YIS', ret[0])
  			createSFOpportunity(charge, ret[0].ContractNumber)
  		})
  	}
