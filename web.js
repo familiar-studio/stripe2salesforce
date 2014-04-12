@@ -104,10 +104,14 @@ app.post('/webhook', function(request, response){
 	}
 
 
-	var createSFOpportunity = function(stripe_info){
+	var createSFOpportunity = function(charge, contract_num){
 		var stripe_id = request.body.data.object.id
 		var amount = request.body.data.object.amount/100
-		var date = moment.unix(stripe_info.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+
+		if (contract_num) {
+			console.log('YO!')
+		}
 
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
@@ -145,17 +149,27 @@ app.post('/webhook', function(request, response){
  		// At this point, we need the contact to already be created so we can find the AccountId
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) {
 		  console.log(res[0].AccountId)
-		  createNewSFContract(res[0].AccountId, subscription_id) 
+		  createNewSFContract(charge, res[0].AccountId, subscription_id) 
 		});
  	} 	
 
- 	var createNewSFContract = function(account_id, subscription_id){
+ 	var createNewSFContract = function(charge, account_id, subscription_id){
  		console.log('CREATE NEW CONTRACT')
  		console.log(account_id, subscription_id)
- 		conn.sobject('Contract').create({ AccountId : account_id }, function(err, ret){
+ 		conn.sobject('Contract').create({ AccountId : account_id, Stripe_Subscription_Id__c : subscription_id }, function(err, ret){
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log(ret)
+ 			// if the Contract field of the Opportunity needs simply a pointer to this contract's ID, use this function
+ 			// createSFOpportunity(charge, ret.id)
+ 			// Otherwise, invoke the below:
+ 			findSFContract(charge, ret.id)
  		});
+ 	}
+
+ 	var findSFContract = function(charge, contract_id) {
+ 		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, res) { 
+ 			createSFOpportunity(charge, ret[0].ContractNumber)
+ 		})
  	}
 
 
