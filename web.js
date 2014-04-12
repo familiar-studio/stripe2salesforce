@@ -88,7 +88,7 @@ app.post('/webhook', function(request, response){
 	      console.log("Created Contact With ID: " + ret.id);
 
 // ===================================
-	      checkCharge(request_type)
+	      checkCharge()
 	  });
 	}
 
@@ -101,7 +101,7 @@ app.post('/webhook', function(request, response){
 			console.log('Updated Contact Email to:' + email);
 
 // ====================================
-			checkCharge(request_type)
+			checkCharge()
 		});
 	}
 
@@ -160,8 +160,9 @@ app.post('/webhook', function(request, response){
  	}
 
 
- 	var checkCharge = function(request_type) {
- 		if (request_type === 'charge.succeeded') {
+ 	var checkCharge = function() {
+ 		console.log('CHECKING CHARGE TYPE')
+ 		if (request.body.type === 'charge.succeeded') {
  			var charge = request.body.data.object;
 
  			if (charge.invoice !== null) {
@@ -172,9 +173,12 @@ app.post('/webhook', function(request, response){
  		};
  	}
 
+
  	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
  		var stripeCustomerId = request.body.data.object.id
  		var customer = request.body.data.object
+
+ 		console.log('CHECKING CUSTOMER EXISTENCE -- ITS OBVI GOING TO BE NULL')
 
  		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
  			if (res.length == 0) {
