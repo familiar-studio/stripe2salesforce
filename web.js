@@ -145,7 +145,6 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFAccount = function(charge, subscription_id){
- 		console.log('HEY!', charge.customer)
  		// At this point, we need the contact to already be created so we can find the AccountId
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) {
 		  console.log(res[0].AccountId)
@@ -154,8 +153,6 @@ app.post('/webhook', function(request, response){
  	} 	
 
  	var createNewSFContract = function(charge, account_id, subscription_id){
- 		console.log('CREATE NEW CONTRACT')
- 		console.log(account_id, subscription_id)
  		conn.sobject('Contract').create({ AccountId : account_id, Stripe_Subscription_Id__c : subscription_id }, function(err, ret){
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log(ret)
@@ -167,7 +164,9 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFContract = function(charge, contract_id) {
+ 		console.log('ALOOOOOO')
  		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, res) { 
+ 			console.log('YIS YIS YIS YIS', ret[0])
  			createSFOpportunity(charge, ret[0].ContractNumber)
  		})
  	}
