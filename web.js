@@ -67,7 +67,6 @@ app.post('/webhook', function(request, response){
 
 
 	var getStripeCustomer = function(option, stripe_id, sf_id) {
-		console.log('GET STRIPE CUSTOMER', option)
 		stripe.customers.retrieve(stripe_id, function(err, customer){
 			console.log('EMAIL OBJECT', customer)
 			if (option === 0){
@@ -82,16 +81,16 @@ app.post('/webhook', function(request, response){
 	}
 
 	var createNewSFContact = function(stripe_id, customer){
-		console.log("CREATE NEW SF CONTACT", customer.email)
 		conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
 	      if (err || !ret.success) { return console.error(err, ret); }
-	      console.log("Created Contact With ID: " + ret.id);
+	      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
 
-// ===================================
 	      checkCharge()
 	  });
 	}
 
+
+// this function is anachronistic since identity validation will occur by parallels in email address
 	var updateSFContactEmail = function(sf_id, stripe_id, customer){
 		conn.sobject('Contact').update({
 			Id: sf_id,
@@ -100,7 +99,6 @@ app.post('/webhook', function(request, response){
 			if (error || !ret.success) { return console.error(err, ret); }
 			console.log('Updated Contact Email to:' + email);
 
-// ====================================
 			checkCharge()
 		});
 	}
@@ -161,10 +159,10 @@ app.post('/webhook', function(request, response){
 
 
  	var checkCharge = function() {
- 		console.log('CHECKING CHARGE TYPE')
+ 		console.log('CHECKING CHARGE TYPE', request.body.type)
  		if (request.body.type === 'charge.succeeded') {
  			var charge = request.body.data.object;
-
+ 			console.log("CHARGE OBJ", charge)
  			if (charge.invoice !== null) {
  				getStripeInvoice(charge)
  			} else {
@@ -177,7 +175,7 @@ app.post('/webhook', function(request, response){
  	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
  		var customer = request.body.data.object
 
- 		console.log('CHECKING CUSTOMER EXISTENCE -- ITS OBVI GOING TO BE NULL')
+ 		console.log('CHECKING CUSTOMER EXISTENCE -- ITS OBVI GOING TO BE NULL. YOU NEED TO CHECK BY EMAIL')
 
  		conn.sobject('Contact').find({ Stripe_Customer_Id__c : customer.id }).limit(1).execute(function(err, res) {
  			if (res.length == 0) {
@@ -188,33 +186,6 @@ app.post('/webhook', function(request, response){
  			};
  		});
  	};
-
-
- 
-	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
-	// 	var stripeCustomerId = request.body.data.object.id
-	// 	var customer = request.body.data.object
-
-	// 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
-	// 		if (res.length == 0) {
-	// 			createNewSFContact(stripeCustomerId, customer);
-	// 		} else {
-	// 			updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
-	// 		};
-	// 	});
-	// };
-
-// CHECKING CHARGE.SUCCEEDED SHOULD BE A CALLBACK OF CUSTOMER.CREATED
-
-	// if (request.body.type === 'charge.succeeded') {
-	// 	var charge = request.body.data.object;
-
-	// 	if (charge.invoice !== null) {
-	// 		getStripeInvoice(charge)
-	// 	} else {
-	// 		createSFOpportunity(charge);
-	// 	};
-	// };
 
 	// on post from stripe webhook, dump json transaction in mongodb
 	mongo.Db.connect(mongoUri, function(err, db) {
