@@ -113,6 +113,7 @@ app.post('/webhook', function(request, response){
 		conn.sobject("Opportunity").create({ 
 			Amount: (charge.amount/100), 
 			Stripe_Charge_Id__c: charge.id, 
+			// TODO: add charge logic to checkName func
 			Name: "isaac's test",
 			StageName: "Closed Won",
 			CloseDate: date
@@ -120,10 +121,9 @@ app.post('/webhook', function(request, response){
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
-			console.log("created!!!!!!!!!!!! record id :" + ret.id);
+			console.log('worked?')
 		});
 
-		// TODO: add charge logic to checkName func
 	}
 
 	var createSFOpportunity = function(stripe_info){
