@@ -155,7 +155,6 @@ app.post('/webhook', function(request, response){
  	var createNewSFContract = function(charge, account_id, subscription_id){
  		conn.sobject('Contract').create({ AccountId : account_id, Stripe_Subscription_Id__c : subscription_id }, function(err, ret){
  			if (err || !ret.success) { return console.error(err, ret); }
- 			console.log(ret)
  			// if the Contract field of the Opportunity needs simply a pointer to this contract's ID, use this function
  			// createSFOpportunity(charge, ret.id)
  			// Otherwise, invoke the below:
@@ -164,8 +163,8 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFContract = function(charge, contract_id) {
- 		console.log('ALOOOOOO')
- 		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, res) { 
+ 		console.log(contract_id)
+ 		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, ret) { 
  			console.log('YIS YIS YIS YIS', ret[0])
  			createSFOpportunity(charge, ret[0].ContractNumber)
  		})
