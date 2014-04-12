@@ -135,7 +135,7 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeInvoice = function(charge){
+ 	var findStripeSubscription = function(charge){
  		stripe.invoices.retrieve( charge.invoice, function(err, response){
  			findSFSubscription(charge, response.subscription);
  		});
@@ -184,7 +184,7 @@ app.post('/webhook', function(request, response){
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var charge = request.body.data.object;
  			if (charge.invoice !== null) {
- 				getStripeInvoice(charge)
+ 				findStripeSubscription(charge)
  			} else {
  				createSFOpportunity(charge);
  			};
