@@ -142,7 +142,8 @@ app.post('/webhook', function(request, response){
 
  	var findSFAccount = function(charge, subscription_id){
  		console.log('HEY!', charge.customer)
- 		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
+ 		// At this point, we need the contact to already be created so we can find the AccountId
+ 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log("WE HITTING THIS?", res[0])
  			console.log("THIS BE WHAT WE WANT", res[0].AccountId)
