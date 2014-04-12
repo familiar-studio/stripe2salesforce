@@ -131,8 +131,8 @@ app.post('/webhook', function(request, response){
 
  	var findSFSubscription = function(subscription_id, charge){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
- 			console.log(res.length)
  		  if (res.length === 0) {
+ 		  	console.log('Moving to create subscription')
  		  	findSFAccount(charge, subscription_id)
  		  } else {
  		  	console.log('Subscription for' + res[0].Id + 'Exists');
@@ -141,7 +141,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFAccount = function(charge, subscription_id){
- 		console.log('HEY!')
+ 		console.log('HEY!', charge.customer)
  		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log("WE HITTING THIS?", res[0])
