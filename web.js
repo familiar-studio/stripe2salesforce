@@ -139,7 +139,6 @@ app.post('/webhook', function(request, response){
 		}
 
 		// TODO: add charge logic to checkName func
-		console.log(contract)
 	}
  	
  	var findStripeSubscription = function(charge){
