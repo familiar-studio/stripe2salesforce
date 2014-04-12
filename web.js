@@ -118,6 +118,7 @@ app.post('/webhook', function(request, response){
 		}
 
 		// TODO: add charge logic to checkName func
+		console.log(contract)
 
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
@@ -126,10 +127,10 @@ app.post('/webhook', function(request, response){
 			StageName: "Closed Won",
 			CloseDate: date,
 			Contract__c: contract 
-			
+
 		}, function(error, ret){
-			if (err || !ret.success) { return console.error(err, ret); }
-			console.log("created record id :" + ret.id);
+			if (err || !ret.success) { return console.error(error, ret); }
+			console.log("Created Opportunity: " + ret);
 		});
 	}
  	
