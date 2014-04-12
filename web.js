@@ -146,7 +146,7 @@ app.post('/webhook', function(request, response){
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) {
 		  console.log(res[0].AccountId)
 		  createNewSFContract(res[0].AccountId, subscription_id) 
-		})''
+		});
  	} 	
 
  	var createNewSFContract = function(account_id, subscription_id){
