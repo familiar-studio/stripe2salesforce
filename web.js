@@ -131,6 +131,7 @@ app.post('/webhook', function(request, response){
 
  	var findSFSubscription = function(subscription_id, charge){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
+ 			console.log(res.length)
  		  if (res.length === 0) {
  		  	findSFAccount(charge, subscription_id)
  		  } else {
@@ -140,6 +141,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFAccount = function(charge, subscription_id){
+ 		console.log('HEY!')
  		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
  			if (err || !ret.success) { return console.error(err, ret); }
  			console.log("WE HITTING THIS?", res[0])
@@ -163,7 +165,6 @@ app.post('/webhook', function(request, response){
  		if (request.body.type === 'charge.succeeded') {
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var charge = request.body.data.object;
- 			console.log("CHARGE OBJ", charge)
  			if (charge.invoice !== null) {
  				getStripeInvoice(charge)
  			} else {
