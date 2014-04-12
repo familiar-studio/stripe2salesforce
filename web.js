@@ -120,28 +120,25 @@ app.post('/webhook', function(request, response){
 		});
 	}
  	
- 	var getStripeInvoice = function(stripe_info){
- 		stripe.invoices.retrieve( stripe_info.invoice, function(err, response){
- 			findSFSubscription(response.subscription, stripe_info);
+ 	var getStripeInvoice = function(charge){
+ 		stripe.invoices.retrieve( charge.invoice, function(err, response){
+ 			findSFSubscription(response.subscription, charge);
  		});
  	}
 
- 	var findSFSubscription = function(subscription_id, stripe_info){
+ 	var findSFSubscription = function(subscription_id, charge){
  		conn.sobject('Contract').find({ Stripe_Subscription_Id__c : subscription_id }).limit(1).execute(function(err, res){
  		  if (res.length === 0) {
- 		  	findSFAccount(stripe_info.customer, subscription_id)
+ 		  	findSFAccount(charge, subscription_id)
  		  } else {
  		  	console.log('Subscription for' + res[0].Id + 'Exists');
  		  };
  		});
  	}
 
- 	var findSFAccount = function(stripe_info){
- 		console.log(stripe_info)
- 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_info.customer }).limit(1).execute(function(err, res) { 
- 			if (res.length === 0) {
- 				createNewSFContact(stripe_info)
- 			}
+ 	var findSFAccount = function(charge, subscription_id){
+ 		console.log(charge, subscription_id)
+ 		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
  			console.log('=============================')
  			console.log(res[0].AccountId)
  			createNewSFContract(res[0].AccountId)
@@ -157,33 +154,32 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
-	if (request.body.type === 'charge.succeeded') {
-		var stripe_info = request.body.data.object;
-  	var invoice = request.body.data.object.invoice;
+ 
+	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
+		var stripeCustomerId = request.body.data.object.id
+		var customer = request.body.data.object
 
-  	console.log(stripe_info)
-
-		// if (invoice !== null) {
-		// 	getStripeInvoice(stripe_info) // invoice)
-		// } else {
-		// 	createSFOpportunity(stripe_info);
-		// };
+		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+			if (res.length == 0) {
+				createNewSFContact(stripeCustomerId, customer);
+			} else {
+				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+			};
+		});
 	};
 
+// CHECKING CHARGE.SUCCEEDED SHOULD BE A CALLBACK OF CUSTOMER.CREATED
 
- 
-	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
-	// 	var stripeCustomerId = request.body.data.object.id
-	// 	var customer = request.body.data.object
+	if (request.body.type === 'charge.succeeded') {
+		var charge = request.body.data.object;
 
-	// 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
-	// 		if (res.length == 0) {
-	// 			createNewSFContact(stripeCustomerId, customer);
-	// 		} else {
-	// 			updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
-	// 		};
-	// 	});
-	// };
+		if (invoice !== null) {
+			getStripeInvoice(charge)
+		} else {
+			createSFOpportunity(charge);
+		};
+	};
+
 
 	response.send('OK');
 	response.end();
