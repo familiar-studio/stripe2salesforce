@@ -158,9 +158,10 @@ app.post('/webhook', function(request, response){
  	}
 
 
- 	var checkCharge = function() {
- 		console.log('CHECKING CHARGE TYPE', request.body.type)
+ 	// var checkCharge = function() {
+ 	// 	console.log('CHECKING CHARGE TYPE', request.body.type)
  		if (request.body.type === 'charge.succeeded') {
+ 			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var charge = request.body.data.object;
  			console.log("CHARGE OBJ", charge)
  			if (charge.invoice !== null) {
@@ -169,17 +170,17 @@ app.post('/webhook', function(request, response){
  				createSFOpportunity(charge);
  			};
  		};
- 	}
+ 	// }
 
+ 	// a problem which I'm too burnt-out to currently unwrap: when called from UrbanGlass, many different request types will be sent at the same time. If a customer does not yet exist, the checkCharge must wait until creation before it can properly run (a non-existant customer cannot have a contract). However, I assume there will be some cases in which a customer will already exist and therefore neither creation nor updates will fire. The question then is, how do we signal checkCharge to invocate if it's waiting for a customer validation?
 
  	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
  		var customer = request.body.data.object
 
- 		console.log('CHECKING CUSTOMER EXISTENCE -- ITS OBVI GOING TO BE NULL. YOU NEED TO CHECK BY EMAIL')
+ 		console.log('BROKEN CUSTOMER EXISTENCE CHECK -- YOU NEED TO VALIDATE BY EMAIL')
 
  		conn.sobject('Contact').find({ Stripe_Customer_Id__c : customer.id }).limit(1).execute(function(err, res) {
  			if (res.length == 0) {
- 				console.log('HEY THERE, INVOKING CREATE NEW SF CUSTOMER', customer.id, customer)
  				createNewSFContact(customer.id, customer);
  			} else {
  				updateSFContactEmail(res[0].Id, customer.id, customer);
