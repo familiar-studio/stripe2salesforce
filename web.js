@@ -112,27 +112,34 @@ app.post('/webhook', function(request, response){
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 		if (contract_num) {
-			var contract = contract_num
+			conn.sobject("Opportunity").create({ 
+				Amount: amount, 
+				Stripe_Charge_Id__c: charge.id, 
+				// name is currently fake for debugging purposes
+				Name: charge.id,
+				StageName: "Closed Won",
+				CloseDate: date,
+				Contract__c: contract_num
+			}, function(error, ret){
+				if (err || !ret.success) { return console.error(error, ret); }
+				console.log("Created Opportunity: " + ret);
+			});
 		} else {
-			var contract = null
+			conn.sobject("Opportunity").create({ 
+				Amount: amount, 
+				Stripe_Charge_Id__c: charge.id, 
+				// name is currently fake for debugging purposes
+				Name: charge.id,
+				StageName: "Closed Won",
+				CloseDate: date
+			}, function(error, ret){
+				if (err || !ret.success) { return console.error(error, ret); }
+				console.log("Created Opportunity: " + ret);
+			});
 		}
 
 		// TODO: add charge logic to checkName func
 		console.log(contract)
-
-		conn.sobject("Opportunity").create({ 
-			Amount: amount, 
-			Stripe_Charge_Id__c: charge.id, 
-			// name is currently fake for debugging purposes
-			Name: charge.id,
-			StageName: "Closed Won",
-			CloseDate: date,
-			Contract__c: contract 
-
-		}, function(error, ret){
-			if (err || !ret.success) { return console.error(error, ret); }
-			console.log("Created Opportunity: " + ret);
-		});
 	}
  	
  	var findStripeSubscription = function(charge){
