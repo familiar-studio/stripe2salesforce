@@ -159,21 +159,6 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
- 	var checkCustomer = function(request_type) {
- 		console.log('=============', request_type)
- 		if (request_type === 'customer.created' || request.body.type === 'customer.updated') {
- 			var stripeCustomerId = request.body.data.object.id
- 			var customer = request.body.data.object
-
- 			conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
- 				if (res.length == 0) {
- 					createNewSFContact(stripeCustomerId, customer);
- 				} else {
- 					updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
- 				};
- 			});
- 		};
- 	}
 
  	var checkCharge = function(request_type) {
  		if (request_type === 'charge.succeeded') {
@@ -187,7 +172,18 @@ app.post('/webhook', function(request, response){
  		};
  	}
 
- 	checkCustomer(request.body.type)
+ 	if (request_type === 'customer.created' || request.body.type === 'customer.updated') {
+ 		var stripeCustomerId = request.body.data.object.id
+ 		var customer = request.body.data.object
+
+ 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+ 			if (res.length == 0) {
+ 				createNewSFContact(stripeCustomerId, customer);
+ 			} else {
+ 				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+ 			};
+ 		});
+ 	};
 
  
 	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
