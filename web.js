@@ -175,16 +175,16 @@ app.post('/webhook', function(request, response){
 
 
  	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
- 		var stripeCustomerId = request.body.data.object.id
  		var customer = request.body.data.object
 
  		console.log('CHECKING CUSTOMER EXISTENCE -- ITS OBVI GOING TO BE NULL')
 
- 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+ 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : customer.id }).limit(1).execute(function(err, res) {
  			if (res.length == 0) {
- 				createNewSFContact(stripeCustomerId, customer);
+ 				console.log('HEY THERE, INVOKING CREATE NEW SF CUSTOMER', customer.id, customer)
+ 				createNewSFContact(customer.id, customer);
  			} else {
- 				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+ 				updateSFContactEmail(res[0].Id, customer.id, customer);
  			};
  		});
  	};
