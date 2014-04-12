@@ -112,18 +112,19 @@ app.post('/webhook', function(request, response){
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 		if (contract_num) {
+			console.log('ohei!')
+
 			conn.sobject("Opportunity").create({ 
-				Amount: (charge.amount / 100),
-				Stripe_Charge_Id__c: charge.id + "SUBSCRIPTION", 
-				// name is currently fake for debugging purposes
-				Name: charge.id,
+				Amount: amount, 
+				Stripe_Charge_Id__c: stripe_id, 
+				Name: "isaac test",
 				StageName: "Closed Won",
 				CloseDate: date,
 				Contract__c: contract_num
-
+			
 			}, function(error, ret){
-				if (err || !ret.success) { return console.error(error, ret); }
-				console.log("Created Opportunity: " + ret);
+				if (err || !ret.success) { return console.error(err, ret); }
+				console.log("created!!!!!!!!!!!! record id :" + ret.id);
 			});
 		} 
 
