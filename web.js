@@ -123,7 +123,8 @@ app.post('/webhook', function(request, response){
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Charge_Id__c: charge.id, 
-			Name: "OUR Stripe Charge",
+			// name is currently fake for debugging purposes
+			Name: charge.id,
 			StageName: "Closed Won",
 			CloseDate: date,
 			Contract__c: contract 
@@ -171,6 +172,7 @@ app.post('/webhook', function(request, response){
 
  	var findSFContract = function(charge, contract_id) {
  		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, ret) { 
+ 			console.log(ret[0].ContractNumber)
  			createSFOpportunity(charge, ret[0].ContractNumber)
  		})
  	}
