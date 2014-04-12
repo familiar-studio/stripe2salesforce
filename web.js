@@ -116,8 +116,8 @@ app.post('/webhook', function(request, response){
 			// TODO: add charge logic to checkName func
 			Name: "isaac's test",
 			StageName: "Closed Won",
-			CloseDate: date
-			// Contract__c: contract_num
+			CloseDate: date,
+			Contract__c: contract_num
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
@@ -129,6 +129,7 @@ app.post('/webhook', function(request, response){
 	var createSFOpportunity = function(stripe_info){
 		var stripe_id = request.body.data.object.id
 		var amount = request.body.data.object.amount
+		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 		// console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
 		// console.log('THIS IS THE id *********************', request.body.data.object.customer)
 
@@ -137,7 +138,7 @@ app.post('/webhook', function(request, response){
 			Stripe_Charge_Id__c: stripe_id, 
 			Name: "OUR Stripe Charge",
 			StageName: "Closed Won",
-			CloseDate: "2011-02-13T20:30:00.000Z"
+			CloseDate: date
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
