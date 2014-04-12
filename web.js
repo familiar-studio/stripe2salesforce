@@ -105,35 +105,20 @@ app.post('/webhook', function(request, response){
 	}
 
 
-	var createSFOpportunity = function(charge, contract_num){
-		console.log(charge)
+	var createSFSubscriptionOpportunity = function(charge, contract_num){
 		var stripe_id = request.body.data.object.id
 		var amount = request.body.data.object.amount/100
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
-
-		if (contract_num) {
-			console.log('ohei!')
-
-			conn.sobject("Opportunity").create({ 
-				Amount: amount, 
-				Stripe_Charge_Id__c: stripe_id, 
-				Name: "isaac test",
-				StageName: "Closed Won",
-				CloseDate: date,
-				Contract__c: contract_num
-			
-			}, function(error, ret){
-				if (err || !ret.success) { return console.error(err, ret); }
-				console.log("created!!!!!!!!!!!! record id :" + ret.id);
-			});
-		} 
+		
+		console.log('ohei!', contract_num)
 
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
 			Stripe_Charge_Id__c: stripe_id, 
-			Name: "new test",
+			Name: "isaac's test",
 			StageName: "Closed Won",
-			CloseDate: "2011-02-13T20:30:00.000Z"
+			CloseDate: date,
+			Contract__c: contract_num
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
@@ -143,24 +128,24 @@ app.post('/webhook', function(request, response){
 		// TODO: add charge logic to checkName func
 	}
 
-	// var createSFOpportunity = function(stripe_info){
-	// 	var stripe_id = request.body.data.object.id
-	// 	var amount = request.body.data.object.amount
-	// 	// console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
-	// 	// console.log('THIS IS THE id *********************', request.body.data.object.customer)
+	var createSFOpportunity = function(stripe_info){
+		var stripe_id = request.body.data.object.id
+		var amount = request.body.data.object.amount
+		// console.log('THIS IS THE AMOUT *********************', request.body.data.object.amount)
+		// console.log('THIS IS THE id *********************', request.body.data.object.customer)
 
-	// 	conn.sobject("Opportunity").create({ 
-	// 		Amount: amount, 
-	// 		Stripe_Charge_Id__c: stripe_id, 
-	// 		Name: "OUR Stripe Charge",
-	// 		StageName: "Closed Won",
-	// 		CloseDate: "2011-02-13T20:30:00.000Z"
+		conn.sobject("Opportunity").create({ 
+			Amount: amount, 
+			Stripe_Charge_Id__c: stripe_id, 
+			Name: "OUR Stripe Charge",
+			StageName: "Closed Won",
+			CloseDate: "2011-02-13T20:30:00.000Z"
 		
-	// 	}, function(error, ret){
-	// 		if (err || !ret.success) { return console.error(err, ret); }
-	// 		console.log("created!!!!!!!!!!!! record id :" + ret.id);
-	// 	});
-	// }
+		}, function(error, ret){
+			if (err || !ret.success) { return console.error(err, ret); }
+			console.log("created!!!!!!!!!!!! record id :" + ret.id);
+		});
+	}
  	
  	var findStripeSubscription = function(charge){
  		stripe.invoices.retrieve( charge.invoice, function(err, response){
@@ -199,7 +184,7 @@ app.post('/webhook', function(request, response){
 
  	var findSFContract = function(charge, contract_id) {
  		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, ret) { 
- 			createSFOpportunity(charge, ret[0].ContractNumber)
+ 			createSFSubscriptionOpportunity(charge, ret[0].ContractNumber)
  		})
  	}
 
