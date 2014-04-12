@@ -87,6 +87,8 @@ app.post('/webhook', function(request, response){
 	      if (err || !ret.success) { return console.error(err, ret); }
 	      console.log("Created Contact With ID: " + ret.id);
 
+// ===================================
+	      checkCharge(request_type)
 	  });
 	}
 
@@ -97,6 +99,9 @@ app.post('/webhook', function(request, response){
 		}, function(error, result){
 			if (error || !ret.success) { return console.error(err, ret); }
 			console.log('Updated Contact Email to:' + email);
+
+// ====================================
+			checkCharge(request_type)
 		});
 	}
 
@@ -155,6 +160,7 @@ app.post('/webhook', function(request, response){
  	}
 
  	var checkCustomer = function(request_type) {
+ 		console.log('=============', request_type)
  		if (request_type === 'customer.created' || request.body.type === 'customer.updated') {
  			var stripeCustomerId = request.body.data.object.id
  			var customer = request.body.data.object
@@ -167,8 +173,6 @@ app.post('/webhook', function(request, response){
  				};
  			});
  		};
-
- 		checkCharge(request_type)
  	}
 
  	var checkCharge = function(request_type) {
