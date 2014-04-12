@@ -63,6 +63,7 @@ app.post('/webhook', function(request, response){
 				last_name: 'no last name listed'
 			};
 		};
+		// TODO: get name from card for createOpportunity Invocation
 	}
 
 
@@ -111,17 +112,21 @@ app.post('/webhook', function(request, response){
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 		if (contract_num) {
-			console.log('YO!')
+			var contract = contract_num
+		} else {
+			var contract = null
 		}
+
+		// TODO: add charge logic to checkName func
 
 		conn.sobject("Opportunity").create({ 
 			Amount: amount, 
-			Stripe_Charge_Id__c: stripe_id, 
+			Stripe_Charge_Id__c: charge.id, 
 			Name: "OUR Stripe Charge",
 			StageName: "Closed Won",
-			CloseDate: date
-			// Contract__c: 
-		
+			CloseDate: date,
+			Contract__c: contract 
+			
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
 			console.log("created record id :" + ret.id);
