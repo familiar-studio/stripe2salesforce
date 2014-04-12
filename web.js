@@ -137,10 +137,10 @@ app.post('/webhook', function(request, response){
  	}
 
  	var findSFAccount = function(charge, subscription_id){
- 		console.log("CREATE ACCOUNT", charge, subscription_id)
  		conn.sobject('Contract').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) { 
- 			console.log('=============================')
- 			console.log(res[0].AccountId)
+ 			if (err || !ret.success) { return console.error(err, ret); }
+ 			console.log("WE HITTING THIS?", res[0])
+ 			console.log("THIS BE WHAT WE WANT", res[0].AccountId)
  			createNewSFContract(res[0].AccountId)
  		});
  	} 	
