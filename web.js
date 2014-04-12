@@ -113,30 +113,32 @@ app.post('/webhook', function(request, response){
 
 		if (contract_num) {
 			conn.sobject("Opportunity").create({ 
-				Amount: amount, 
-				Stripe_Charge_Id__c: charge.id, 
+				Amount: (charge.amount / 100),
+				Stripe_Charge_Id__c: charge.id + "SUBSCRIPTION", 
 				// name is currently fake for debugging purposes
 				Name: charge.id,
 				StageName: "Closed Won",
 				CloseDate: date,
 				Contract__c: contract_num
+
 			}, function(error, ret){
 				if (err || !ret.success) { return console.error(error, ret); }
 				console.log("Created Opportunity: " + ret);
 			});
-		} else {
-			conn.sobject("Opportunity").create({ 
-				Amount: amount, 
-				Stripe_Charge_Id__c: charge.id, 
-				// name is currently fake for debugging purposes
-				Name: charge.id,
-				StageName: "Closed Won",
-				CloseDate: date
-			}, function(error, ret){
-				if (err || !ret.success) { return console.error(error, ret); }
-				console.log("Created Opportunity: " + ret);
-			});
-		}
+		} 
+
+		conn.sobject("Opportunity").create({ 
+			Amount: amount, 
+			Stripe_Charge_Id__c: stripe_id, 
+			// name is currently fake for debugging purposes
+			Name: charge.id + 'SINGLE PAYMENT',
+			StageName: "Closed Won",
+			CloseDate: date
+
+		}, function(error, ret){
+			if (err || !ret.success) { return console.error(error, ret); }
+			console.log("Created Opportunity: " + ret);
+		});
 
 		// TODO: add charge logic to checkName func
 	}
@@ -178,7 +180,7 @@ app.post('/webhook', function(request, response){
 
  	var findSFContract = function(charge, contract_id) {
  		conn.sobject('Contract').find({ 'Id' : contract_id }).limit(1).execute(function(err, ret) { 
- 			console.log(ret[0].ContractNumber)
+ 			console.log('YOU MIGHT BE BREAKING HERE', ret[0].ContractNumber)
  			createSFOpportunity(charge, ret[0].ContractNumber)
  		})
  	}
