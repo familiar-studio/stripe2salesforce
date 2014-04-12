@@ -154,33 +154,73 @@ app.post('/webhook', function(request, response){
  		});
  	}
 
+ 	var checkCustomer = function(request_type) {
+ 		if (request_type === 'customer.created' || request.body.type === 'customer.updated') {
+ 			var stripeCustomerId = request.body.data.object.id
+ 			var customer = request.body.data.object
 
+ 			conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+ 				if (res.length == 0) {
+ 					createNewSFContact(stripeCustomerId, customer);
+ 				} else {
+ 					updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+ 				};
+ 			});
+ 		};
+
+ 		checkCharge(request_type)
+ 	}
+
+ 	var checkCharge = function(request_type) {
+ 		if (request_type === 'charge.succeeded') {
+ 			var charge = request.body.data.object;
+
+ 			if (charge.invoice !== null) {
+ 				getStripeInvoice(charge)
+ 			} else {
+ 				createSFOpportunity(charge);
+ 			};
+ 		};
+ 	}
+
+ 	checkCustomer(request.body.type)
 
  
-	if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
-		var stripeCustomerId = request.body.data.object.id
-		var customer = request.body.data.object
+	// if (request.body.type === 'customer.created' || request.body.type === 'customer.updated') {
+	// 	var stripeCustomerId = request.body.data.object.id
+	// 	var customer = request.body.data.object
 
-		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
-			if (res.length == 0) {
-				createNewSFContact(stripeCustomerId, customer);
-			} else {
-				updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
-			};
-		});
-	};
+	// 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripeCustomerId }).limit(1).execute(function(err, res) {
+	// 		if (res.length == 0) {
+	// 			createNewSFContact(stripeCustomerId, customer);
+	// 		} else {
+	// 			updateSFContactEmail(res[0].Id, stripeCustomerId, customer);
+	// 		};
+	// 	});
+	// };
 
 // CHECKING CHARGE.SUCCEEDED SHOULD BE A CALLBACK OF CUSTOMER.CREATED
 
-	if (request.body.type === 'charge.succeeded') {
-		var charge = request.body.data.object;
+	// if (request.body.type === 'charge.succeeded') {
+	// 	var charge = request.body.data.object;
 
-		if (charge.invoice !== null) {
-			getStripeInvoice(charge)
-		} else {
-			createSFOpportunity(charge);
-		};
-	};
+	// 	if (charge.invoice !== null) {
+	// 		getStripeInvoice(charge)
+	// 	} else {
+	// 		createSFOpportunity(charge);
+	// 	};
+	// };
+
+	// on post from stripe webhook, dump json transaction in mongodb
+	mongo.Db.connect(mongoUri, function(err, db) {
+		// may be viewed at bash$ heroku addons:open mongolab
+		db.collection('stripeLogs', function(er, collection) {
+			collection.insert({'stripeReq':request.body}, function(err, result){
+				console.log(err);
+
+			});
+		});
+	});
 
 
 	response.send('OK');
