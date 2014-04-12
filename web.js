@@ -106,19 +106,17 @@ app.post('/webhook', function(request, response){
 
 
 	var createSFSubscriptionOpportunity = function(charge, contract_num){
-		var stripe_id = request.body.data.object.id
-		var amount = request.body.data.object.amount/100
 		var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
-		
+
 		console.log('ohei!', contract_num)
 
 		conn.sobject("Opportunity").create({ 
-			Amount: amount, 
-			Stripe_Charge_Id__c: stripe_id, 
+			Amount: (charge.amount/100), 
+			Stripe_Charge_Id__c: charge.id, 
 			Name: "isaac's test",
 			StageName: "Closed Won",
-			CloseDate: date,
-			Contract__c: contract_num
+			CloseDate: date
+			// Contract__c: contract_num
 		
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
