@@ -91,7 +91,7 @@ app.post('/webhook', function(request, response){
 
         						console.log("%%%%RETURN", ret)
 
-        						deferred.resolve(ret);
+        						
 	        				    if (err || !ret.success) { return console.error(err, ret); }
 	        				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
 	        				    deferred.resolve(ret);
@@ -139,7 +139,7 @@ app.post('/webhook', function(request, response){
 	var salesContact2Account = function(chargeObj){
 		// pass chargeObj, from inside function stripe_id = chargeObj.customer
 		// invoice will be chargeObj.invoice
-		var deferred = q.defer();
+		// var deferred = q.defer();
 		var stripe_id = chargeObj.customer;
 		var invoice = chargeObj.invoice;
 		var amount = chargeObj.amount;
@@ -151,6 +151,8 @@ app.post('/webhook', function(request, response){
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
  			} else {
+
+
  				console.log("No invoice-- do a single charge here!")
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 				    var account_id = res[0].AccountId
@@ -162,10 +164,10 @@ app.post('/webhook', function(request, response){
 				        conn.sobject("Opportunity").create({ 
 				        	Amount: (amount/100), 
 				        	Stripe_Charge_Id__c: charge_id, 
-				        	// TODO: add charge logic to checkName func
 				        	Name: "Meghann's Test",
 				        	StageName: "Closed Won",
-				        	CloseDate: date
+				        	CloseDate: date,
+				        	Account: account_id
 				        
 				        }, function(error, ret){
 				        	if (err || !ret.success) { return console.error(err, ret); }
@@ -173,14 +175,14 @@ app.post('/webhook', function(request, response){
 				        });
 
 
-				    deferred.resolve(res[0].AccountId)
+				    // deferred.resolve(res[0].AccountId)
  				});
  			};
 		
 						
 						
         
-        return deferred.promise;
+        // return deferred.promise;
 
 	}
 
