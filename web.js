@@ -78,7 +78,7 @@ app.post('/webhook', function(request, response){
 		  var deferred = q.defer();
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("RESULT", res.length)
-			var sfExistingId = res[0].Id
+			
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
@@ -116,7 +116,7 @@ app.post('/webhook', function(request, response){
 					});			            	
 	        	})
 	        } else {
-
+	        	var sfExistingId = res[0].Id
 	        	console.log("CONTACT ALREADY EXITS")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
 	            	conn.sobject('Contact').update({
