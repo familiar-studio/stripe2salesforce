@@ -168,10 +168,11 @@ app.post('/webhook', function(request, response){
 				        conn.sobject("Opportunity").create({ 
 				        	Amount: (amount/100), 
 				        	Stripe_Charge_Id__c: charge_id, 
-				        	Name: "Meghann's Test",
+				        	Name: "YES THIS WORKS",
 				        	StageName: "Closed Won",
-				        	CloseDate: date,
-				        	Account: account_id
+				        	CloseDate: date
+				        	//Account: account_id
+				        	// WHEN ADDING ACCOUND FIELD THE CREATE METHOD BREAKS, I THINK THIS MAY BE BECAUSE THE DATA TYPE IS A "INFO LOOK UP"
 				        	
 				        
 				        }, function(error, ret){
