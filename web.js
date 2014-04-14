@@ -153,9 +153,8 @@ app.post('/webhook', function(request, response){
  			} else {
  				console.log("No invoice-- do a single charge here!")
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+ 					console.log(res[0])
 				    var account_id = res[0].AccountId
-				    console.log("account id", res[0])
-				    console.log("this is it", res[0] ######################)
 				    var account_name = res[0].AccountName
 				    console.log ("this is the account name: account_name")
 				    var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
