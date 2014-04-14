@@ -134,8 +134,9 @@ app.post('/webhook', function(request, response){
 	}
 		
 	var salesContact2Account = function(stripe_id){
+		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-          console.log(res[0].AccountId)
+          console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
           return res[0].AccountId
         });
 
