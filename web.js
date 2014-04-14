@@ -83,7 +83,7 @@ app.post('/webhook', function(request, response){
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
 	        		console.log("this is the email:", customer.metadata.Email)
 	        		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
-	 					var sfContactId = res[0].Id
+	 					
 	        			if (res.length == 0){
 	        				console.log("this means no contact but checking for email")
         					conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
@@ -92,7 +92,9 @@ app.post('/webhook', function(request, response){
         				      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
         				  	});
 	        			}else{
-	        				console.log("this was email and updating")
+	        				var sfContactId = res[0].Id
+
+	        				console.log("there was email and now updating", sfContactId)
 
 
         					stripe.customers.retrieve(stripe_id, function(err, customer){
