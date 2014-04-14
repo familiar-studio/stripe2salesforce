@@ -139,11 +139,18 @@ app.post('/webhook', function(request, response){
 	var salesContact2Account = function(chargeObj){
 		// pass chargeObj, from inside function stripe_id = chargeObj.customer
 		// invoice will be chargeObj.invoice
-		var stripe_id = chargeObj.customer
-		console.log("THIS IS THE STRIPE ID", stripe_id)
-		console.log("IS THIS THE INVOICE?", chargeObj.invoice)
+		var deferred = q.defer();
+		var stripe_id = chargeObj.customer;
+		var invoice = chargeObj.invoice;
+		// console.log("THIS IS THE STRIPE ID", stripe_id)
+		// console.log("IS THIS THE INVOICE?", chargeObj.invoice)
 
-		var deferred = q.defer()
+ 			if (invoice !== null) {
+ 				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
+ 			} else {
+ 				console.log("No invoice-- do a single charge here!")
+ 			};
+		
 		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
         console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
