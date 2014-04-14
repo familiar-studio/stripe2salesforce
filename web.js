@@ -166,8 +166,7 @@ app.post('/webhook', function(request, response){
 				        	Stripe_Charge_Id__c: charge_id, 
 				        	Name: "Meghann's Test",
 				        	StageName: "Closed Won",
-				        	CloseDate: date,
-				        	Account: account_id
+				        	CloseDate: date
 				        
 				        }, function(error, ret){
 				        	if (err || !ret.success) { return console.error(err, ret); }
