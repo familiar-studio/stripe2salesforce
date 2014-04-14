@@ -100,6 +100,8 @@ app.post('/webhook', function(request, response){
         					stripe.customers.retrieve(stripe_id, function(err, customer){
         				    	conn.sobject('Contact').update({
         				            Id: sfContactId,
+        				            FirstName : stripeCheckName(customer.metadata.Name).first_name,
+        				            LastName: stripeCheckName(customer.metadata.Name).last_name,
         				            Stripe_Customer_Id__c : stripe_id
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
