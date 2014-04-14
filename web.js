@@ -160,9 +160,6 @@ app.post('/webhook', function(request, response){
 				    console.log (res[0].CreatedDate)
 				   
 				   console.log ("this is the account date:", date)
-				    
-
-				    // var date = moment.unix(res[0].CreatedDate).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 				    var date = res[0].CreatedDate
 
 				        conn.sobject("Opportunity").create({ 
@@ -170,7 +167,8 @@ app.post('/webhook', function(request, response){
 				        	Stripe_Charge_Id__c: charge_id, 
 				        	Name: "Meghann's Test",
 				        	StageName: "Closed Won",
-				        	CloseDate: date
+				        	CloseDate: date,
+				        	Account: account_id
 				        
 				        }, function(error, ret){
 				        	if (err || !ret.success) { return console.error(err, ret); }
