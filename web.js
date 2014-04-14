@@ -148,14 +148,15 @@ app.post('/webhook', function(request, response){
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
  			} else {
+ 				console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
+			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+        	console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
+        // check invoice here and pass acct_id
+        		deferred.resolve(res[0].AccountId)
  				console.log("No invoice-- do a single charge here!")
  			};
 		
-		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-        console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
-        // check invoice here and pass acct_id
-        	deferred.resolve(res[0].AccountId)
+		
         });
         return deferred.promise;
 
