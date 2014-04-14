@@ -136,12 +136,17 @@ app.post('/webhook', function(request, response){
 		return deferred.promise;
 	}
 		
-	var salesContact2Account = function(stripe_id){
+	var salesContact2Account = function(chargeObj){
+		// pass chargeObj, from inside function stripe_id = chargeObj.customer
+		// invoice will be chargeObj.invoice
+		var stripe_id = chargeObj.customer
+
 		var deferred = q.defer()
 		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
         console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
-          return deferred.resolve(res[0].AccountId)
+        // check invoice here and pass acct_id
+        	deferred.resolve(res[0].AccountId)
         });
         return deferred.promise;
 
@@ -149,26 +154,33 @@ app.post('/webhook', function(request, response){
 
 
 		if (request.body.type === 'charge.succeeded') {
-			var chargeObj = request.body.data.object
+			var chargeObj = {
+				customer: request.body.data.object.customer,
+				invoice: request.body.data.object.invoice	
+			}
+			// var chargeObj = request.body.data.object
 			// var acct_id
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
  			stripeId2SalesContact(stripe_id).then(function(){
- 				salesContact2Account(stripe_id)
+
+ 				salesContact2Account(chargeObj)
  				// console.log("POST ACCT FETCH", acct_id)
 
- 			}).then(function(acct_id){
- 				console.log("PRE OPPORTUNITY ACCT",acct_id)
- 				var charge = request.body.data.object;
- 				console.log(charge.invoice)
- 				if (charge.invoice !== null) {
- 					// stripeSubId2SFID
- 					console.log('INVOICE EXISTS')
+ 			})
 
- 				} else {
- 					console.log('INVOICE == NULL')
- 				};
+ 			// .then(function(acct_id){
+ 			// 	console.log("PRE OPPORTUNITY ACCT",acct_id)
+ 			// 	var charge = request.body.data.object;
+ 			// 	console.log(charge.invoice)
+ 			// 	if (charge.invoice !== null) {
+ 			// 		// stripeSubId2SFID
+ 			// 		console.log('INVOICE EXISTS')
+
+ 			// 	} else {
+ 			// 		console.log('INVOICE == NULL')
+ 			// 	};
 
  				// doSomthingWithId(acct_id)
  			})
