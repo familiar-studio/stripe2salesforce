@@ -157,11 +157,10 @@ app.post('/webhook', function(request, response){
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 				    var account_id = res[0].AccountId
 				    var account_name = res[0].Name
-				    console.log ("this is the account id:", account_id)
-				    console.log ("this is the account name:", account_name)
-				     console.log ("this is the amount:", amount/100)
+				    console.log (res[0].CreatedDate)
+				   
 				   console.log ("this is the account date:", date)
-				    console.log ("this is the account charge id:", charge_id)
+				    
 
 				    var date = moment.unix(res[0].CreatedDate).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
