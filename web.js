@@ -41,7 +41,7 @@ var conn = new jsforce.Connection({
 
 
 
-conn.login('keith@familiar-studio.com', '5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
+conn.login('keith@familiar-studio.com', 'KVWVXbwYUjbB33yDyh84HkGeL1fbW2ZDx0rnmu', function(err, res) {
   if (err) { return console.error(err); }
 })
 
@@ -110,7 +110,7 @@ app.post('/webhook', function(request, response){
 
 		if (request.body.type === 'charge.succeeded') {
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
- 			var stripe_id = request.body.data.object.id;
+ 			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
  			stripeId2SalesContact(stripe_id)
  		};
