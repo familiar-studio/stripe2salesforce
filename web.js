@@ -55,7 +55,9 @@ app.post('/webhook', function(request, response){
 
 	var stripeId2SalesContact = function(stripe_id){
 		console.log("hello, I am inside!")
+
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+			console.log("RESULT", res.length)
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
@@ -109,7 +111,7 @@ app.post('/webhook', function(request, response){
 		if (request.body.type === 'charge.succeeded') {
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.id;
-
+ 			console.log("STRIPE ID", stripe_id)
  			stripeId2SalesContact(stripe_id)
  		};
 
