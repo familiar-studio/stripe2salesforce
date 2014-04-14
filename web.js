@@ -49,9 +49,9 @@ conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE
 
 app.post('/webhook', function(request, response){
 
-	var stripeCheckName = function(){
+	var stripeCheckName = function(name){
 		//adding swtich case
-		var name = request.body.data.object.metadata.Name;
+		
 		console.log("THIS IS THE NAME", name)
 		if (typeof name == 'string') {
 			var name_array = name.split(' ');
@@ -86,7 +86,7 @@ app.post('/webhook', function(request, response){
 	 					
 	        			if (res.length == 0){
 	        				console.log("this means no contact but checking for email")
-        					conn.sobject("Contact").create({ FirstName : stripeCheckName().first_name, LastName: stripeCheckName().last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+        					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
         						console.log("%%%%RETURN", ret)
         				      if (err || !ret.success) { return console.error(err, ret); }
         				      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
