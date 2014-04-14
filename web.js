@@ -143,7 +143,8 @@ app.post('/webhook', function(request, response){
 		var stripe_id = chargeObj.customer;
 		var invoice = chargeObj.invoice;
 		var amount = chargeObj.amount;
-		console.log("THIS IS THE AMOUNT", amount);
+		var charge_id = chargeObj.charge_id; 
+		console.log("THIS IS THE Charge ID", charge_id);
 		// console.log("THIS IS THE STRIPE ID", stripe_id)
 		// console.log("IS THIS THE INVOICE?", chargeObj.invoice)
 
@@ -153,13 +154,14 @@ app.post('/webhook', function(request, response){
  				console.log("No invoice-- do a single charge here!")
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 				    var account_id = res[0].AccountId
+				    console.log(***********************res[0]*****************************)
 				    var account_name = res[0].AccountName
 				    console.log ("this is the account name: account_name")
 				    var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 				        conn.sobject("Opportunity").create({ 
 				        	Amount: (amount/100), 
-				        	Stripe_Charge_Id__c: charge.id, 
+				        	Stripe_Charge_Id__c: charge_id, 
 				        	// TODO: add charge logic to checkName func
 				        	Name: "Meghann's Test",
 				        	StageName: "Closed Won",
@@ -184,11 +186,11 @@ app.post('/webhook', function(request, response){
 
 
 		if (request.body.type === 'charge.succeeded') {
-			console.log ("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&", request.body.data.object)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
 				invoice: request.body.data.object.invoice,
 				amount: request.body.data.object.amount,
+				charge_id: request.body.data.object.id
 
 			}
 			// var chargeObj = request.body.data.object
