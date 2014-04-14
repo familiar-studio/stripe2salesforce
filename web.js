@@ -150,15 +150,15 @@ app.post('/webhook', function(request, response){
 
 		if (request.body.type === 'charge.succeeded') {
 			var chargeObj = request.body.data.object
-			var acct_id
+			// var acct_id
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
  			stripeId2SalesContact(stripe_id).then(function(){
- 				acct_id = salesContact2Account(stripe_id)
- 				console.log("POST ACCT FETCH", acct_id)
+ 				salesContact2Account(stripe_id)
+ 				// console.log("POST ACCT FETCH", acct_id)
 
- 			}).then(function(){
+ 			}).then(function(acct_id){
  				console.log("PRE OPPORTUNITY ACCT",acct_id)
  				var charge = request.body.data.object;
  				console.log(charge.invoice)
