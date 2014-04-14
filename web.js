@@ -52,8 +52,10 @@ app.post('/webhook', function(request, response){
 	var stripeCheckName = function(){
 		//adding swtich case
 		var name = request.body.data.object.metadata.Name;
+		console.log("THIS IS THE NAME", name)
 		if (typeof name == 'string') {
 			var name_array = name.split(' ');
+
 			return {
 				first_name: name_array[0], 
 				last_name: name_array[name_array.length - 1]
