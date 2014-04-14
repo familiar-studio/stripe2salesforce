@@ -156,8 +156,8 @@ app.post('/webhook', function(request, response){
  					
 				    var account_id = res[0].AccountId
 				    var account_name = res[0].Name
-				    console.log ("this is the account name:" account_name)
-				    console.log ("this is the account name:" account_name)
+				    console.log ("this is the account name:", account_id)
+				    console.log ("this is the account name:", account_name)
 				    var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 				        conn.sobject("Opportunity").create({ 
