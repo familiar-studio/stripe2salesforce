@@ -142,6 +142,8 @@ app.post('/webhook', function(request, response){
 		var deferred = q.defer();
 		var stripe_id = chargeObj.customer;
 		var invoice = chargeObj.invoice;
+		var amount = chargeObj.amount;
+		console.log("THIS IS THE AMOUNT", amount);
 		// console.log("THIS IS THE STRIPE ID", stripe_id)
 		// console.log("IS THIS THE INVOICE?", chargeObj.invoice)
 
@@ -150,9 +152,26 @@ app.post('/webhook', function(request, response){
  			} else {
  				console.log("No invoice-- do a single charge here!")
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-				        console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
-				        // check invoice here and pass acct_id
-				        	deferred.resolve(res[0].AccountId)
+				    var account_id = res[0].AccountId
+				    var account_name = res[0].AccountName
+				    console.log ("this is the account name: account_name")
+				    var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+
+				        conn.sobject("Opportunity").create({ 
+				        	Amount: (amount/100), 
+				        	Stripe_Charge_Id__c: charge.id, 
+				        	// TODO: add charge logic to checkName func
+				        	Name: "Meghann's Test",
+				        	StageName: "Closed Won",
+				        	CloseDate: date
+				        
+				        }, function(error, ret){
+				        	if (err || !ret.success) { return console.error(err, ret); }
+				        	console.log('worked?')
+				        });
+
+
+				    deferred.resolve(res[0].AccountId)
  				});
  			};
 		
@@ -167,7 +186,9 @@ app.post('/webhook', function(request, response){
 		if (request.body.type === 'charge.succeeded') {
 			var chargeObj = {
 				customer: request.body.data.object.customer,
-				invoice: request.body.data.object.invoice	
+				invoice: request.body.data.object.invoice,
+				charge: request.body.data.object.amount,
+
 			}
 			// var chargeObj = request.body.data.object
 			// var acct_id
