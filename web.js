@@ -140,6 +140,8 @@ app.post('/webhook', function(request, response){
 		// pass chargeObj, from inside function stripe_id = chargeObj.customer
 		// invoice will be chargeObj.invoice
 		var stripe_id = chargeObj.customer
+		console.log("THIS IS THE STRIPE ID", stripe_id)
+		console.log("IS THIS THE INVOICE?", chargeObj.invoice)
 
 		var deferred = q.defer()
 		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
