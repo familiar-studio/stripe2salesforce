@@ -147,7 +147,7 @@ app.post('/webhook', function(request, response){
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
- 			stripeId2SalesContact(stripe_id).then(salesContact2Account(stripe_id))
+ 			stripeId2SalesContact(stripe_id).then(function(){salesContact2Account(stripe_id)})
 
  		};
 
