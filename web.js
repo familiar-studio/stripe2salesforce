@@ -88,11 +88,13 @@ app.post('/webhook', function(request, response){
 	        			if (res.length == 0){
 	        				console.log("this means no contact but checking for email")
         					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+
         						console.log("%%%%RETURN", ret)
+
         						deferred.resolve(ret);
-        				      if (err || !ret.success) { return console.error(err, ret); }
-        				      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
-        				      deferred.resolve(ret);
+	        				    if (err || !ret.success) { return console.error(err, ret); }
+	        				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
+	        				    deferred.resolve(ret);
         				  	});
 	        			}else{
 	        				var sfContactId = res[0].Id
@@ -109,7 +111,7 @@ app.post('/webhook', function(request, response){
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
-        				            deferred.resolve(ret);
+        				            deferred.resolve(result);
         				        });
 
         				   });
@@ -126,7 +128,7 @@ app.post('/webhook', function(request, response){
 	                }, function(error, result){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
-	                     deferred.resolve(ret);
+	                     deferred.resolve(result);
 	                });
 	           });
 	        };
