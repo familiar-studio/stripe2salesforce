@@ -81,6 +81,7 @@ app.post('/webhook', function(request, response){
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
+	        		console.log("this is the email:", customer.metadata.Email)
 	        		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
 	 					var sfContactId = res[0].Id
 	        			if (res.length == 0){
