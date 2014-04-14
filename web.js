@@ -150,6 +150,7 @@ app.post('/webhook', function(request, response){
 
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
+ 				conn.sobject('Contract').find({  })
  			} else {
 
 
@@ -194,6 +195,7 @@ app.post('/webhook', function(request, response){
 
 
 		if (request.body.type === 'charge.succeeded') {
+			console.log("THIS IS THE BIG GUY________________________", request.body.data.object)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
 				invoice: request.body.data.object.invoice,
