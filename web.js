@@ -91,7 +91,7 @@ app.post('/webhook', function(request, response){
         						console.log("%%%%RETURN", ret)
         				      if (err || !ret.success) { return console.error(err, ret); }
         				      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
-        				      deferred.resolve(ret);
+        				      deferred.resolve();
         				  	});
 	        			}else{
 	        				var sfContactId = res[0].Id
@@ -108,7 +108,7 @@ app.post('/webhook', function(request, response){
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
-        				            deferred.resolve(ret);
+        				            deferred.resolve();
         				        });
 
         				   });
@@ -125,7 +125,7 @@ app.post('/webhook', function(request, response){
 	                }, function(error, result){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
-	                    deferred.resolve(ret);
+	                    deferred.resolve();
 	                });
 	           });
 	        };
