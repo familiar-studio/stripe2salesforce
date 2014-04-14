@@ -49,7 +49,23 @@ conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE
 
 app.post('/webhook', function(request, response){
 
-	
+	var stripeCheckName = function(){
+		//adding swtich case
+		var name = request.body.data.object.metadata.Name;
+		if (typeof name == 'string') {
+			var name_array = name.split(' ');
+			return {
+				first_name: name_array[0], 
+				last_name: name_array[name_array.length - 1]
+			};
+		} else {
+			return {
+				first_name: 'no first name listed',
+				last_name: 'no last name listed'
+			};
+		};
+		// TODO: get name from card for createOpportunity Invocation
+	}
 
 
 
@@ -59,8 +75,7 @@ app.post('/webhook', function(request, response){
 
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("RESULT", res.length)
-			var sfContactId = res[0].Id
-			console.log("THIS IS THE CONATCT ID", sfContactId)
+			
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
@@ -76,7 +91,7 @@ app.post('/webhook', function(request, response){
 	        				console.log("this was email and updating")
         					stripe.customers.retrieve(stripe_id, function(err, customer){
         				    	conn.sobject('Contact').update({
-        				            Id: sfContactId ,
+        				            Email: customer.metadata.Email ,
         				            Stripe_Customer_Id__c : stripe_id
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
