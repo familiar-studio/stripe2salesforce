@@ -41,7 +41,7 @@ var conn = new jsforce.Connection({
 
 
 
-conn.login('keith@familiar-studio.com', 'rfai8Y0Epsk1sUc1rcy1WNf0', function(err, res) {
+conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWprfai8Y0Epsk1sUc1rcy1WNf0', function(err, res) {
   if (err) { return console.error("I AM BROKEN, YO"); }
 })
 
