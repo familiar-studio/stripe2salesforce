@@ -78,7 +78,7 @@ app.post('/webhook', function(request, response){
 		  var deferred = q.defer();
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("RESULT", res.length)
-			
+			var sfExistingId = res[0].Id
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
@@ -120,7 +120,7 @@ app.post('/webhook', function(request, response){
 	        	console.log("CONTACT ALREADY EXITS")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
 	            	conn.sobject('Contact').update({
-	                    Id: sf_id,
+	                    Id: sfExistingId,
 	                    Email: customer.email
 	                }, function(error, result){
 	                    if (error || !ret.success) { return console.error(err, ret); }
@@ -136,7 +136,7 @@ app.post('/webhook', function(request, response){
 	var salesContact2Account = function(stripe_id){
 		console.log("HELO I AM INSIDE SALESCONTACT2ACCOUNT")
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-          console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
+        console.log("THIS IS THE ACCOUNT ID:###################", res[0].AccountId)
           return res[0].AccountId
         });
 
