@@ -127,20 +127,21 @@ app.post('/webhook', function(request, response){
 	    });
 	}
 		
-	// var salesContact2Account = function(stripe_id){
-	// 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
- //          console.log(res[0].AccountId)
- //          return res[0].AccountId
- //        });
+	var salesContact2Account = function(stripe_id){
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+          console.log(res[0].AccountId)
+          return res[0].AccountId
+        });
 
-	// }
+	}
 
 
 		if (request.body.type === 'charge.succeeded') {
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
- 			stripeId2SalesContact(stripe_id)
+ 			// stripeId2SalesContact(stripe_id)
+ 			console.log(salesContact2Account(stripe_id))
  		};
 
 
