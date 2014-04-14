@@ -162,7 +162,8 @@ app.post('/webhook', function(request, response){
 				   console.log ("this is the account date:", date)
 				    
 
-				    var date = moment.unix(res[0].CreatedDate).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+				    // var date = moment.unix(res[0].CreatedDate).format("YYYY-MM-DDTHH:mm:ss:ZZ")
+				    var date = res[0].CreatedDate
 
 				        conn.sobject("Opportunity").create({ 
 				        	Amount: (amount/100), 
