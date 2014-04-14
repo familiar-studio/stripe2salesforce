@@ -3,6 +3,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
+var q = require('q'); 
 
 var stripe = require("stripe")(
  "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
@@ -74,7 +75,7 @@ app.post('/webhook', function(request, response){
 
 	var stripeId2SalesContact = function(stripe_id){
 		console.log("hello, I am inside!")
-
+		  var deferred = q.defer();
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("RESULT", res.length)
 			
@@ -90,6 +91,7 @@ app.post('/webhook', function(request, response){
         						console.log("%%%%RETURN", ret)
         				      if (err || !ret.success) { return console.error(err, ret); }
         				      console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
+        				      deferred.resolve(ret);
         				  	});
 	        			}else{
 	        				var sfContactId = res[0].Id
@@ -106,7 +108,9 @@ app.post('/webhook', function(request, response){
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
+        				            deferred.resolve(ret);
         				        });
+
         				   });
 	        			}
 					});			            	
@@ -121,10 +125,12 @@ app.post('/webhook', function(request, response){
 	                }, function(error, result){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
+	                    deferred.resolve(ret);
 	                });
 	           });
 	        };
 	    });
+		return deferred.promise;
 	}
 		
 	var salesContact2Account = function(stripe_id){
@@ -140,8 +146,8 @@ app.post('/webhook', function(request, response){
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
  			var stripe_id = request.body.data.object.customer;
  			console.log("STRIPE ID", stripe_id)
- 			// stripeId2SalesContact(stripe_id)
- 			console.log(salesContact2Account(stripe_id))
+ 			stripeId2SalesContact(stripe_id).then(salesContact2Account(stripe_id))
+
  		};
 
 
