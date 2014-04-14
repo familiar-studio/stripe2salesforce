@@ -157,9 +157,12 @@ app.post('/webhook', function(request, response){
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 				    var account_id = res[0].AccountId
 				    var account_name = res[0].Name
-				    console.log ("here:", res[0].CreatedDate)
 				   	var date = res[0].CreatedDate
+				   	
 				   	console.log ("this is the account date:", date)
+				   	console.log ("this is the account id:", account_id)
+				   	console.log ("this is the account amount:", amount/100)
+				   	console.log ("this is the account charge_id:", charge_id)
 				    
 
 				        conn.sobject("Opportunity").create({ 
