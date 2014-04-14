@@ -59,6 +59,8 @@ app.post('/webhook', function(request, response){
 
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("RESULT", res.length)
+			var sfContactId = res[0].Id
+			console.log("THIS IS THE CONATCT ID", sfContactId)
 	        if (res.length == 0) {
 	        	console.log("this means no contact in SF")
 	        	stripe.customers.retrieve(stripe_id, function(err, customer){
@@ -74,8 +76,8 @@ app.post('/webhook', function(request, response){
 	        				console.log("this was email and updating")
         					stripe.customers.retrieve(stripe_id, function(err, customer){
         				    	conn.sobject('Contact').update({
-        				            Id: sf_id,
-        				            Email: customer.metadata.Email
+        				            Id: sfContactId ,
+        				            Stripe_Customer_Id__c : stripe_id
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
