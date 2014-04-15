@@ -31,6 +31,7 @@ app.use(logfmt.requestLogger());
 // Salesforce Connection information
 
 
+
 var stripeCheckName = function(name){
 	console.log("FULL NAME", name)
 	if (typeof name == 'string') {
@@ -178,10 +179,11 @@ var salesContact2Contract = function(chargeObj){
 	};
 }
 
-
+var conn 
 
 app.post('/webhook', function(request, response){
-	var conn = new jsforce.Connection({
+	
+	conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
 	    clientSecret : '8923954381316425368',
@@ -195,6 +197,7 @@ app.post('/webhook', function(request, response){
 	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
 
 	  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
+	
 	})
 
 
