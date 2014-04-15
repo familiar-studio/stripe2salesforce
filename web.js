@@ -57,54 +57,54 @@ var stripeId2SalesContact = function(stripe_id){
 	console.log('CREATING / UPDATING CONTACT')
 	var deferred = q.defer();
 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
-		
-      if (res.length == 0) {
-      	stripe.customers.retrieve(stripe_id, function(err, customer){
-      		console.log('CUSTOMER', customer)
+		console.log(stripe_id, res.length)
+    if (res.length == 0) {
+    	stripe.customers.retrieve(stripe_id, function(err, customer){
+    		console.log('CUSTOMER', customer)
 
-      		// if (typeof customer.metadata == 'string') {
-      		// 	var email = 
-      		// }
+    		// if (typeof customer.metadata == 'string') {
+    		// 	var email = 
+    		// }
 
-      		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
-					
-      			if (res.length == 0){
-    					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
-    				    if (err || !ret.success) { return console.error(err, ret); }
-    				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
-    				    deferred.resolve(ret);
-  				  	});
-      			} else {
-      				var sfContactId = res[0].Id
-    					stripe.customers.retrieve(stripe_id, function(err, customer){
-  				    	conn.sobject('Contact').update({
-			            Id: sfContactId,
-			            FirstName : stripeCheckName(customer.metadata.Name).first_name,
-			            LastName: stripeCheckName(customer.metadata.Name).last_name,
-			            Stripe_Customer_Id__c : stripe_id
-				        }, function(error, ret){
-			            if (error || !ret.success) { return console.error(err, ret); }
-			            console.log('Updated Customer found by Email:' + customer.metadata.Email);
-			            deferred.resolve(ret); 
-				        });
-    				  });
-      			};
-					});			            	
-      	});
-      } else {
-      	var sfExistingId = res[0].Id
-      	stripe.customers.retrieve(stripe_id, function(err, customer){
-        	conn.sobject('Contact').update({
-            Id: sfExistingId,
-            Email: customer.email
-          }, function(error, ret){
-						if (error || !ret.success) { return console.error(err, ret); }
-						console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
-						deferred.resolve(ret);
-          });
-       });
-      };
-    });
+    		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
+				
+    			if (res.length == 0){
+  					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+  				    if (err || !ret.success) { return console.error(err, ret); }
+  				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
+  				    deferred.resolve(ret);
+				  	});
+    			} else {
+    				var sfContactId = res[0].Id
+  					stripe.customers.retrieve(stripe_id, function(err, customer){
+				    	conn.sobject('Contact').update({
+		            Id: sfContactId,
+		            FirstName : stripeCheckName(customer.metadata.Name).first_name,
+		            LastName: stripeCheckName(customer.metadata.Name).last_name,
+		            Stripe_Customer_Id__c : stripe_id
+			        }, function(error, ret){
+		            if (error || !ret.success) { return console.error(err, ret); }
+		            console.log('Updated Customer found by Email:' + customer.metadata.Email);
+		            deferred.resolve(ret); 
+			        });
+  				  });
+    			};
+				});			            	
+    	});
+    } else {
+    	var sfExistingId = res[0].Id
+    	stripe.customers.retrieve(stripe_id, function(err, customer){
+      	conn.sobject('Contact').update({
+          Id: sfExistingId,
+          Email: customer.email
+        }, function(error, ret){
+					if (error || !ret.success) { return console.error(err, ret); }
+					console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
+					deferred.resolve(ret);
+        });
+     });
+    };
+  });
 	return deferred.promise;
 }
 
