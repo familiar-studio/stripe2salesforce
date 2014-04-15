@@ -166,7 +166,24 @@ app.post('/webhook', function(request, response){
 	              			  	console.log('CONTRACT CREATED WITH ID: ', ret.id)
 	              			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
 	              			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", ret[0])
-	              			  		// createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
+														var contract_num = res[0].ContractNumber		  
+														var account_id = res[0].AccountId
+														var account_name = res[0].Name
+														var date = res[0].CreatedDate
+
+														conn.sobject("Opportunity").create({ 
+															Amount: (amount/100), 
+															Stripe_Charge_Id__c: charge_id, 
+															Name: "this is old sub new charge",
+															StageName: "Closed Won",
+															CloseDate: date,
+															AccountId: account_id,
+															Contract__c: ContractNumber
+
+														}, function(error, ret){
+															if (err || !ret.success) { return console.error(err, ret); }
+															console.log('worked?')
+														});
 	              			  	});
 	              			  });
 	              			});
