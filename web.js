@@ -55,41 +55,37 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 
-		console.log(stripe_id, res.length)
-
     if (res.length == 0) {
 
     	stripe.customers.retrieve('cus_3rOOkGiqkcsaPJ', function(err, customer){
-    		console.log('CUSTOMER', customer)
+    		if (typeof customer.metadata == 'string') {
+    			var email = 
+    		}
 
-    		// if (typeof customer.metadata == 'string') {
-    		// 	var email = 
-    		// }
-
-    		// conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
+    		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
 				
-    		// 	if (res.length == 0){
-  				// 	conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
-  				//     if (err || !ret.success) { return console.error(err, ret); }
-  				//     console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
-  				//     deferred.resolve(ret);
-				  // 	});
-    		// 	} else {
-    		// 		var sfContactId = res[0].Id
-  				// 	stripe.customers.retrieve(stripe_id, function(err, customer){
-				  //   	conn.sobject('Contact').update({
-		    //         Id: sfContactId,
-		    //         FirstName : stripeCheckName(customer.metadata.Name).first_name,
-		    //         LastName: stripeCheckName(customer.metadata.Name).last_name,
-		    //         Stripe_Customer_Id__c : stripe_id
-			   //      }, function(error, ret){
-		    //         if (error || !ret.success) { return console.error(err, ret); }
-		    //         console.log('Updated Customer found by Email:' + customer.metadata.Email);
-		    //         deferred.resolve(ret); 
-			   //      });
-  				//   });
-    		// 	};
-				// });			            	
+    			if (res.length == 0){
+  					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+  				    if (err || !ret.success) { return console.error(err, ret); }
+  				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
+  				    deferred.resolve(ret);
+				  	});
+    			} else {
+    				var sfContactId = res[0].Id
+  					stripe.customers.retrieve(stripe_id, function(err, customer){
+				    	conn.sobject('Contact').update({
+		            Id: sfContactId,
+		            FirstName : stripeCheckName(customer.metadata.Name).first_name,
+		            LastName: stripeCheckName(customer.metadata.Name).last_name,
+		            Stripe_Customer_Id__c : stripe_id
+			        }, function(error, ret){
+		            if (error || !ret.success) { return console.error(err, ret); }
+		            console.log('Updated Customer found by Email:' + customer.metadata.Email);
+		            deferred.resolve(ret); 
+			        });
+  				  });
+    			};
+				});			            	
     	});
     } else {
     	var sfExistingId = res[0].Id
@@ -200,7 +196,7 @@ var loginDevelopment = function(){
 	stripe = require("stripe")(
 	 "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
 	);
-	
+
 	conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
