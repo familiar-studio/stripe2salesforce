@@ -174,7 +174,7 @@ app.post('/webhook', function(request, response){
 
 	          				console.log("SUB IN SF!")
 	          				
-			           //    		var contract =		  
+			           //    		var contract_num = res[0].ContractNumber		  
 	             //  			   var account_id = res[0].AccountId
 	             //  			   var account_name = res[0].Name
 	             //  			  	var date = res[0].CreatedDate
@@ -186,7 +186,7 @@ app.post('/webhook', function(request, response){
 		            //   			  	StageName: "Closed Won",
 		            //   			  	CloseDate: date,
 		            //   			  	AccountId: account_id,
-		            //   			  	Contract__c: 
+		            //   			  	Contract__c: ContractNumber
               			  	
               			  	
               			  
