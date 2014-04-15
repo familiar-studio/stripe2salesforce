@@ -261,17 +261,33 @@ app.post('/webhook', function(request, response){
 				charge_id: request.body.data.object.id
 
 			}
+
+			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+				if (res.length === 0){
+					var stripe_id = request.body.data.object.customer;
+					console.log("STRIPE ID", stripe_id)
+					stripeId2SalesContact(stripe_id).then(function(){
+
+						salesContact2Account(chargeObj)
+						// console.log("POST ACCT FETCH", acct_id)
+
+					})
+				} else {
+					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
+				}
+
+			});
 			// var chargeObj = request.body.data.object
 			// var acct_id
  			// WAIT UNTIL INVOKED BY CUSTOMER VALIDATION
- 			var stripe_id = request.body.data.object.customer;
- 			console.log("STRIPE ID", stripe_id)
- 			stripeId2SalesContact(stripe_id).then(function(){
+ 			// var stripe_id = request.body.data.object.customer;
+ 			// console.log("STRIPE ID", stripe_id)
+ 			// stripeId2SalesContact(stripe_id).then(function(){
 
- 				salesContact2Account(chargeObj)
- 				// console.log("POST ACCT FETCH", acct_id)
+ 			// 	salesContact2Account(chargeObj)
+ 			// 	// console.log("POST ACCT FETCH", acct_id)
 
- 			})
+ 			// })
 
  			// .then(function(acct_id){
  			// 	console.log("PRE OPPORTUNITY ACCT",acct_id)
