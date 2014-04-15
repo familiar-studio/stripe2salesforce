@@ -189,9 +189,9 @@ app.post('/webhook', function(request, response){
 
 	    				console.log("SUB IN SF!")
 				  		console.log("HERE BE THE OLD CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
-							var contract_id = res[0].Id  
-							var account_id = res[0].AccountId
-							var date = res[0].CreatedDate
+							var contract_id = res[0].Id;
+							var account_id = res[0].AccountId;
+							var date = res[0].CreatedDate;
 
 							console.log("VARIABLES:", contract_id, account_id, date, charge_id)
 
