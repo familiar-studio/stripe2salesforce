@@ -61,16 +61,19 @@ var stripeId2SalesContact = function(stripe_id){
 
     		console.log(customer.metadata, typeof customer.metadata)
 
-    		if (typeof customer.metadata == 'object') {
-    			if (Object.keys(customer.metadada).length === 0) {
-	    			console.log('email does not exist')
-	    			var email = customer.email,
-	    					name = 'anonymous';
-	    		} else {
-	    			var email = customer.metadata.Email,
-	    					name = customer.metadata.Name;
-	    		}
-	    	}
+
+    		// uncomment to witness the lies of javascript:
+    		
+    		// if (typeof customer.metadata == 'object') {
+    		// 	if (Object.keys(customer.metadada).length === 0) {
+	    	// 		console.log('email does not exist')
+	    	// 		var email = customer.email,
+	    	// 				name = 'anonymous';
+	    	// 	} else {
+	    	// 		var email = customer.metadata.Email,
+	    	// 				name = customer.metadata.Name;
+	    	// 	}
+	    	// }
 
     		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
 				
