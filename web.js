@@ -183,7 +183,7 @@ var conn
 
 app.post('/webhook', function(request, response){
 	
-	conn = new jsforce.Connection({
+	var conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
 	    clientSecret : '8923954381316425368',
