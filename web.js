@@ -287,6 +287,17 @@ var loginChangeMachine = function(){
 	return deferred.promise;
 }
 
+var chargeObj = function(){
+	var deferred = q.defer();
+	deferred.resolve({
+		customer: chargeSucceeded.data.object.customer,
+		invoice: chargeSucceeded.data.object.invoice,
+		amount: chargeSucceeded.data.object.amount,
+		charge_id: chargeSucceeded.data.object.id
+	})
+	return deferred.promise
+}
+
 app.post('/webhook/changeMachine', function(request, response) {
 
 	client_ids = {
@@ -299,45 +310,83 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 		loginChangeMachine().then(function(){
 
-			console.log('EXECUTING SALES FORCE LOGIC')
-			
-			var chargeObj = {
-				customer: chargeSucceeded.data.object.customer,
-				invoice: chargeSucceeded.data.object.invoice,
-				amount: chargeSucceeded.data.object.amount,
-				charge_id: chargeSucceeded.data.object.id
-			};
+			chargeObj().then(function(obj){
 
-			console.log('CHARGE OBJ:', chargeObj)
+				console.log('EXECUTING SALES FORCE LOGIC')
+				
+				console.log('CHARGE OBJ:', obj)
 
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-				console.log('OPPORTUNITY FOUND / EXISTS', res)
+				// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj().charge_id }).limit(1).execute(function(err, res) {
+					
+				// 	console.log('OPPORTUNITY FOUND / EXISTS', res)
 
-				if (res.length === 0){
-					var stripe_id = chargeSucceeded.data.object.customer;
+				// 	if (res.length === 0){
+				// 		var stripe_id = chargeSucceeded.data.object.customer;
 
-					console.log('STRIPE_ID:', stripe_id)
+				// 		console.log('STRIPE_ID:', stripe_id)
 
-					stripeId2SalesContact(stripe_id).then(function(){
+				// 		stripeId2SalesContact(stripe_id).then(function(){
 
-						salesContact2Contract(chargeObj);
+				// 			salesContact2Contract(chargeObj);
 
+				// 		});
+				// 	} else {
+				// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+				// 	};
+
+				// });
+
+				mongo.Db.connect(mongoUri, function(err, db) {
+					// may be viewed at bash$ heroku addons:open mongolab
+		 			db.collection('stripeLogs', function(er, collection) {
+		 				collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
+		 					console.log(err);
+
+		 				});
 					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
-
-			});
-
-			mongo.Db.connect(mongoUri, function(err, db) {
-				// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
-	 					console.log(err);
-
-	 				});
 				});
-			});
+			})
+
+			// console.log('EXECUTING SALES FORCE LOGIC')
+			
+			// var chargeObj = {
+			// 	customer: chargeSucceeded.data.object.customer,
+			// 	invoice: chargeSucceeded.data.object.invoice,
+			// 	amount: chargeSucceeded.data.object.amount,
+			// 	charge_id: chargeSucceeded.data.object.id
+			// };
+
+			// console.log('CHARGE OBJ:', chargeObj)
+
+			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj().charge_id }).limit(1).execute(function(err, res) {
+				
+			// 	console.log('OPPORTUNITY FOUND / EXISTS', res)
+
+			// 	if (res.length === 0){
+			// 		var stripe_id = chargeSucceeded.data.object.customer;
+
+			// 		console.log('STRIPE_ID:', stripe_id)
+
+			// 		stripeId2SalesContact(stripe_id).then(function(){
+
+			// 			salesContact2Contract(chargeObj);
+
+			// 		});
+			// 	} else {
+			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+			// 	};
+
+			// });
+
+			// mongo.Db.connect(mongoUri, function(err, db) {
+			// 	// may be viewed at bash$ heroku addons:open mongolab
+	 	// 		db.collection('stripeLogs', function(er, collection) {
+	 	// 			collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
+	 	// 				console.log(err);
+
+	 	// 			});
+			// 	});
+			// });
 		});
 	};
 
