@@ -92,7 +92,7 @@ var stripeId2SalesContact = function(stripe_id){
 			   //      });
   				//   });
     		// 	};
-				});			            	
+				// });			            	
     	});
     } else {
     	var sfExistingId = res[0].Id
