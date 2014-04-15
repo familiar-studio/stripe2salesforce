@@ -195,7 +195,7 @@ app.post('/webhook', function(request, response){
 
 
 		if (request.body.type === 'charge.succeeded') {
-			console.log("THIS IS THE BIG GUY________________________", request.body.data.object)
+			console.log("THIS IS THE BIG GUY________________________", request.body.data)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
 				invoice: request.body.data.object.invoice,
