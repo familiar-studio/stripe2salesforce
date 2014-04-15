@@ -57,7 +57,9 @@ var stripeId2SalesContact = function(stripe_id){
 
     if (res.length == 0) {
 
-    	stripe.customers.retrieve('cus_3rOOkGiqkcsaPJ', function(err, customer){
+    	stripe.customers.retrieve(stripe_id, function(err, customer){
+
+    		console.log("CUSTOMER", customer)
 
     		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
 				
