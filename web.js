@@ -61,8 +61,8 @@ var stripeId2SalesContact = function(stripe_id){
 		console.log(stripe_id, res.length)
 
     if (res.length == 0) {
-    	
-    	stripe.customers.retrieve(stripe_id, function(err, customer){
+
+    	stripe.customers.retrieve('cus_3rOOkGiqkcsaPJ', function(err, customer){
     		console.log('CUSTOMER', customer)
 
     		// if (typeof customer.metadata == 'string') {
