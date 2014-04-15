@@ -47,8 +47,6 @@ conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE
 
 
 var stripeCheckName = function(name){
-	//adding swtich case
-	
 	console.log("FULL NAME", name)
 	if (typeof name == 'string') {
 		var name_array = name.split(' ');
@@ -196,7 +194,8 @@ var salesContact2Contract = function(chargeObj){
 }
 
 
-app.post('/webhook/', function(request, response){
+
+app.post('/webhook', function(request, response){
 
 		if (request.body.type === 'charge.succeeded' ) {
 			var chargeObj = {
