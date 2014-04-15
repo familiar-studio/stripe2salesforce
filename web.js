@@ -171,8 +171,8 @@ app.post('/webhook', function(request, response){
 				        	Stripe_Charge_Id__c: charge_id, 
 				        	Name: "YES THIS WORKS",
 				        	StageName: "Closed Won",
-				        	CloseDate: date
-				        	//Account: account_id
+				        	CloseDate: date,
+				        	AccountId: account_id //try this? 
 				        	// WHEN ADDING ACCOUND FIELD THE CREATE METHOD BREAKS, I THINK THIS MAY BE BECAUSE THE DATA TYPE IS A "INFO LOOK UP"
 				        	
 				        
