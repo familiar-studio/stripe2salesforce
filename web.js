@@ -160,7 +160,13 @@ app.post('/webhook', function(request, response){
 	 				conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 	          			if (res.length === 0) {
 	              			console.log(' NO SUB IN SF__________Moving to create subscription')
-	              			
+	              			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+	              			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
+	              			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
+	              			  		createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
+	              			  	});
+	              			  });
+	              			});
 	          			} else {
 	          				console.log("SUB IN SF!")
 	              			console.log('Subscription for' + res[0].Id + 'Exists');
