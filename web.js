@@ -159,12 +159,12 @@ app.post('/webhook', function(request, response){
 	        				console.log('ACCOUNT ID: ', res[0].AccountId)
 	        			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
 	        			  	console.log('CONTRACT CREATED WITH ID: ', ret.id)
-	        			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
-	        			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", ret[0])
-											var contract_num = res[0].ContractNumber		  
-											var account_id = res[0].AccountId
-											var account_name = res[0].Name
-											var date = res[0].CreatedDate
+	        			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+	        			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", result[0])
+											var contract_num = result[0].ContractNumber		  
+											var account_id = result[0].AccountId
+											var account_name = result[0].Name
+											var date = result[0].CreatedDate
 
 											conn.sobject("Opportunity").create({ 
 												Amount: (amount/100), 
@@ -185,7 +185,7 @@ app.post('/webhook', function(request, response){
 	    			} else {
 
 	    				console.log("SUB IN SF!")
-				  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
+				  		console.log("HERE BE THE OLD CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
 							var contract_num = res[0].ContractNumber		  
 							var account_id = res[0].AccountId
 							var account_name = res[0].Name
