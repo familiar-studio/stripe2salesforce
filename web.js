@@ -310,10 +310,10 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 			console.log('CHARGE OBJ:', chargeObj)
 
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				console.log('OPPORTUNITY FOUND / EXISTS', res)
 
-				if (res.length === 0){
+				// if (res.length === 0){
 					var stripe_id = chargeSucceeded.data.object.customer;
 
 					console.log('STRIPE_ID:', stripe_id)
@@ -323,11 +323,11 @@ app.post('/webhook/changeMachine', function(request, response) {
 						salesContact2Contract(chargeObj);
 
 					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
+				// } else {
+					// console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+				// };
 
-			});
+			// });
 
 			mongo.Db.connect(mongoUri, function(err, db) {
 				// may be viewed at bash$ heroku addons:open mongolab
