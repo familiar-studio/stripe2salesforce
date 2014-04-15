@@ -29,21 +29,6 @@ app.use(app.router);
 app.use(logfmt.requestLogger());
 
 // Salesforce Connection information
-var conn = new jsforce.Connection({
-  oauth2 : {
-    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
-    clientSecret : '8923954381316425368',
-    redirectUri : 'https://stripe2salesforce.herokuapp.com',
-    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-
-  },
-//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-})
-
-conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
-
-  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
-})
 
 
 var stripeCheckName = function(name){
@@ -196,40 +181,56 @@ var salesContact2Contract = function(chargeObj){
 
 
 app.post('/webhook', function(request, response){
+	var conn = new jsforce.Connection({
+	  oauth2 : {
+	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
+	    clientSecret : '8923954381316425368',
+	    redirectUri : 'https://stripe2salesforce.herokuapp.com',
+	    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 
-		if (request.body.type === 'charge.succeeded' ) {
-			var chargeObj = {
-				customer: request.body.data.object.customer,
-				invoice: request.body.data.object.invoice,
-				amount: request.body.data.object.amount,
-				charge_id: request.body.data.object.id
+	  },
+	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
+	})
+
+	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
+
+	  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
+	})
+
+
+	if (request.body.type === 'charge.succeeded' ) {
+		var chargeObj = {
+			customer: request.body.data.object.customer,
+			invoice: request.body.data.object.invoice,
+			amount: request.body.data.object.amount,
+			charge_id: request.body.data.object.id
+		};
+
+		conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+			if (res.length === 0){
+				var stripe_id = request.body.data.object.customer;
+				stripeId2SalesContact(stripe_id).then(function(){
+
+					salesContact2Contract(chargeObj);
+
+				});
+			} else {
+				console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
 			};
 
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-				if (res.length === 0){
-					var stripe_id = request.body.data.object.customer;
-					stripeId2SalesContact(stripe_id).then(function(){
+		});
 
-						salesContact2Contract(chargeObj);
+		mongo.Db.connect(mongoUri, function(err, db) {
+			// may be viewed at bash$ heroku addons:open mongolab
+ 			db.collection('stripeLogs', function(er, collection) {
+ 				collection.insert({'stripeReq':request.body}, function(err, result){
+ 					console.log(err);
 
-					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
-				};
-
+ 				});
 			});
+		});
 
-			mongo.Db.connect(mongoUri, function(err, db) {
- 			// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({'stripeReq':request.body}, function(err, result){
-	 					console.log(err);
-
-	 				});
-	 			});
- 			});
-
- 		};
+	};
 
 	response.send('OK');
 	response.end();
