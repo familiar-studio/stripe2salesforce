@@ -161,11 +161,11 @@ app.post('/webhook', function(request, response){
 	        			  	console.log('CONTRACT CREATED WITH ID: ', ret.id)
 	        			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
 	        			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", result[0])
-											var contract_num = result[0].Id;		  
+											var contract_id = result[0].Id;		  
 											var account_id = result[0].AccountId;
 											var date = result[0].CreatedDate;
 
-											console.log('VARIABLES: ', contract_num, account_id, date)
+											console.log('VARIABLES: ', contract_id, account_id, date)
 
 
 
@@ -176,7 +176,7 @@ app.post('/webhook', function(request, response){
 												StageName: "Closed Won",
 												CloseDate: date,
 												AccountId: account_id,
-												Contract__c: contract_num
+												Contract__c: contract_id
 
 											}, function(error, ret){
 												if (err || !ret.success) { return console.error(err, ret); }
@@ -189,11 +189,11 @@ app.post('/webhook', function(request, response){
 
 	    				console.log("SUB IN SF!")
 				  		console.log("HERE BE THE OLD CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
-							var contract_num = res[0].ContractNumber		  
+							var contract_id = res[0].Id  
 							var account_id = res[0].AccountId
 							var date = res[0].CreatedDate
 
-							console.log("VARIABLES:", contract_num, account_id, date, charge_id)
+							console.log("VARIABLES:", contract_id, account_id, date, charge_id)
 
 							conn.sobject("Opportunity").create({ 
 								Amount: (amount/100), 
@@ -202,7 +202,7 @@ app.post('/webhook', function(request, response){
 								StageName: "Closed Won",
 								CloseDate: date,
 								AccountId: account_id,
-								Contract__c: contract_num
+								Contract__c: contract_id
 
 							}, function(error, ret){
 								if (err || !ret.success) { return console.error(err, ret); }
