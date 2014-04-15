@@ -5,9 +5,6 @@ var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var q = require('q'); 
 
-var stripe = require("stripe")(
- "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
-);
 var jsforce = require('jsforce');
 
 var moment = require('moment');
@@ -193,9 +190,17 @@ var salesContact2Contract = function(chargeObj){
 
 var conn;
 var client_ids;
+var stripe;
 
 var loginDevelopment = function(){	
+
 	var deferred = q.defer()
+
+
+	stripe = require("stripe")(
+	 "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
+	);
+	
 	conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
@@ -276,6 +281,11 @@ app.post('/webhook', function(request, response) {
 
 var loginChangeMachine = function(){
 	var deferred = q.defer()
+
+	stripe = require("stripe")(
+	 "sk_test_GrcQGm7NZntXmQh2X2o9Krrf"
+	);
+
 	conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
