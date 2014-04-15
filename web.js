@@ -185,7 +185,7 @@ app.post('/webhook', function(request, response){
 	    			} else {
 
 	    				console.log("SUB IN SF!")
-				  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", ret[0])
+				  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
 							var contract_num = res[0].ContractNumber		  
 							var account_id = res[0].AccountId
 							var account_name = res[0].Name
