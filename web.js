@@ -59,6 +59,15 @@ var stripeId2SalesContact = function(stripe_id){
 
     	stripe.customers.retrieve(stripe_id, function(err, customer){
 
+    		if (customer.metadata.Email == 'undefined'){
+    			console.log('email does not exist')
+    			var email = customer.email,
+    					name = 'anonymous';
+    		} else {
+    			var email = customer.metadata.Email,
+    					name = customer.metadata.Name;
+    		}
+
     		console.log("CUSTOMER", customer)
 
     		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
