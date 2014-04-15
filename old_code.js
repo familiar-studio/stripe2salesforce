@@ -113,6 +113,17 @@ var stripeCheckName = function(){
  		});
  	}
 
+
+ 	conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+ 	  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
+ 	  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
+ 	  		createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
+ 	  	});
+ 	  });
+ 	});
+
+
+
  	var findSFAccount = function(charge, subscription_id){
  		// At this point, we need the contact to already be created so we can find the AccountId
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : charge.customer }).limit(1).execute(function(err, res) {
