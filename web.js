@@ -155,7 +155,7 @@ app.post('/webhook', function(request, response){
  				stripe.invoices.retrieve( invoice, function(err, response){
 	 				// console.log("------------------------------response", response.subscription);
 	 				var sub_id = response.subscription 
-	 				var amount = response.amount
+	 				// var amount = response.amount
 
 	 				conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 	          			if (res.length === 0) {
@@ -171,30 +171,30 @@ app.post('/webhook', function(request, response){
 	          			} else {
 
 	          				console.log("SUB IN SF!")
-	          				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			              			  
+	          				
+			           //    		var contract =		  
+	             //  			   var account_id = res[0].AccountId
+	             //  			   var account_name = res[0].Name
+	             //  			  	var date = res[0].CreatedDate
 
-			              			  	conn.sobject("Opportunity").create({ 
-			              			  	Amount: (amount/100), 
-			              			  	Stripe_Charge_Id__c: charge_id, 
-			              			  	Name: "YES THIS WORKS",
-			              			  	StageName: "Closed Won",
-			              			  	CloseDate: date,
-			              			  	AccountId: account_id 
-			              			  	
-			              			  	
-			              			  
-			              			  }, function(error, ret){
-			              			  	if (err || !ret.success) { return console.error(err, ret); }
-			              			  	console.log('worked?')
-			              			  });
+	             //  			  	conn.sobject("Opportunity").create({ 
+		            //   			  	Amount: (amount/100), 
+		            //   			  	Stripe_Charge_Id__c: charge_id, 
+		            //   			  	Name: "this is old sub new charge",
+		            //   			  	StageName: "Closed Won",
+		            //   			  	CloseDate: date,
+		            //   			  	AccountId: account_id,
+		            //   			  	Contract__c: 
+              			  	
+              			  	
+              			  
+              // 			  }, function(error, ret){
+	             //  			  	if (err || !ret.success) { return console.error(err, ret); }
+	             //  			  	console.log('worked?')
+	             //  			  });
 
-
-	              			  });
-	              			});
-
-	              			console.log('Subscription for' + res[0].Id + 'Exists');
-		          		};
+	             //  			console.log('Subscription for' + res[0].Id + 'Exists');
+		          		// };
 		        	});
 
 
