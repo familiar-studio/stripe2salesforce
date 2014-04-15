@@ -150,7 +150,9 @@ app.post('/webhook', function(request, response){
 
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
- 				conn.sobject('Contract').find({  })
+ 				stripe.invoices.retrieve( invoice, function(err, response){
+ 				console.log("response", response);
+ 				});
  			} else {
 
 
@@ -195,7 +197,7 @@ app.post('/webhook', function(request, response){
 
 
 		if (request.body.type === 'charge.succeeded' ) { //|| 'customer.subscription.created' SWITHC STATEMENT HERE: IF CHARGE SUCCEED THEN THIS IF SUBSCRIPTION THEN THAT?
-			console.log("THIS IS THE BIG GUY________________________", request.body.data)
+			// console.log("THIS IS THE BIG GUY________________________", request.body.data)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
 				invoice: request.body.data.object.invoice,
