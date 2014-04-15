@@ -71,9 +71,6 @@ app.post('/webhook', function(request, response){
 				last_name: 'no last name listed'
 			};
 		};
-
-		console.log("")
-		// TODO: get name from card for createOpportunity Invocation
 	}
 
 
