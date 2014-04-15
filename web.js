@@ -161,7 +161,9 @@ app.post('/webhook', function(request, response){
 	          			if (res.length === 0) {
 	              			console.log(' NO SUB IN SF__________Moving to create subscription')
 	              			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+	              				console.log('ACCOUNT ID: ', res[0].AccountId)
 	              			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
+	              			  	console.log('CONTRACT CREATED WITH ID: ', ret.id)
 	              			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
 	              			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", ret[0])
 	              			  		// createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
@@ -194,7 +196,7 @@ app.post('/webhook', function(request, response){
 	             //  			  });
 
 	             //  			console.log('Subscription for' + res[0].Id + 'Exists');
-		          		// };
+		          		};
 		        	});
 
 
