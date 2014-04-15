@@ -112,6 +112,7 @@ app.post('/webhook', function(request, response){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
         				            deferred.resolve(result); //ISSUE HERE DOES NOT REACH BRANCH chnages to ret
+        				            console.log("RESULT!!!!!!!!!!!", result)
         				        });
 
         				   });
@@ -129,6 +130,7 @@ app.post('/webhook', function(request, response){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
 	                     deferred.resolve(result);
+	                     console.log("RESULT!!!!!!!!!!!", result)
 	                });
 	           });
 	        };
