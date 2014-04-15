@@ -181,6 +181,7 @@ var salesContact2Contract = function(chargeObj){
 
 
 var conn;
+var client_ids;
 
 var loginDevelopment = function(){	
 	var deferred = q.defer()
@@ -197,10 +198,9 @@ var loginDevelopment = function(){
 
 	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
 	  if (err) { return console.error("I AM BROKEN, YO"); } 
-	  console.log("connected!")
+	  console.log("connected to DEVELOPMENT")
 	  deferred.resolve(res)
 	})
-
 	return deferred.promise;
 }
 
@@ -208,12 +208,97 @@ var loginDevelopment = function(){
 
 app.post('/webhook', function(request, response) {
 
+	client_ids = {
+		contactRecord : '',
+		contractRecord : '',
+		opportunityRecord : ''
+	}
+
 	if (request.body.type === 'charge.succeeded' ) {
 		console.log('CHARGE SUCCEEDED')
 
 		var chargeSucceeded = request.body
 
 		loginDevelopment().then(function(){
+
+			console.log('CONNECTION OBJECT: ', conn)
+			
+			var chargeObj = {
+				customer: chargeSucceeded.data.object.customer,
+				invoice: chargeSucceeded.data.object.invoice,
+				amount: chargeSucceeded.data.object.amount,
+				charge_id: chargeSucceeded.data.object.id
+			};
+
+			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+				if (res.length === 0){
+					var stripe_id = chargeSucceeded.data.object.customer;
+					stripeId2SalesContact(stripe_id).then(function(){
+
+						salesContact2Contract(chargeObj);
+
+					});
+				} else {
+					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
+				};
+
+			});
+
+			mongo.Db.connect(mongoUri, function(err, db) {
+				// may be viewed at bash$ heroku addons:open mongolab
+	 			db.collection('stripeLogs', function(er, collection) {
+	 				collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
+	 					console.log(err);
+
+	 				});
+				});
+			});
+		});
+	};
+
+	response.send('OK');
+	response.end();
+});
+
+// ========================================
+//              CHANGE MACHINE
+// ========================================
+
+var loginChangeMachine = function(){
+	var deferred = q.defer()
+	conn = new jsforce.Connection({
+	  oauth2 : {
+	    clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
+	    clientSecret : '6117747355402425276',
+	    redirectUri : 'https://stripe2salesforce.herokuapp.com',
+	    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
+
+	  },
+	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
+	})
+
+	conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
+	  if (err) { return console.error("I AM BROKEN, YO"); } 
+	  console.log("connected to CHANGE MACHINE")
+	  deferred.resolve(res)
+	})
+	return deferred.promise;
+}
+
+app.post('/webhook/changeMachine', function(request, response) {
+
+	client_ids = {
+		contactRecord : '012G000000127om',
+		contractRecord : '012Z0000000D284',
+		opportunityRecord : '012Z0000000D289'
+	}
+
+	if (request.body.type === 'charge.succeeded' ) {
+		console.log('CHARGE SUCCEEDED')
+
+		var chargeSucceeded = request.body
+
+		loginChangeMachine().then(function(){
 
 			console.log('CONNECTION OBJECT: ', conn)
 			
