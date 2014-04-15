@@ -194,7 +194,7 @@ app.post('/webhook', function(request, response){
 	}
 
 
-		if (request.body.type === 'charge.succeeded') {
+		if (request.body.type === 'charge.succeeded' || 'customer.subscription.created') {
 			console.log("THIS IS THE BIG GUY________________________", request.body.data)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
