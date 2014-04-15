@@ -111,7 +111,7 @@ app.post('/webhook', function(request, response){
         				        }, function(error, result){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
-        				            deferred.resolve(result);
+        				            deferred.resolve(ret); //ISSUE HERE DOES NOT REACH BRANCH chnages to ret
         				        });
 
         				   });
@@ -128,7 +128,7 @@ app.post('/webhook', function(request, response){
 	                }, function(error, result){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
-	                     deferred.resolve(result);
+	                     deferred.resolve(ret);
 	                });
 	           });
 	        };
@@ -151,8 +151,25 @@ app.post('/webhook', function(request, response){
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
  				stripe.invoices.retrieve( invoice, function(err, response){
- 				console.log("------------------------------response", response);
- 				});
+ 				// console.log("------------------------------response", response.subscription);
+ 				var sub_id = response.subscription 
+ 				var amount = response.amount
+
+ 				conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
+          			if (res.length === 0) {
+              			console.log(' NO SUB IN SF__________Moving to create subscription')
+              			
+          			} else {
+          				console.log("SUB IN SF!")
+              			console.log('Subscription for' + res[0].Id + 'Exists');
+	          		};
+	        	});
+
+
+
+
+ 			});
+ 				
  			} else {
 
 
