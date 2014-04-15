@@ -191,10 +191,10 @@ app.post('/webhook', function(request, response){
 
  			} else {
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			    var account_id = res[0].AccountId
-			   	var date = res[0].CreatedDate
+			    var account_id = res[0].AccountId;
+			   	var date = res[0].CreatedDate;
 
-			   	createOpp(amount, charge_id, date, account_id)
+			   	createOpp(amount, charge_id, date, account_id);
  				});
  			};
 	}
@@ -206,34 +206,36 @@ app.post('/webhook', function(request, response){
 				invoice: request.body.data.object.invoice,
 				amount: request.body.data.object.amount,
 				charge_id: request.body.data.object.id
-			}
+			};
 
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				if (res.length === 0){
 					var stripe_id = request.body.data.object.customer;
 					stripeId2SalesContact(stripe_id).then(function(){
 
-						salesContact2Contract(chargeObj)
+						salesContact2Contract(chargeObj);
 
-					})
+					});
 				} else {
 					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
-				}
+				};
 
 			});
+
+			mongo.Db.connect(mongoUri, function(err, db) {
+ 			// may be viewed at bash$ heroku addons:open mongolab
+	 			db.collection('stripeLogs', function(er, collection) {
+	 				collection.insert({'stripeReq':request.body}, function(err, result){
+	 					console.log(err);
+
+	 				});
+	 			});
+ 			});
 
  		};
 
 
- 		mongo.Db.connect(mongoUri, function(err, db) {
- 			// may be viewed at bash$ heroku addons:open mongolab
- 			db.collection('stripeLogs', function(er, collection) {
- 				collection.insert({'stripeReq':request.body}, function(err, result){
- 					console.log(err);
-
- 				});
- 			});
- 		});
+ 		
 
 
 
