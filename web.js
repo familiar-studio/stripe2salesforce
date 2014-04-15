@@ -277,10 +277,10 @@ var loginChangeMachine = function(){
 	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 	})
 
-	conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
-	  if (err) { return console.error("I AM BROKEN, YO"); } 
-	  console.log("connected to CHANGE MACHINE")
-	  deferred.resolve(res)
+	conn.login('keith+changemachine@familiar-studio.com.change', '2GEcATmMirLMR9TxZbPYnJ8X4eEyfN6Yr8t', function(err, res) {
+	  if (err) { return console.error("I AM BROKEN, YO"); };
+	  console.log("connected to CHANGE MACHINE");
+	  deferred.resolve(res);
 	})
 	return deferred.promise;
 }
@@ -291,16 +291,16 @@ app.post('/webhook/changeMachine', function(request, response) {
 		contactRecord : '012G000000127om',
 		contractRecord : '012Z0000000D284',
 		opportunityRecord : '012Z0000000D289'
-	}
+	};
 
 	if (request.body.type === 'charge.succeeded' ) {
 		console.log('CHARGE SUCCEEDED')
 
-		var chargeSucceeded = request.body
+		var chargeSucceeded = request.body;
 
 		loginChangeMachine().then(function(){
 
-			console.log('CONNECTION OBJECT: ', conn)
+			console.log('CONNECTION OBJECT: ', conn);
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
@@ -318,7 +318,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 					});
 				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
+					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
 				};
 
 			});
@@ -337,7 +337,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	response.send('OK');
 	response.end();
-});
+})
 
 
 
