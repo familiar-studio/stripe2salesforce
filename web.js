@@ -215,13 +215,13 @@ app.post('/webhook', function(request, response) {
 	}
 
 	if (request.body.type === 'charge.succeeded' ) {
-		console.log('CHARGE SUCCEEDED')
+		console.log('CHARGE SUCCEEDED - DEVELOPMENT')
 
 		var chargeSucceeded = request.body
 
 		loginDevelopment().then(function(){
 
-			console.log('CONNECTION OBJECT: ', conn)
+			console.log('CONNECTION OBJECT - DEVELOPMENT: ', conn)
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
@@ -294,13 +294,13 @@ app.post('/webhook/changeMachine', function(request, response) {
 	};
 
 	if (request.body.type === 'charge.succeeded' ) {
-		console.log('CHARGE SUCCEEDED')
+		console.log('CHARGE SUCCEEDED - CHANGE MACHINE')
 
 		var chargeSucceeded = request.body;
 
 		loginChangeMachine().then(function(){
 
-			console.log('CONNECTION OBJECT: ', conn);
+			console.log('CONNECTION OBJECT - CHANGE MACHINE: ', conn);
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
