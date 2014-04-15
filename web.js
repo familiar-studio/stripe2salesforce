@@ -48,8 +48,6 @@ conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE
 })
 
 
-app.post('/webhook', function(request, response){
-
 	var stripeCheckName = function(name){
 		//adding swtich case
 		
@@ -73,9 +71,7 @@ app.post('/webhook', function(request, response){
 		};
 	}
 
-
-
-	var stripeId2SalesContact = function(stripe_id){
+var stripeId2SalesContact = function(stripe_id){
 		var deferred = q.defer();
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			
@@ -123,6 +119,7 @@ app.post('/webhook', function(request, response){
 		return deferred.promise;
 	}
 
+
 	var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		if (contract_id){
 			conn.sobject("Opportunity").create({ 
@@ -155,6 +152,8 @@ app.post('/webhook', function(request, response){
 			});
 		};
 	}
+
+
 		
 	var salesContact2Contract = function(chargeObj){
 
@@ -200,6 +199,10 @@ app.post('/webhook', function(request, response){
 	}
 
 
+
+
+app.post('/webhook/', function(request, response){
+
 		if (request.body.type === 'charge.succeeded' ) {
 			var chargeObj = {
 				customer: request.body.data.object.customer,
@@ -234,14 +237,13 @@ app.post('/webhook', function(request, response){
 
  		};
 
-
- 		
-
-
-
 	response.send('OK');
 	response.end();
 });
+
+
+
+
 
 
 var port = Number(process.env.PORT || 5000);
