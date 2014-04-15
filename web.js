@@ -59,7 +59,9 @@ var stripeId2SalesContact = function(stripe_id){
 
     	stripe.customers.retrieve(stripe_id, function(err, customer){
 
-    		if (customer.metadata.Email == 'undefined'){
+    		console.log(customer)
+
+    		if (Object.keys(customer.metadada).length === 0) {
     			console.log('email does not exist')
     			var email = customer.email,
     					name = 'anonymous';
@@ -67,8 +69,6 @@ var stripeId2SalesContact = function(stripe_id){
     			var email = customer.metadata.Email,
     					name = customer.metadata.Name;
     		}
-
-    		console.log("CUSTOMER", customer)
 
     		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
 				
@@ -337,12 +337,9 @@ app.post('/webhook/changeMachine', function(request, response) {
 			console.log('CHARGE OBJ:', chargeObj)
 
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-				console.log('OPPORTUNITY FOUND / EXISTS', res)
 
 				if (res.length === 0){
 					var stripe_id = chargeSucceeded.data.object.customer;
-
-					console.log('STRIPE_ID:', stripe_id)
 
 					stripeId2SalesContact(stripe_id).then(function(){
 
