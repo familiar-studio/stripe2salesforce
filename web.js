@@ -172,8 +172,8 @@ app.post('/webhook', function(request, response){
 				        	Name: "YES THIS WORKS",
 				        	StageName: "Closed Won",
 				        	CloseDate: date,
-				        	AccountId: account_id //try this? 
-				        	// WHEN ADDING ACCOUND FIELD THE CREATE METHOD BREAKS, I THINK THIS MAY BE BECAUSE THE DATA TYPE IS A "INFO LOOK UP"
+				        	AccountId: account_id 
+				        	
 				        	
 				        
 				        }, function(error, ret){
