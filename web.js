@@ -40,165 +40,160 @@ var conn = new jsforce.Connection({
 //  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 })
 
-
-
 conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
 
   if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
 })
 
 
-	var stripeCheckName = function(name){
-		//adding swtich case
-		
-		console.log("FULL NAME", name)
-		if (typeof name == 'string') {
-			var name_array = name.split(' ');
+var stripeCheckName = function(name){
+	//adding swtich case
+	
+	console.log("FULL NAME", name)
+	if (typeof name == 'string') {
+		var name_array = name.split(' ');
 
-			if (name_array.length == 1) {
-				return {first_name: '', last_name: name_array.join(' ')}
-			} else {
-				return {
-					first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
-					last_name: name_array[name_array.length - 1]
-				};
-			}
+		if (name_array.length == 1) {
+			return {first_name: '', last_name: name_array.join(' ')}
 		} else {
 			return {
-				first_name: 'no first name listed',
-				last_name: 'no last name listed'
+				first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
+				last_name: name_array[name_array.length - 1]
 			};
+		}
+	} else {
+		return {
+			first_name: 'no first name listed',
+			last_name: 'no last name listed'
 		};
-	}
+	};
+}
 
 var stripeId2SalesContact = function(stripe_id){
-		var deferred = q.defer();
-		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
-			
-        if (res.length == 0) {
-        	stripe.customers.retrieve(stripe_id, function(err, customer){
-        		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
- 					
-        			if (res.length == 0){
-      					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
-      				    if (err || !ret.success) { return console.error(err, ret); }
-      				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
-      				    deferred.resolve(ret);
-    				  	});
-        			} else {
-        				var sfContactId = res[0].Id
-      					stripe.customers.retrieve(stripe_id, function(err, customer){
-    				    	conn.sobject('Contact').update({
-				            Id: sfContactId,
-				            FirstName : stripeCheckName(customer.metadata.Name).first_name,
-				            LastName: stripeCheckName(customer.metadata.Name).last_name,
-				            Stripe_Customer_Id__c : stripe_id
-  				        }, function(error, ret){
-				            if (error || !ret.success) { return console.error(err, ret); }
-				            console.log('Updated Customer found by Email:' + customer.metadata.Email);
-				            deferred.resolve(ret); 
-  				        });
-      				  });
-        			};
-						});			            	
-        	});
-        } else {
-        	var sfExistingId = res[0].Id
-        	stripe.customers.retrieve(stripe_id, function(err, customer){
-          	conn.sobject('Contact').update({
-              Id: sfExistingId,
-              Email: customer.email
-            }, function(error, ret){
-							if (error || !ret.success) { return console.error(err, ret); }
-							console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
-							deferred.resolve(ret);
-            });
-         });
-        };
-	    });
-		return deferred.promise;
-	}
+	var deferred = q.defer();
+	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+		
+      if (res.length == 0) {
+      	stripe.customers.retrieve(stripe_id, function(err, customer){
+      		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
+					
+      			if (res.length == 0){
+    					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+    				    if (err || !ret.success) { return console.error(err, ret); }
+    				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
+    				    deferred.resolve(ret);
+  				  	});
+      			} else {
+      				var sfContactId = res[0].Id
+    					stripe.customers.retrieve(stripe_id, function(err, customer){
+  				    	conn.sobject('Contact').update({
+			            Id: sfContactId,
+			            FirstName : stripeCheckName(customer.metadata.Name).first_name,
+			            LastName: stripeCheckName(customer.metadata.Name).last_name,
+			            Stripe_Customer_Id__c : stripe_id
+				        }, function(error, ret){
+			            if (error || !ret.success) { return console.error(err, ret); }
+			            console.log('Updated Customer found by Email:' + customer.metadata.Email);
+			            deferred.resolve(ret); 
+				        });
+    				  });
+      			};
+					});			            	
+      	});
+      } else {
+      	var sfExistingId = res[0].Id
+      	stripe.customers.retrieve(stripe_id, function(err, customer){
+        	conn.sobject('Contact').update({
+            Id: sfExistingId,
+            Email: customer.email
+          }, function(error, ret){
+						if (error || !ret.success) { return console.error(err, ret); }
+						console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
+						deferred.resolve(ret);
+          });
+       });
+      };
+    });
+	return deferred.promise;
+}
 
 
-	var createOpp = function(amount, charge_id, date, account_id, contract_id){
-		if (contract_id){
-			conn.sobject("Opportunity").create({ 
-				Amount: (amount/100), 
-				Stripe_Charge_Id__c: charge_id, 
-				Name: "Old Subscription, new charge",
-				StageName: "Closed Won",
-				CloseDate: date,
-				AccountId: account_id,
-				Contract__c: contract_id
+var createOpp = function(amount, charge_id, date, account_id, contract_id){
+	if (contract_id){
+		conn.sobject("Opportunity").create({ 
+			Amount: (amount/100), 
+			Stripe_Charge_Id__c: charge_id, 
+			Name: "Old Subscription, new charge",
+			StageName: "Closed Won",
+			CloseDate: date,
+			AccountId: account_id,
+			Contract__c: contract_id
 
-			}, function(error, ret){
-				if (err || !ret.success) { return console.error(err, ret); }
-				console.log('new opportunity created from new contract: ', ret.id)
-			});
+		}, function(error, ret){
+			if (err || !ret.success) { return console.error(err, ret); }
+			console.log('new opportunity created from new contract: ', ret.id)
+		});
 
-		}else{
-			conn.sobject("Opportunity").create({ 
-				Amount: (amount/100), 
-				Stripe_Charge_Id__c: charge_id, 
-				Name: "single charge",
-				StageName: "Closed Won",
-				CloseDate: date,
-				AccountId: account_id 
-
-			
-			}, function(error, ret){
-				if (err || !ret.success) { return console.error(err, ret); }
-				console.log('single charge opportunity created')
-			});
-		};
-	}
-
+	}else{
+		conn.sobject("Opportunity").create({ 
+			Amount: (amount/100), 
+			Stripe_Charge_Id__c: charge_id, 
+			Name: "single charge",
+			StageName: "Closed Won",
+			CloseDate: date,
+			AccountId: account_id 
 
 		
-	var salesContact2Contract = function(chargeObj){
+		}, function(error, ret){
+			if (err || !ret.success) { return console.error(err, ret); }
+			console.log('single charge opportunity created')
+		});
+	};
+}
 
-		var stripe_id = chargeObj.customer;
-		var invoice = chargeObj.invoice;
-		var amount = chargeObj.amount;
-		var charge_id = chargeObj.charge_id; 
+	
+var salesContact2Contract = function(chargeObj){
 
- 			if (invoice !== null) {
- 				stripe.invoices.retrieve( invoice, function(err, response){
-	 				var sub_id = response.subscription 
+	var stripe_id = chargeObj.customer;
+	var invoice = chargeObj.invoice;
+	var amount = chargeObj.amount;
+	var charge_id = chargeObj.charge_id; 
 
-	 				conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
-	    			if (res.length === 0) {
-        			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-        			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
-        			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-										var contract_id = result[0].Id;		  
-										var account_id = result[0].AccountId;
-										var date = result[0].CreatedDate;
+	if (invoice !== null) {
+		stripe.invoices.retrieve( invoice, function(err, response){
+			var sub_id = response.subscription 
 
-										createOpp(amount, charge_id, date, account_id, contract_id)
-        			  	});
-        			  });
-        			});
-	    			} else {
-							var contract_id = res[0].Id;
-							var account_id = res[0].AccountId;
-							var date = res[0].CreatedDate;
-							createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
-	      		};
-		    	});
-	 			});
+			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
+			if (res.length === 0) {
+  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+  			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
+  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+							var contract_id = result[0].Id;		  
+							var account_id = result[0].AccountId;
+							var date = result[0].CreatedDate;
 
- 			} else {
- 				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			    var account_id = res[0].AccountId;
-			   	var date = res[0].CreatedDate;
+							createOpp(amount, charge_id, date, account_id, contract_id)
+  			  	});
+  			  });
+  			});
+			} else {
+				var contract_id = res[0].Id;
+				var account_id = res[0].AccountId;
+				var date = res[0].CreatedDate;
+				createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
+  		};
+  	});
+		});
 
-			   	createOpp(amount, charge_id, date, account_id);
- 				});
- 			};
-	}
+	} else {
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+    var account_id = res[0].AccountId;
+   	var date = res[0].CreatedDate;
 
-
+   	createOpp(amount, charge_id, date, account_id);
+		});
+	};
+}
 
 
 app.post('/webhook/', function(request, response){
