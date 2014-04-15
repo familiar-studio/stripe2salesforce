@@ -165,7 +165,7 @@ app.post('/webhook', function(request, response){
 											var account_id = result[0].AccountId
 											var date = result[0].CreatedDate
 
-											console.log('VARIABLES: ' contract_num, account_id, date)
+											console.log('VARIABLES: ', contract_num, account_id, date)
 
 
 
@@ -191,7 +191,8 @@ app.post('/webhook', function(request, response){
 				  		console.log("HERE BE THE OLD CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
 							var contract_num = res[0].ContractNumber		  
 							var account_id = res[0].AccountId
-							var date = res[0].CreatedDate
+							// var date = res[0].CreatedDate
+							var date = moment.unix(charge.created).format("YYYY-MM-DDTHH:mm:ss:ZZ")
 
 							console.log("VARIABLES:", contract_num, account_id, date, charge_id)
 
