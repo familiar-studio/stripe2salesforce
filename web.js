@@ -271,6 +271,7 @@ var loginChangeMachine = function(){
 	    clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
 	    clientSecret : '6117747355402425276',
 	    redirectUri : 'https://stripe2salesforce.herokuapp.com',
+	    loginUrl : 'https://test.salesforce.com',
 	    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 
 	  },
