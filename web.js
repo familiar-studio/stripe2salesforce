@@ -123,8 +123,47 @@ app.post('/webhook', function(request, response){
 	    });
 		return deferred.promise;
 	}
+
+	var createOpp = function(amount, charge_id, date, account_id, contract_id){
+
+		if (contract_id){
+			conn.sobject("Opportunity").create({ 
+				Amount: (amount/100), 
+				Stripe_Charge_Id__c: charge_id, 
+				Name: "Old Subscription, new charge",
+				StageName: "Closed Won",
+				CloseDate: date,
+				AccountId: account_id,
+				Contract__c: contract_id
+
+			}, function(error, ret){
+				if (err || !ret.success) { return console.error(err, ret); }
+				console.log('new opportunity created from new contract: ', ret.id)
+			});
+
+		}else{
+			conn.sobject("Opportunity").create({ 
+				Amount: (amount/100), 
+				Stripe_Charge_Id__c: charge_id, 
+				Name: "single charge",
+				StageName: "Closed Won",
+				CloseDate: date,
+				AccountId: account_id 
+
+			
+			}, function(error, ret){
+				if (err || !ret.success) { return console.error(err, ret); }
+				console.log('single charge opportunity created')
+			});
+
+
+		}
+
+
+
+	}
 		
-	var salesContact2Account = function(chargeObj){
+	var salesContact2Contract = function(chargeObj){
 
 		var stripe_id = chargeObj.customer;
 		var invoice = chargeObj.invoice;
@@ -144,19 +183,20 @@ app.post('/webhook', function(request, response){
 										var account_id = result[0].AccountId;
 										var date = result[0].CreatedDate;
 
-										conn.sobject("Opportunity").create({ 
-											Amount: (amount/100), 
-											Stripe_Charge_Id__c: charge_id, 
-											Name: "Old Subscription, new charge",
-											StageName: "Closed Won",
-											CloseDate: date,
-											AccountId: account_id,
-											Contract__c: contract_id
+										createOpp(amount, charge_id, date, account_id, contract_id)
+										// conn.sobject("Opportunity").create({ 
+										// 	Amount: (amount/100), 
+										// 	Stripe_Charge_Id__c: charge_id, 
+										// 	Name: "Old Subscription, new charge",
+										// 	StageName: "Closed Won",
+										// 	CloseDate: date,
+										// 	AccountId: account_id,
+										// 	Contract__c: contract_id
 
-										}, function(error, ret){
-											if (err || !ret.success) { return console.error(err, ret); }
-											console.log('new opportunity created from new contract: ', ret.id)
-										});
+										// }, function(error, ret){
+										// 	if (err || !ret.success) { return console.error(err, ret); }
+										// 	console.log('new opportunity created from new contract: ', ret.id)
+										// });
         			  	});
         			  });
         			});
@@ -164,20 +204,20 @@ app.post('/webhook', function(request, response){
 							var contract_id = res[0].Id;
 							var account_id = res[0].AccountId;
 							var date = res[0].CreatedDate;
+							createOpp(amount, charge_id, date, account_id, contract_id)
+							// conn.sobject("Opportunity").create({ 
+							// 	Amount: (amount/100), 
+							// 	Stripe_Charge_Id__c: charge_id, 
+							// 	Name: "New subscription, new charge",
+							// 	StageName: "Closed Won",
+							// 	CloseDate: date,
+							// 	AccountId: account_id,
+							// 	Contract__c: contract_id
 
-							conn.sobject("Opportunity").create({ 
-								Amount: (amount/100), 
-								Stripe_Charge_Id__c: charge_id, 
-								Name: "New subscription, new charge",
-								StageName: "Closed Won",
-								CloseDate: date,
-								AccountId: account_id,
-								Contract__c: contract_id
-
-							}, function(error, ret){
-								if (err || !ret.success) { return console.error(err, ret); }
-								console.log('new opportunity created from existing contract', ret.id)
-							});
+							// }, function(error, ret){
+							// 	if (err || !ret.success) { return console.error(err, ret); }
+							// 	console.log('new opportunity created from existing contract', ret.id)
+							// });
 	      		};
 		    	});
 	 			});
@@ -187,19 +227,20 @@ app.post('/webhook', function(request, response){
 			    var account_id = res[0].AccountId
 			   	var date = res[0].CreatedDate
 			   	
-	        conn.sobject("Opportunity").create({ 
-	        	Amount: (amount/100), 
-	        	Stripe_Charge_Id__c: charge_id, 
-	        	Name: "single charge",
-	        	StageName: "Closed Won",
-	        	CloseDate: date,
-	        	AccountId: account_id 
+			   	createOpp(amount, charge_id, date, account_id)
+	        // conn.sobject("Opportunity").create({ 
+	        // 	Amount: (amount/100), 
+	        // 	Stripe_Charge_Id__c: charge_id, 
+	        // 	Name: "single charge",
+	        // 	StageName: "Closed Won",
+	        // 	CloseDate: date,
+	        // 	AccountId: account_id 
 
 	        
-	        }, function(error, ret){
-	        	if (err || !ret.success) { return console.error(err, ret); }
-	        	console.log('single charge opportunity created')
-	        });
+	        // }, function(error, ret){
+	        // 	if (err || !ret.success) { return console.error(err, ret); }
+	        // 	console.log('single charge opportunity created')
+	        // });
 
  				});
  			};
@@ -219,7 +260,7 @@ app.post('/webhook', function(request, response){
 					var stripe_id = request.body.data.object.customer;
 					stripeId2SalesContact(stripe_id).then(function(){
 
-						salesContact2Account(chargeObj)
+						salesContact2Contract(chargeObj)
 
 					})
 				} else {
