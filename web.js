@@ -277,7 +277,7 @@ var loginChangeMachine = function(){
 	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 	})
 
-	conn.login('keith+changemachine@familiar-studio.com.change', '2GEcATmMirLMR9TxZbPYnJ8X4eEyfN6Yr8t', function(err, res) {
+	conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
 	  if (err) { return console.error("I AM BROKEN, YO", err); };
 	  console.log("connected to CHANGE MACHINE");
 	  deferred.resolve(res);
