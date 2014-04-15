@@ -55,12 +55,16 @@ app.post('/webhook', function(request, response){
 		
 		console.log("FULL NAME", name)
 		if (typeof name == 'string') {
-			var name_array = name.split(' '); 
+			var name_array = name.split(' ');
 
-			return {
-				first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
-				last_name: name_array[name_array.length - 1]
-			};
+			if (name_array.length == 1) {
+				return {first_name: 'N/A', last_name: name_array.join(' ')}
+			} else {
+				return {
+					first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
+					last_name: name_array[name_array.length - 1]
+				};
+			}
 		} else {
 			return {
 				first_name: 'no first name listed',
