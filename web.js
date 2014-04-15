@@ -172,9 +172,24 @@ app.post('/webhook', function(request, response){
 
 	          				console.log("SUB IN SF!")
 	          				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-	              			  
+			              			  
 
-	              			  
+			              			  	conn.sobject("Opportunity").create({ 
+			              			  	Amount: (amount/100), 
+			              			  	Stripe_Charge_Id__c: charge_id, 
+			              			  	Name: "YES THIS WORKS",
+			              			  	StageName: "Closed Won",
+			              			  	CloseDate: date,
+			              			  	AccountId: account_id 
+			              			  	
+			              			  	
+			              			  
+			              			  }, function(error, ret){
+			              			  	if (err || !ret.success) { return console.error(err, ret); }
+			              			  	console.log('worked?')
+			              			  });
+
+
 	              			  });
 	              			});
 
