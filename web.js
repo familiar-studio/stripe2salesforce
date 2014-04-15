@@ -53,12 +53,12 @@ app.post('/webhook', function(request, response){
 	var stripeCheckName = function(name){
 		//adding swtich case
 		
-		console.log("THIS IS THE NAME", name)
+		console.log("FULL NAME", name)
 		if (typeof name == 'string') {
-			var name_array = name.split(' ');
+			var name_array = name.split(' '); 
 
 			return {
-				first_name: name_array[0], 
+				first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
 				last_name: name_array[name_array.length - 1]
 			};
 		} else {
@@ -67,6 +67,8 @@ app.post('/webhook', function(request, response){
 				last_name: 'no last name listed'
 			};
 		};
+
+		console.log("")
 		// TODO: get name from card for createOpportunity Invocation
 	}
 
@@ -152,7 +154,7 @@ app.post('/webhook', function(request, response){
 
 										}, function(error, ret){
 											if (err || !ret.success) { return console.error(err, ret); }
-											console.log('new opportunity created from existing contract: ', ret.id)
+											console.log('new opportunity created from new contract: ', ret.id)
 										});
         			  	});
         			  });
@@ -173,7 +175,7 @@ app.post('/webhook', function(request, response){
 
 							}, function(error, ret){
 								if (err || !ret.success) { return console.error(err, ret); }
-								console.log('new opportunity created from new contract', ret.id)
+								console.log('new opportunity created from existing contract', ret.id)
 							});
 	      		};
 		    	});
