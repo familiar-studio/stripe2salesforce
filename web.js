@@ -178,10 +178,11 @@ var salesContact2Contract = function(chargeObj){
 	};
 }
 
+var conn;
 
-
-app.post('/webhook', function(request, response){
-	var conn = new jsforce.Connection({
+var loginDevelopment = function(){	
+	var deferred = q.defer()
+	conn = new jsforce.Connection({
 	  oauth2 : {
 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
 	    clientSecret : '8923954381316425368',
@@ -195,41 +196,56 @@ app.post('/webhook', function(request, response){
 	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
 
 	  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
+	  defer.resolve(res)
 	})
 
+	return deferred.promise;
+}
+
+
+
+app.post('/webhook', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
-		var chargeObj = {
-			customer: request.body.data.object.customer,
-			invoice: request.body.data.object.invoice,
-			amount: request.body.data.object.amount,
-			charge_id: request.body.data.object.id
-		};
+		console.log('CHARGE SUCCEEDED')
 
-		conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-			if (res.length === 0){
-				var stripe_id = request.body.data.object.customer;
-				stripeId2SalesContact(stripe_id).then(function(){
+		var chargeSucceeded = request.body
 
-					salesContact2Contract(chargeObj);
+		loginDevelopment().then(function(){
 
-				});
-			} else {
-				console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
+			console.log('CONNECTION OBJECT: ', conn)
+			
+			var chargeObj = {
+				customer: chargeSucceeded.data.object.customer,
+				invoice: chargeSucceeded.data.object.invoice,
+				amount: chargeSucceeded.data.object.amount,
+				charge_id: chargeSucceeded.data.object.id
 			};
 
-		});
+			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+				if (res.length === 0){
+					var stripe_id = chargeSucceeded.data.object.customer;
+					stripeId2SalesContact(stripe_id).then(function(){
 
-		mongo.Db.connect(mongoUri, function(err, db) {
-			// may be viewed at bash$ heroku addons:open mongolab
- 			db.collection('stripeLogs', function(er, collection) {
- 				collection.insert({'stripeReq':request.body}, function(err, result){
- 					console.log(err);
+						salesContact2Contract(chargeObj);
 
- 				});
+					});
+				} else {
+					console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
+				};
+
+			});
+
+			mongo.Db.connect(mongoUri, function(err, db) {
+				// may be viewed at bash$ heroku addons:open mongolab
+	 			db.collection('stripeLogs', function(er, collection) {
+	 				collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
+	 					console.log(err);
+
+	 				});
+				});
 			});
 		});
-
 	};
 
 	response.send('OK');
