@@ -191,6 +191,8 @@ app.post('/webhook', function(request, response){
 							var account_name = res[0].Name
 							var date = res[0].CreatedDate
 
+							console.log("VARIABLES:", contract_num, account_id, account_name, date, charge_id)
+
 							conn.sobject("Opportunity").create({ 
 								Amount: (amount/100), 
 								Stripe_Charge_Id__c: charge_id, 
