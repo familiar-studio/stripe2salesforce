@@ -215,13 +215,11 @@ app.post('/webhook', function(request, response) {
 	}
 
 	if (request.body.type === 'charge.succeeded' ) {
-		console.log('CHARGE SUCCEEDED - DEVELOPMENT')
 
 		var chargeSucceeded = request.body
 
 		loginDevelopment().then(function(){
 
-			console.log('CONNECTION OBJECT - DEVELOPMENT')
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
@@ -295,13 +293,10 @@ app.post('/webhook/changeMachine', function(request, response) {
 	};
 
 	if (request.body.type === 'charge.succeeded' ) {
-		console.log('CHARGE SUCCEEDED - CHANGE MACHINE')
-
 		var chargeSucceeded = request.body;
-
 		loginChangeMachine().then(function(){
 
-			console.log('CONNECTION OBJECT - CHANGE MACHINE');
+			console.log('EXECUTING SALES FORCE LOGIC')
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
