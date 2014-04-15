@@ -196,10 +196,9 @@ var loginDevelopment = function(){
 	})
 
 	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
-
-	  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
-	  defer.resolve(res)
-	
+	  if (err) { return console.error("I AM BROKEN, YO"); } 
+	  console.log("connected!")
+	  deferred.resolve(res)
 	})
 
 	return deferred.promise;
