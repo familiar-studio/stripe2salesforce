@@ -230,12 +230,9 @@ app.post('/webhook', function(request, response) {
 				charge_id: chargeSucceeded.data.object.id
 			};
 
-			console.log('CHARGE OBJ:', chargeObj)
-
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				if (res.length === 0){
 					var stripe_id = chargeSucceeded.data.object.customer;
-					console.log('STRIPE_ID:', stripe_id)
 
 					stripeId2SalesContact(stripe_id).then(function(){
 
@@ -311,9 +308,14 @@ app.post('/webhook/changeMachine', function(request, response) {
 				charge_id: chargeSucceeded.data.object.id
 			};
 
+			console.log('CHARGE OBJ:', chargeObj)
+
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				if (res.length === 0){
 					var stripe_id = chargeSucceeded.data.object.customer;
+
+					console.log('STRIPE_ID:', stripe_id)
+					
 					stripeId2SalesContact(stripe_id).then(function(){
 
 						salesContact2Contract(chargeObj);
