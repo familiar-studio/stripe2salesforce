@@ -31,6 +31,7 @@ app.use(logfmt.requestLogger());
 // Salesforce Connection information
 
 
+
 var stripeCheckName = function(name){
 	console.log("FULL NAME", name)
 	if (typeof name == 'string') {
@@ -178,6 +179,7 @@ var salesContact2Contract = function(chargeObj){
 	};
 }
 
+
 var conn;
 
 var loginDevelopment = function(){	
@@ -197,6 +199,7 @@ var loginDevelopment = function(){
 
 	  if (err) { return console.error("I AM BROKEN, YO"); } console.log("connected!")
 	  defer.resolve(res)
+	
 	})
 
 	return deferred.promise;
