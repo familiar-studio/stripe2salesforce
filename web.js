@@ -108,11 +108,11 @@ app.post('/webhook', function(request, response){
         				            FirstName : stripeCheckName(customer.metadata.Name).first_name,
         				            LastName: stripeCheckName(customer.metadata.Name).last_name,
         				            Stripe_Customer_Id__c : stripe_id
-        				        }, function(error, result){
+        				        }, function(error, ret){
         				            if (error || !ret.success) { return console.error(err, ret); }
         				            console.log('Updated Contact Email to:' + customer.metadata.Email);
-        				            deferred.resolve(result); //ISSUE HERE DOES NOT REACH BRANCH chnages to ret
-        				            console.log("RESULT!!!!!!!!!!!", result)
+        				            deferred.resolve(ret); //ISSUE HERE DOES NOT REACH BRANCH chnages to ret
+        				            console.log("RESULT!!!!!!!!!!!", ret)
         				        });
 
         				   });
@@ -126,11 +126,11 @@ app.post('/webhook', function(request, response){
 	            	conn.sobject('Contact').update({
 	                    Id: sfExistingId,
 	                    Email: customer.email
-	                }, function(error, result){
+	                }, function(error, ret){
 	                    if (error || !ret.success) { return console.error(err, ret); }
 	                    console.log('Updated Contact Email to:' + customer.metadata.Email);
-	                     deferred.resolve(result);
-	                     console.log("RESULT!!!!!!!!!!!", result)
+	                     deferred.resolve(ret);
+	                     console.log("RESULT!!!!!!!!!!!", ret)
 	                });
 	           });
 	        };
