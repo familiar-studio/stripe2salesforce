@@ -163,7 +163,8 @@ app.post('/webhook', function(request, response){
 	              			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	              			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
 	              			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, ret) { 
-	              			  		createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
+	              			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", ret[0])
+	              			  		// createSFSubscriptionOpportunity(charge, ret[0].ContractNumber);
 	              			  	});
 	              			  });
 	              			});
