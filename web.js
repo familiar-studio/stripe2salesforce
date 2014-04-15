@@ -54,6 +54,7 @@ var stripeCheckName = function(name){
 }
 
 var stripeId2SalesContact = function(stripe_id){
+	console.log('CREATING / UPDATING CONTACT')
 	var deferred = q.defer();
 	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 		
@@ -103,6 +104,7 @@ var stripeId2SalesContact = function(stripe_id){
 
 
 var createOpp = function(amount, charge_id, date, account_id, contract_id){
+	console.log('CREATING OPPORTUNITY')
 	if (contract_id){
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
@@ -137,7 +139,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 
 	
 var salesContact2Contract = function(chargeObj){
-
+	console.log('MOVING FROM CONTACT TO CONTRACT')
 	var stripe_id = chargeObj.customer;
 	var invoice = chargeObj.invoice;
 	var amount = chargeObj.amount;
@@ -228,9 +230,13 @@ app.post('/webhook', function(request, response) {
 				charge_id: chargeSucceeded.data.object.id
 			};
 
+			console.log('CHARGE OBJ:', chargeObj)
+
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				if (res.length === 0){
 					var stripe_id = chargeSucceeded.data.object.customer;
+					console.log('STRIPE_ID:', stripe_id)
+
 					stripeId2SalesContact(stripe_id).then(function(){
 
 						salesContact2Contract(chargeObj);
