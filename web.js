@@ -163,8 +163,11 @@ app.post('/webhook', function(request, response){
 	        			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", result[0])
 											var contract_num = result[0].ContractNumber		  
 											var account_id = result[0].AccountId
-											var account_name = result[0].Name
 											var date = result[0].CreatedDate
+
+											console.log('VARIABLES: ' contract_num, account_id, date)
+
+
 
 											conn.sobject("Opportunity").create({ 
 												Amount: (amount/100), 
@@ -177,7 +180,7 @@ app.post('/webhook', function(request, response){
 
 											}, function(error, ret){
 												if (err || !ret.success) { return console.error(err, ret); }
-												console.log('worked?')
+												console.log('OPPORTUNITY CREATED WITH ID: ', ret.id)
 											});
 	        			  	});
 	        			  });
@@ -188,10 +191,9 @@ app.post('/webhook', function(request, response){
 				  		console.log("HERE BE THE OLD CONTRACT -- NEXT STEP OPPORTUNITY:", res[0])
 							var contract_num = res[0].ContractNumber		  
 							var account_id = res[0].AccountId
-							var account_name = res[0].Name
 							var date = res[0].CreatedDate
 
-							console.log("VARIABLES:", contract_num, account_id, account_name, date, charge_id)
+							console.log("VARIABLES:", contract_num, account_id, date, charge_id)
 
 							conn.sobject("Opportunity").create({ 
 								Amount: (amount/100), 
@@ -214,7 +216,6 @@ app.post('/webhook', function(request, response){
  				console.log("No invoice-- do a single charge here!")
  				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 			    var account_id = res[0].AccountId
-			    var account_name = res[0].Name
 			   	var date = res[0].CreatedDate
 			   	
 			   	console.log ("this is the account date:", date)
