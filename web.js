@@ -161,9 +161,9 @@ app.post('/webhook', function(request, response){
 	        			  	console.log('CONTRACT CREATED WITH ID: ', ret.id)
 	        			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
 	        			  		console.log("HERE BE THE NEWLY CREATED CONTRACT -- NEXT STEP OPPORTUNITY:", result[0])
-											var contract_num = result[0].ContractNumber		  
-											var account_id = result[0].AccountId
-											var date = result[0].CreatedDate
+											var contract_num = result[0].Id;		  
+											var account_id = result[0].AccountId;
+											var date = result[0].CreatedDate;
 
 											console.log('VARIABLES: ', contract_num, account_id, date)
 
@@ -227,7 +227,7 @@ app.post('/webhook', function(request, response){
 	        conn.sobject("Opportunity").create({ 
 	        	Amount: (amount/100), 
 	        	Stripe_Charge_Id__c: charge_id, 
-	        	Name: "YES THIS WORKS",
+	        	Name: "single charge",
 	        	StageName: "Closed Won",
 	        	CloseDate: date,
 	        	AccountId: account_id 
