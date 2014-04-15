@@ -310,9 +310,10 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 		loginChangeMachine().then(function(){
 
+			console.log('EXECUTING SALES FORCE LOGIC')
+
 			chargeObj().then(function(obj){
 
-				console.log('EXECUTING SALES FORCE LOGIC')
 				
 				console.log('CHARGE OBJ:', obj)
 
