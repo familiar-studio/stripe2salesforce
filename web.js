@@ -150,9 +150,9 @@ app.post('/webhook', function(request, response){
 
  			if (invoice !== null) {
  				console.log("invoice!!! do a contract create here!!!!....and then an opportunity charge")
- 				// stripe.invoices.retrieve( invoice, function(err, response){
- 				// console.log("------------------------------response", response);
- 				// });
+ 				stripe.invoices.retrieve( invoice, function(err, response){
+ 				console.log("------------------------------response", response);
+ 				});
  			} else {
 
 
