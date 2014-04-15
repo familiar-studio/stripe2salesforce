@@ -221,7 +221,7 @@ app.post('/webhook', function(request, response) {
 
 		loginDevelopment().then(function(){
 
-			console.log('CONNECTION OBJECT - DEVELOPMENT: ', conn)
+			console.log('CONNECTION OBJECT - DEVELOPMENT')
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
@@ -301,7 +301,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 		loginChangeMachine().then(function(){
 
-			console.log('CONNECTION OBJECT - CHANGE MACHINE: ', conn);
+			console.log('CONNECTION OBJECT - CHANGE MACHINE');
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
