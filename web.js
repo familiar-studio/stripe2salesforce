@@ -194,7 +194,7 @@ app.post('/webhook', function(request, response){
 	}
 
 
-		if (request.body.type === 'charge.succeeded' || 'customer.subscription.created') {
+		if (request.body.type === 'charge.succeeded' ) { //|| 'customer.subscription.created' SWITHC STATEMENT HERE: IF CHARGE SUCCEED THEN THIS IF SUBSCRIPTION THEN THAT?
 			console.log("THIS IS THE BIG GUY________________________", request.body.data)
 			var chargeObj = {
 				customer: request.body.data.object.customer,
