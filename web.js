@@ -58,7 +58,7 @@ app.post('/webhook', function(request, response){
 			var name_array = name.split(' ');
 
 			if (name_array.length == 1) {
-				return {first_name: 'N/A', last_name: name_array.join(' ')}
+				return {first_name: '', last_name: name_array.join(' ')}
 			} else {
 				return {
 					first_name: name_array.slice(0, (name_array.length - 1)).join(' '), 
