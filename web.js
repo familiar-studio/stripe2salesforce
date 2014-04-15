@@ -178,7 +178,7 @@ app.post('/webhook', function(request, response){
 															StageName: "Closed Won",
 															CloseDate: date,
 															AccountId: account_id,
-															Contract__c: ContractNumber
+															Contract__c: contract_num
 
 														}, function(error, ret){
 															if (err || !ret.success) { return console.error(err, ret); }
