@@ -169,7 +169,15 @@ app.post('/webhook', function(request, response){
 	              			  });
 	              			});
 	          			} else {
+
 	          				console.log("SUB IN SF!")
+	          				conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+	              			  
+
+	              			  
+	              			  });
+	              			});
+
 	              			console.log('Subscription for' + res[0].Id + 'Exists');
 		          		};
 		        	});
