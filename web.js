@@ -59,7 +59,7 @@ var stripeId2SalesContact = function(stripe_id){
 
     	stripe.customers.retrieve(stripe_id, function(err, customer){
 
-    		console.log(customer)
+    		console.log(customer.metadata, typeof customer.metadata)
 
     		if (Object.keys(customer.metadada).length === 0) {
     			console.log('email does not exist')
