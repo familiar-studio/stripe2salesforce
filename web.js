@@ -355,7 +355,7 @@ var getDevelopmentLogins = function(organization){
 				  }) 
 				conn.login( result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
 				  if (err) { return console.error("I AM BROKEN, YO", err); };
-				  console.log("connected to CHANGE MACHINE");
+				  console.log("connected to DEVELOPMENT");
 				  deferred.resolve(res);
 				})
 
