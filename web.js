@@ -336,7 +336,7 @@ var getLogins = function(organization){
 	var deferred = q.defer()
 
 	mongo.Db.connect(mongoUri, function(err, db) {
-		if (err) { console.log(err); } console.log('connected')
+		if (err) { console.log(err); } console.log('connected', db)
 		var result = db.Organizations.organization.Development.find()
 		console.log("RESULT", result)
 		// db.collection('Organizations', function(er, collection){
