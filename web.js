@@ -66,7 +66,12 @@ var stripeId2SalesContact = function(stripe_id){
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			if (res.length == 0){
-  					conn.sobject("Contact").create({ FirstName : stripeCheckName(name).first_name, LastName: stripeCheckName(name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+  					conn.sobject("Contact").create({ 
+  						FirstName : stripeCheckName(name).first_name, 
+  						LastName: stripeCheckName(name).last_name,  
+  						Stripe_Customer_Id__c: stripe_id, 
+  						Email: customer.email 
+  					}, function(err, ret) {
   				    if (err || !ret.success) { return console.error(err, ret); }
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
