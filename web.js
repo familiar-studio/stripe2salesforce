@@ -55,7 +55,9 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
-
+		console.log("NAME", customer.metadata.Name )
+		console.log("DATA", customer.metadata )
+		console.log("Email", customer.metadata.Email )
 		if (customer.metadata.Name == null){
 			var name = 'anonymous';
 		} else {
