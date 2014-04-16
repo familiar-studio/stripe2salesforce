@@ -362,7 +362,6 @@ var getDevelopmentLogins = function(organization){
 				})
 
 				
-				// conn.login()
 			})
 		})
 	})
