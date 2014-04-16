@@ -341,7 +341,22 @@ var getDevelopmentLogins = function(organization){
 			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
 
-				conn = result.organization.Development.oauth2
+				var stripe = result.organization.Development.stripe_api.secret_key
+
+				conn = new jsforce.Connection({ 
+				oauth2: {
+					clientId: result.organization.Development.oauth2.clientId
+					clientSecret : result.organization.Development.oauth2.clientSecret,
+	    		redirectUri : result.organization.Development.oauth2.redirectUri,
+	    		loginUrl : result.organization.Development.oauth2.loginUrl,
+				},
+				  }) 
+				conn.login( result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
+				  if (err) { return console.error("I AM BROKEN, YO", err); };
+				  console.log("connected to CHANGE MACHINE");
+				  deferred.resolve(res);
+				})
+
 				
 				// conn.login()
 			})
