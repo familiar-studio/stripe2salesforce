@@ -58,10 +58,12 @@ var stripeId2SalesContact = function(stripe_id){
 
 		// uncomment to witness the lies of javascript:
 
-		console.log(typeof customer.metadata, customer.metadata)
+		console.log(typeof customer.metadata, customer.metadata, customer.metadata.email)
 
-		if (customer.metadata == {}){
-			console.log('yaaaaay!')
+		if (customer.metadata.email == null){
+			console.log('>>>>>null<<<<<')
+		} else if (customer.metadata.email == 'undefined') {
+			console.log('>>>>>undefined<<<<<')
 		}
 		
 		// if (typeof customer.metadata == 'object') {
