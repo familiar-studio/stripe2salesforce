@@ -56,19 +56,14 @@ var stripeId2SalesContact = function(stripe_id){
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
 
-		// if (customer.metadata.email == null){
-		// 	console.log('email does not exist')
-		// 	var name = 'anonymous';
-		// } else {
-		// 	var name = customer.metadata.Name;
-		// }
-
-		var name;
-		customer.metadata.email == null ? name = 'anonymous' : name = customer.metadata.Name;
+		if (customer.metadata.email == null){
+			console.log('email does not exist')
+			var name = 'anonymous';
+		} else {
+			var name = customer.metadata.Name;
+		}
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
-			console.log("DIS BE STUFF", email, name)
-
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			if (res.length == 0){
