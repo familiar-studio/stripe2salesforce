@@ -358,6 +358,7 @@ var getChangeMachineLogins = function() {
 
 				conn = result.organization.ChangeMachine.oauth2
 				
+				console.log(conn)
 				// conn.login()
 			})
 		})
