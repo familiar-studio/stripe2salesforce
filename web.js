@@ -342,7 +342,7 @@ var getDevelopmentLogins = function(organization){
 				console.log("THIS IS THE RESULT :", result)
 
 					stripe = require("stripe")(
-				 esult.organization.Development.stripe_api.secret_key
+				 result.organization.Development.stripe_api.secret_key
 				);
 
 				conn = new jsforce.Connection({ 
