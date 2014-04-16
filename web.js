@@ -335,9 +335,9 @@ app.post('/webhook/changeMachine', function(request, response) {
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 
 				if (res.length === 0){
-					var stripe_id = chargeSucceeded.data.object.customer;
+					// var stripe_id = chargeSucceeded.data.object.customer;
 
-					stripeId2SalesContact(stripe_id).then(function(){
+					stripeId2SalesContact(chargeObj.customer).then(function(){
 
 						salesContact2Contract(chargeObj);
 
