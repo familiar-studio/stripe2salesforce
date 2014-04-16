@@ -113,6 +113,13 @@ var stripeId2SalesContact = function(stripe_id){
 
 var createOpp = function(amount, charge_id, date, account_id, contract_id){
 	console.log('CREATING OPPORTUNITY')
+	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
+	console.log("1. amount", amount)
+	console.log("2. stripe charge id", charge_id)
+	console.log("3. date", date)
+	console.log("4. account id", account_id)
+	console.log("5. contact id", contract_id)
+	console.log("6. record type", client_ids.opportunityRecord)
 	if (contract_id){
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
