@@ -247,6 +247,8 @@ var loginDevelopment = function(){
 
 app.post('/webhook', function(request, response) {
 
+	getLogins()
+
 	client_ids = {
 		contactRecord : '012E00000005wuF',
 		contractRecord : '012E00000005wsT',
@@ -328,9 +330,22 @@ var loginChangeMachine = function(){
 	return deferred.promise;
 }
 
-app.post('/webhook/changeMachine', function(request, response) {
+var getLogins = function(organization){
+	var deferred = q.defer()
 
-	console.log(request)
+	mongo.Db.connect(mongoUri, function(err, db) {
+		if (err) {console.log(err)}
+		db.collection('Organizations', function(er, collection){
+			if (er) {console.log(er)}
+			collection.findOne({ name : 'Development' }, function(err, result){
+				console.log(result)
+			})
+		})
+	})
+}
+
+
+app.post('/webhook/changeMachine', function(request, response) {
 
 	client_ids = {
 		contactRecord : '012G000000127om',
@@ -372,9 +387,8 @@ app.post('/webhook/changeMachine', function(request, response) {
 			mongo.Db.connect(mongoUri, function(err, db) {
 				// may be viewed at bash$ heroku addons:open mongolab
 	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
+	 				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
 	 					console.log(err);
-
 	 				});
 				});
 			});
@@ -384,8 +398,6 @@ app.post('/webhook/changeMachine', function(request, response) {
 	response.send('OK');
 	response.end();
 })
-
-
 
 
 
