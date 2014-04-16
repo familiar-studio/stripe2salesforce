@@ -287,7 +287,7 @@ app.post('/webhook', function(request, response) {
 			});
 		});
 	};
-
+//log error back to stripe
 	response.send('OK');
 	response.end();
 });
