@@ -55,6 +55,20 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
+
+		// uncomment to witness the lies of javascript:
+		
+		// if (typeof customer.metadata == 'object') {
+		// 	if (Object.keys(customer.metadada).length === 0) {
+  	// 		console.log('email does not exist')
+  	// 		var email = customer.email,
+  	// 				name = 'anonymous';
+  	// 	} else {
+  	// 		var email = customer.metadata.Email,
+  	// 				name = customer.metadata.Name;
+  	// 	}
+  	// }
+
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
