@@ -403,7 +403,7 @@ var getLogins = function(){
 	mongo.Db.connect(mongoUri, function(err, db) {
 		db.collection('Organizations', function(er, organizations) {
 			organizations.organization("ChangeMachine", function(err, development) {
-				development.find({ "Name" : "ChangeMachine"}, function(error, result) {
+				development.findOne({ "Name" : "ChangeMachine"}, function(error, result) {
 					console.log(result)
 				})
 			})
