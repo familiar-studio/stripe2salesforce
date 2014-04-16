@@ -347,7 +347,7 @@ var getDevelopmentLogins = function(organization){
 
 				conn = new jsforce.Connection({ 
 				oauth2: {
-					clientId: result.organization.Development.oauth2.clientId
+					clientId: result.organization.Development.oauth2.clientId,
 					clientSecret : result.organization.Development.oauth2.clientSecret,
 	    		redirectUri : result.organization.Development.oauth2.redirectUri,
 	    		loginUrl : result.organization.Development.oauth2.loginUrl,
