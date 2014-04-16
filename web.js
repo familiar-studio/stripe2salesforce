@@ -56,7 +56,7 @@ var stripeId2SalesContact = function(stripe_id){
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
 
-		if (customer.metadata.email == null){
+		if (customer.metadata.Name == null){
 			var name = 'anonymous';
 		} else {
 			var name = customer.metadata.Name;
