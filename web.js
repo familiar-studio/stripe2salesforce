@@ -55,7 +55,7 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
-		
+
 		// if (customer.metadata.email == null){
 		// 	console.log('email does not exist')
 		// 	var name = 'anonymous';
@@ -63,7 +63,8 @@ var stripeId2SalesContact = function(stripe_id){
 		// 	var name = customer.metadata.Name;
 		// }
 
-		customer.metadata.email == null ? var name = 'anonymous' : var name = customer.metadata.Name;
+		var name;
+		customer.metadata.email == null ? name = 'anonymous' : name = customer.metadata.Name;
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("DIS BE STUFF", email, name)
