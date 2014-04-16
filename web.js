@@ -341,7 +341,7 @@ var getLogins = function(organization){
 			if (er) { console.log(er); } console.log('in collection', collection)
 			collection.findOne({ organization : 'Development' }, function(error, result){
 				if (error) { console.log(error); } console.log('in results')
-				console.log("THIS IS THE RESULT":, result)
+				console.log("THIS IS THE RESULT :", result)
 			})
 		})
 	})
