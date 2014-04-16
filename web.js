@@ -331,7 +331,7 @@ var loginChangeMachine = function(){
 	return deferred.promise;
 }
 
-var getLogins = function(organization){
+var getDevelopmentLogins = function(organization){
 	console.log('hey!')
 	var deferred = q.defer()
 
@@ -340,8 +340,24 @@ var getLogins = function(organization){
 			if (er) { console.log(er); } console.log('in collection')
 			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
+
 				conn = result.organization.Development.oauth2
-				console.log(conn)
+				
+				// conn.login()
+			})
+		})
+	})
+}
+
+var getChangeMachineLogins = function() {
+	mongo.Db.connect(mongoUri, function(err, db) {
+		db.collection('Organizations', function(er, organizations){
+			if (er) { console.log(er); } console.log('in collection')
+			organizations.findOne({ "organization.ChangeMachine.Name" : "ChangeMachine" }, function(error, result){
+				console.log("THIS IS THE RESULT :", result)
+
+				conn = result.organization.ChangeMachine.oauth2
+				
 				// conn.login()
 			})
 		})
