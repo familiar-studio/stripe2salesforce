@@ -367,6 +367,8 @@ var getDevelopmentLogins = function(organization){
 }
 
 var getChangeMachineLogins = function() {
+	var deferred = q.defer()
+
 	mongo.Db.connect(mongoUri, function(err, db) {
 		db.collection('Organizations', function(er, organizations){
 			if (er) { console.log(er); } console.log('in collection')
@@ -378,21 +380,11 @@ var getChangeMachineLogins = function() {
 				console.log(res)
 
 				stripe = require("stripe")(
-				 res.stripe_api.secret_key
+				  res.stripe_api.secret_key
 				);
 
 				conn = new jsforce.Connection({
 					oauth2: res.oauth2
-
-				  // oauth2 : {
-				  //   clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
-				  //   clientSecret : '6117747355402425276',
-				  //   redirectUri : 'https://stripe2salesforce.herokuapp.com',
-				  //   loginUrl : 'https://test.salesforce.com',
-				  //   //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-
-				  // },
-				//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
 				})
 
 				conn.login( res.sf_login.username, res.sf_login.password, function(err, res) {
@@ -400,13 +392,19 @@ var getChangeMachineLogins = function() {
 					console.log("connected to CHANGE MACHINE");
 					deferred.resolve(res);
 				} )
+			})
+		})
+	})
+	return deferred.promise;
+}
 
-				// conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
-				//   if (err) { return console.error("I AM BROKEN, YO", err); };
-				//   console.log("connected to CHANGE MACHINE");
-				//   deferred.resolve(res);
-				// })
-				// conn.login()
+var getLogins = function(){
+	mongo.Db.connect(mongoUri, function(err, db) {
+		db.collection('Organizations', function(er, organizations) {
+			organizations.organization("ChangeMachine", function(err, development) {
+				development.find({ "Name" : "ChangeMachine"}, function(error, result) {
+					console.log(result)
+				})
 			})
 		})
 	})
@@ -414,7 +412,8 @@ var getChangeMachineLogins = function() {
 
 
 app.post('/webhook/changeMachine', function(request, response) {
-	getChangeMachineLogins()
+	// getChangeMachineLogins()
+	getLogins()
 
 	client_ids = {
 		contactRecord : '012G000000127om',
