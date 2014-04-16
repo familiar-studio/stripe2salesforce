@@ -57,17 +57,19 @@ var stripeId2SalesContact = function(stripe_id){
 	stripe.customers.retrieve(stripe_id, function(err, customer){
 
 		// uncomment to witness the lies of javascript:
+
+		console.log(typeof customer.metadata, customer.metadata)
 		
-		// if (typeof customer.metadata == 'object') {
-		// 	if (Object.keys(customer.metadada).length === 0) {
-  	// 		console.log('email does not exist')
-  	// 		var email = customer.email,
-  	// 				name = 'anonymous';
-  	// 	} else {
-  	// 		var email = customer.metadata.Email,
-  	// 				name = customer.metadata.Name;
-  	// 	}
-  	// }
+		if (typeof customer.metadata == 'object') {
+			if (Object.keys(customer.metadada).length === 0) {
+  			console.log('email does not exist')
+  			var email = customer.email,
+  					name = 'anonymous';
+  		} else {
+  			var email = customer.metadata.Email,
+  					name = customer.metadata.Name;
+  		}
+  	}
 
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 	    if (res.length == 0) {
@@ -197,9 +199,7 @@ var client_ids;
 var stripe;
 
 var loginDevelopment = function(){	
-
 	var deferred = q.defer()
-
 
 	stripe = require("stripe")(
 	 "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
