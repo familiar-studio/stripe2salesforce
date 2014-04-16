@@ -59,6 +59,10 @@ var stripeId2SalesContact = function(stripe_id){
 		// uncomment to witness the lies of javascript:
 
 		console.log(typeof customer.metadata, customer.metadata)
+
+		if (customer.metadata == {}){
+			console.log('yaaaaay!')
+		}
 		
 		if (typeof customer.metadata == 'object') {
 			if (Object.keys(customer.metadada).length === 0) {
