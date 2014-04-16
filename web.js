@@ -55,17 +55,15 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
+		
+		// if (customer.metadata.email == null){
+		// 	console.log('email does not exist')
+		// 	var name = 'anonymous';
+		// } else {
+		// 	var name = customer.metadata.Name;
+		// }
 
-		console.log(typeof customer.metadata, customer.metadata, customer.metadata.email)
-
-		if (customer.metadata.email == null){
-			console.log('email does not exist')
-			var email = customer.email,
-					name = 'anonymous';
-		} else {
-			var email = customer.metadata.Email,
-					name = customer.metadata.Name;
-		}
+		customer.metadata.email == null ? var name = 'anonymous' : var name = customer.metadata.Name;
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log("DIS BE STUFF", email, name)
@@ -73,7 +71,7 @@ var stripeId2SalesContact = function(stripe_id){
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			if (res.length == 0){
-  					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
+  					conn.sobject("Contact").create({ FirstName : stripeCheckName(name).first_name, LastName: stripeCheckName(name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
   				    if (err || !ret.success) { return console.error(err, ret); }
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
@@ -82,8 +80,8 @@ var stripeId2SalesContact = function(stripe_id){
     				var sfContactId = res[0].Id
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
-	            FirstName : stripeCheckName(customer.metadata.Name).first_name,
-	            LastName: stripeCheckName(customer.metadata.Name).last_name,
+	            FirstName : stripeCheckName(name).first_name,
+	            LastName: stripeCheckName(name).last_name,
 	            Stripe_Customer_Id__c : stripe_id
 		        }, function(error, ret){
 	            if (error || !ret.success) { return console.error(err, ret); }
