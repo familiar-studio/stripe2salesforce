@@ -96,7 +96,7 @@ var stripeId2SalesContact = function(stripe_id){
 					deferred.resolve(ret);
 	      });
 	    };
-	   });
+	  });
   });
 	return deferred.promise;
 }
