@@ -377,8 +377,6 @@ var getChangeMachineLogins = function() {
 
 				var res = result.organization.ChangeMachine;
 
-				console.log(res)
-
 				stripe = require("stripe")(
 				  res.stripe_api.secret_key
 				);
