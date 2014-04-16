@@ -356,9 +356,37 @@ var getChangeMachineLogins = function() {
 			organizations.findOne({ "organization.ChangeMachine.Name" : "ChangeMachine" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
 
-				conn = result.organization.ChangeMachine.oauth2
-				
-				console.log(conn)
+				var res = result.organization.ChangeMachine
+
+				stripe = require("stripe")(
+				 res.stripe_api.secret_key
+				);
+
+				conn = new jsforce.Connection({
+					oauth2: res.oauth2
+
+				  // oauth2 : {
+				  //   clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
+				  //   clientSecret : '6117747355402425276',
+				  //   redirectUri : 'https://stripe2salesforce.herokuapp.com',
+				  //   loginUrl : 'https://test.salesforce.com',
+				  //   //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
+
+				  // },
+				//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
+				})
+
+				conn.login( res.sf_login.username, res.sf_login.password, function(err, res) {
+					if (err) { return console.error("I AM BROKEN, YO", err); };
+					console.log("connected to CHANGE MACHINE");
+					deferred.resolve(res);
+				} )
+
+				// conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
+				//   if (err) { return console.error("I AM BROKEN, YO", err); };
+				//   console.log("connected to CHANGE MACHINE");
+				//   deferred.resolve(res);
+				// })
 				// conn.login()
 			})
 		})
