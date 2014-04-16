@@ -341,7 +341,9 @@ var getDevelopmentLogins = function(organization){
 			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
 
-				var stripe = result.organization.Development.stripe_api.secret_key
+					stripe = require("stripe")(
+				 res.stripe_api.secret_key
+				);
 
 				conn = new jsforce.Connection({ 
 				oauth2: {
