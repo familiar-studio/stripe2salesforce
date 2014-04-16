@@ -248,7 +248,7 @@ var stripe;
 app.post('/webhook', function(request, response) {
 
 	console.log('hello')
-	// getDevelopmentLogins()
+	getDevelopmentLogins()
 
 	client_ids = {
 		contactRecord : '012E00000005wuF',
