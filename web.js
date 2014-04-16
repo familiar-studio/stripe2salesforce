@@ -395,6 +395,7 @@ var getChangeMachineLogins = function() {
 
 
 app.post('/webhook/changeMachine', function(request, response) {
+	getChangeMachineLogins()
 
 	client_ids = {
 		contactRecord : '012G000000127om',
