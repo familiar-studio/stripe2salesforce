@@ -339,7 +339,7 @@ var getLogins = function(organization){
 		if (err) { console.log(err); } console.log('connected')
 		db.collection('Organizations', function(er, collection){
 			if (er) { console.log(er); } console.log('in collection')
-			collection.findOne({ name : 'Development' }, function(error, result){
+			collection.findOne({ organization : 'Development' }, function(error, result){
 				if (error) { console.log(error); } console.log('in results')
 				console.log(result)
 			})
