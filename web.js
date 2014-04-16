@@ -248,7 +248,7 @@ var stripe;
 app.post('/webhook', function(request, response) {
 
 	console.log('hello')
-	getDevelopmentLogins()
+	// getDevelopmentLogins()
 
 	client_ids = {
 		contactRecord : '012E00000005wuF',
@@ -260,7 +260,7 @@ app.post('/webhook', function(request, response) {
 
 		var chargeSucceeded = request.body
 
-		loginDevelopment().then(function(){
+		getDevelopmentLogins().then(function(){
 
 			
 			var chargeObj = {
@@ -369,15 +369,13 @@ return deferred.promise;
 }
 
 var getChangeMachineLogins = function() {
-	var deferred = q.defer()
+	var deferred = q.defer();
 
 	mongo.Db.connect(mongoUri, function(err, db) {
 		db.collection('Organizations', function(er, organizations){
-			if (er) { console.log(er); } console.log('in collection')
 			organizations.findOne({ "organization.ChangeMachine.Name" : "ChangeMachine" }, function(error, result){
-				console.log("THIS IS THE RESULT :", result)
 
-				var res = result.organization.ChangeMachine
+				var res = result.organization.ChangeMachine;
 
 				console.log(res)
 
@@ -387,34 +385,21 @@ var getChangeMachineLogins = function() {
 
 				conn = new jsforce.Connection({
 					oauth2: res.oauth2
-				})
+				});
 
 				conn.login( res.sf_login.username, res.sf_login.password, function(err, res) {
 					if (err) { return console.error("I AM BROKEN, YO", err); };
 					console.log("connected to CHANGE MACHINE");
 					deferred.resolve(res);
-				} )
-			})
-		})
-	})
+				});
+			});
+		});
+	});
 	return deferred.promise;
-}
-
-var getLogins = function(){
-	mongo.Db.connect(mongoUri, function(err, db) {
-		db.collection('Organizations', function(er, organizations) {
-			console.log(organizations)
-			organizations.findOne({ "Name" : "ChangeMachine" }, function(err, org) {
-				console.log(org)
-			})
-		})
-	})
 }
 
 
 app.post('/webhook/changeMachine', function(request, response) {
-	// getChangeMachineLogins()
-	getLogins()
 
 	client_ids = {
 		contactRecord : '012G000000127om',
@@ -424,7 +409,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-		loginChangeMachine().then(function(){
+			getChangeMachineLogins().then(function(){
 
 			console.log('EXECUTING SALES FORCE LOGIC')
 			
