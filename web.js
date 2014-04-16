@@ -57,7 +57,6 @@ var stripeId2SalesContact = function(stripe_id){
 	stripe.customers.retrieve(stripe_id, function(err, customer){
 
 		if (customer.metadata.email == null){
-			console.log('email does not exist')
 			var name = 'anonymous';
 		} else {
 			var name = customer.metadata.Name;
