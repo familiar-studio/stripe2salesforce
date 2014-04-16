@@ -336,10 +336,11 @@ var getLogins = function(organization){
 	var deferred = q.defer()
 
 	mongo.Db.connect(mongoUri, function(err, db) {
-		if (err) {console.log(err)}
+		if (err) { console.log(err); } console.log('connected')
 		db.collection('Organizations', function(er, collection){
-			if (er) {console.log(er)}
-			collection.findOne({ name : 'Development' }, function(err, result){
+			if (er) { console.log(er); } console.log('in collection')
+			collection.findOne({ name : 'Development' }, function(error, result){
+				if (error) { console.log(error); } console.log('in results')
 				console.log(result)
 			})
 		})
