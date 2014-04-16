@@ -342,7 +342,7 @@ var getDevelopmentLogins = function(organization){
 				console.log("THIS IS THE RESULT :", result)
 
 					stripe = require("stripe")(
-				 esult.organization.Development.stripe_api.secret_key
+				 result.organization.Development.stripe_api.secret_key
 				);
 
 				conn = new jsforce.Connection({ 
@@ -353,9 +353,10 @@ var getDevelopmentLogins = function(organization){
 	    		loginUrl : result.organization.Development.oauth2.loginUrl,
 				},
 				  }) 
+				console.log("IS THIS THE RIGHT PASSCODE:" result.organization.Development.sf_login.password )
 				conn.login( result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
 				  if (err) { return console.error("I AM BROKEN, YO", err); };
-				  console.log("connected to CHANGE MACHINE");
+				  console.log("connected to DEVELOPMENT");
 				  deferred.resolve(res);
 				})
 
