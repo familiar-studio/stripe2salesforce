@@ -248,7 +248,7 @@ var loginDevelopment = function(){
 app.post('/webhook', function(request, response) {
 
 	console.log('hello')
-	getLogins()
+	getDevelopmentLogins()
 
 	client_ids = {
 		contactRecord : '012E00000005wuF',
@@ -374,6 +374,8 @@ var getChangeMachineLogins = function() {
 				console.log("THIS IS THE RESULT :", result)
 
 				var res = result.organization.ChangeMachine
+
+				console.log(res)
 
 				stripe = require("stripe")(
 				 res.stripe_api.secret_key
