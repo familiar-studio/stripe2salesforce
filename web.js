@@ -404,8 +404,7 @@ var getChangeMachineLogins = function() {
 var getLogins = function(){
 	mongo.Db.connect(mongoUri, function(err, db) {
 		db.collection('Organizations', function(er, organizations) {
-			organizations.findOne({ "organization" : "ChangeMachine"}, function(err, development) {
-				development.findOne({ "Name" : "ChangeMachine"}, function(error, result) {
+			organizations.findOne({ "organization" : "ChangeMachine" }, function(err, development) {
 					console.log(result)
 				})
 			})
