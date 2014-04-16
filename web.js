@@ -78,18 +78,18 @@ var stripeId2SalesContact = function(stripe_id){
 		        });
     			};
 				});			            	
-    	});
-    } else {
-    	var sfExistingId = res[0].Id
-    	conn.sobject('Contact').update({
-        Id: sfExistingId,
-        Email: customer.email
-      }, function(error, ret){
-				if (error || !ret.success) { return console.error(err, ret); }
-				console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
-				deferred.resolve(ret);
-      });
-    };
+	    } else {
+	    	var sfExistingId = res[0].Id
+	    	conn.sobject('Contact').update({
+	        Id: sfExistingId,
+	        Email: customer.email
+	      }, function(error, ret){
+					if (error || !ret.success) { return console.error(err, ret); }
+					console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
+					deferred.resolve(ret);
+	      });
+	    };
+	   });
   });
 	return deferred.promise;
 }
@@ -158,7 +158,7 @@ var salesContact2Contract = function(chargeObj){
 					var contract_id = res[0].Id;
 					var account_id = res[0].AccountId;
 					var date = res[0].CreatedDate;
-					
+
 					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
 	  		};
 	  	});
