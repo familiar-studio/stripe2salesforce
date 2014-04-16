@@ -340,6 +340,9 @@ var getLogins = function(organization){
 			if (er) { console.log(er); } console.log('in collection')
 			organizations.find("organization", function(error, result){
 				console.log("THIS IS THE RESULT :", result)
+				result.each(function(org){
+					console.log(org)
+				})
 			})
 		})
 	})
