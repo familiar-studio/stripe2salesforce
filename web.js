@@ -64,16 +64,16 @@ var stripeId2SalesContact = function(stripe_id){
 			console.log('yaaaaay!')
 		}
 		
-		if (typeof customer.metadata == 'object') {
-			if (Object.keys(customer.metadada).length === 0) {
-  			console.log('email does not exist')
-  			var email = customer.email,
-  					name = 'anonymous';
-  		} else {
-  			var email = customer.metadata.Email,
-  					name = customer.metadata.Name;
-  		}
-  	}
+		// if (typeof customer.metadata == 'object') {
+		// 	if (Object.keys(customer.metadada).length === 0) {
+  // 			console.log('email does not exist')
+  // 			var email = customer.email,
+  // 					name = 'anonymous';
+  // 		} else {
+  // 			var email = customer.metadata.Email,
+  // 					name = customer.metadata.Name;
+  // 		}
+  // 	}
 
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 	    if (res.length == 0) {
