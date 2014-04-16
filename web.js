@@ -337,15 +337,13 @@ var getLogins = function(organization){
 
 	mongo.Db.connect(mongoUri, function(err, db) {
 		if (err) { console.log(err); } console.log('connected', db)
-		var result = db.Organizations.organization.Development.find()
-		console.log("RESULT", result)
-		// db.collection('Organizations', function(er, collection){
-		// 	if (er) { console.log(er); } console.log('in collection')
-		// 	collection.find({  }, function(error, result){
+		db.collection('Organizations', function(er, collection){
+			if (er) { console.log(er); } console.log('in collection')
+			collection.find({}, function(error, result){
 		// 		if (error) { console.log(error); } console.log('in results')
-		// 		console.log("THIS IS THE RESULT :", result)
-		// 	})
-		// })
+				console.log("THIS IS THE RESULT :", result)
+			})
+		})
 	})
 }
 
