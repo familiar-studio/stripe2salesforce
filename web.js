@@ -50,6 +50,9 @@ var stripeCheckName = function(name){
 	};
 }
 
+
+
+
 var stripeId2SalesContact = function(stripe_id){
 	console.log('CREATING / UPDATING CONTACT')
 	var deferred = q.defer();
