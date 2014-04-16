@@ -59,23 +59,17 @@ var stripeId2SalesContact = function(stripe_id){
 		console.log(typeof customer.metadata, customer.metadata, customer.metadata.email)
 
 		if (customer.metadata.email == null){
-			console.log('>>>>>null<<<<<')
-		} else if (customer.metadata.email == 'undefined') {
-			console.log('>>>>>undefined<<<<<')
+			console.log('email does not exist')
+			var email = customer.email,
+					name = 'anonymous';
+		} else {
+			var email = customer.metadata.Email,
+					name = customer.metadata.Name;
 		}
 		
-		// if (typeof customer.metadata == 'object') {
-		// 	if (Object.keys(customer.metadada).length === 0) {
-  // 			console.log('email does not exist')
-  // 			var email = customer.email,
-  // 					name = 'anonymous';
-  // 		} else {
-  // 			var email = customer.metadata.Email,
-  // 					name = customer.metadata.Name;
-  // 		}
-  // 	}
-
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+			console.log("DIS BE STUFF", email, name)
+
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			if (res.length == 0){
