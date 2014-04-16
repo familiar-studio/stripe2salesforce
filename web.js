@@ -354,7 +354,8 @@ var getDevelopmentLogins = function(organization){
 				},
 				  }) 
 				console.log("IS THIS THE RIGHT PASSCODE:", result.organization.Development.sf_login.password )
-				conn.login( result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
+				console.log("IS THIS THE RIGHT NAME:", result.organization.Development.sf_login.username )
+				conn.login(result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
 				  if (err) { return console.error("I AM BROKEN, YO", err); };
 				  console.log("connected to DEVELOPMENT");
 				  deferred.resolve(res);
@@ -365,6 +366,7 @@ var getDevelopmentLogins = function(organization){
 			})
 		})
 	})
+return deferred.promise;
 }
 
 var getChangeMachineLogins = function() {
