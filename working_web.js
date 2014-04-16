@@ -53,11 +53,30 @@ var stripeCheckName = function(name){
 var stripeId2SalesContact = function(stripe_id){
 	console.log('CREATING / UPDATING CONTACT')
 	var deferred = q.defer();
+	conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 
-	stripe.customers.retrieve(stripe_id, function(err, customer){
-		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
-	    if (res.length == 0) {
-    		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
+    if (res.length == 0) {
+
+    	stripe.customers.retrieve(stripe_id, function(err, customer){
+
+    		console.log(customer.metadata, typeof customer.metadata)
+
+
+    		// uncomment to witness the lies of javascript:
+    		
+    		// if (typeof customer.metadata == 'object') {
+    		// 	if (Object.keys(customer.metadada).length === 0) {
+	    	// 		console.log('email does not exist')
+	    	// 		var email = customer.email,
+	    	// 				name = 'anonymous';
+	    	// 	} else {
+	    	// 		var email = customer.metadata.Email,
+	    	// 				name = customer.metadata.Name;
+	    	// 	}
+	    	// }
+
+    		conn.sobject('Contact').find({ Email : customer.metadata.Email }).limit(1).execute(function(err, res) {
+				
     			if (res.length == 0){
   					conn.sobject("Contact").create({ FirstName : stripeCheckName(customer.metadata.Name).first_name, LastName: stripeCheckName(customer.metadata.Name).last_name,  Stripe_Customer_Id__c: stripe_id, Email: customer.email }, function(err, ret) {
   				    if (err || !ret.success) { return console.error(err, ret); }
@@ -66,29 +85,33 @@ var stripeId2SalesContact = function(stripe_id){
 				  	});
     			} else {
     				var sfContactId = res[0].Id
-			    	conn.sobject('Contact').update({
-	            Id: sfContactId,
-	            FirstName : stripeCheckName(customer.metadata.Name).first_name,
-	            LastName: stripeCheckName(customer.metadata.Name).last_name,
-	            Stripe_Customer_Id__c : stripe_id
-		        }, function(error, ret){
-	            if (error || !ret.success) { return console.error(err, ret); }
-	            console.log('Updated Customer found by Email:' + customer.metadata.Email);
-	            deferred.resolve(ret); 
-		        });
+  					stripe.customers.retrieve(stripe_id, function(err, customer){
+				    	conn.sobject('Contact').update({
+		            Id: sfContactId,
+		            FirstName : stripeCheckName(customer.metadata.Name).first_name,
+		            LastName: stripeCheckName(customer.metadata.Name).last_name,
+		            Stripe_Customer_Id__c : stripe_id
+			        }, function(error, ret){
+		            if (error || !ret.success) { return console.error(err, ret); }
+		            console.log('Updated Customer found by Email:' + customer.metadata.Email);
+		            deferred.resolve(ret); 
+			        });
+  				  });
     			};
 				});			            	
     	});
     } else {
     	var sfExistingId = res[0].Id
-    	conn.sobject('Contact').update({
-        Id: sfExistingId,
-        Email: customer.email
-      }, function(error, ret){
-				if (error || !ret.success) { return console.error(err, ret); }
-				console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
-				deferred.resolve(ret);
-      });
+    	stripe.customers.retrieve(stripe_id, function(err, customer){
+      	conn.sobject('Contact').update({
+          Id: sfExistingId,
+          Email: customer.email
+        }, function(error, ret){
+					if (error || !ret.success) { return console.error(err, ret); }
+					console.log('Updated Contact found by customer_id to:' + customer.metadata.Email);
+					deferred.resolve(ret);
+        });
+     });
     };
   });
 	return deferred.promise;
@@ -142,34 +165,33 @@ var salesContact2Contract = function(chargeObj){
 			var sub_id = response.subscription 
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
-				if (res.length === 0) {
-	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-	  			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
-	  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-								var contract_id = result[0].Id;		  
-								var account_id = result[0].AccountId;
-								var date = result[0].CreatedDate;
+			if (res.length === 0) {
+  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+  			  conn.sobject('Contract').create({ AccountId : res[0].AccountId, Stripe_Subscription_Id__c : sub_id }, function(err, ret){
+  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+							var contract_id = result[0].Id;		  
+							var account_id = result[0].AccountId;
+							var date = result[0].CreatedDate;
 
-								createOpp(amount, charge_id, date, account_id, contract_id)
-	  			  	});
-	  			  });
-	  			});
-				} else {
-					var contract_id = res[0].Id;
-					var account_id = res[0].AccountId;
-					var date = res[0].CreatedDate;
-					
-					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
-	  		};
-	  	});
+							createOpp(amount, charge_id, date, account_id, contract_id)
+  			  	});
+  			  });
+  			});
+			} else {
+				var contract_id = res[0].Id;
+				var account_id = res[0].AccountId;
+				var date = res[0].CreatedDate;
+				createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
+  		};
+  	});
 		});
 
 	} else {
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-	    var account_id = res[0].AccountId;
-	   	var date = res[0].CreatedDate;
+    var account_id = res[0].AccountId;
+   	var date = res[0].CreatedDate;
 
-	   	createOpp(amount, charge_id, date, account_id);
+   	createOpp(amount, charge_id, date, account_id);
 		});
 	};
 }
@@ -236,8 +258,9 @@ app.post('/webhook', function(request, response) {
 
 			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 				if (res.length === 0){
+					var stripe_id = chargeSucceeded.data.object.customer;
 
-					stripeId2SalesContact(chargeObj.customer).then(function(){
+					stripeId2SalesContact(stripe_id).then(function(){
 
 						salesContact2Contract(chargeObj);
 
