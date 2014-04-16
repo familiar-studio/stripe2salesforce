@@ -330,6 +330,8 @@ var loginChangeMachine = function(){
 
 app.post('/webhook/changeMachine', function(request, response) {
 
+	console.log(request)
+
 	client_ids = {
 		contactRecord : '012G000000127om',
 		contractRecord : '012Z0000000D284',
