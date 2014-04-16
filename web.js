@@ -338,9 +338,9 @@ var getLogins = function(organization){
 	mongo.Db.connect(mongoUri, function(err, db) {
 		db.collection('Organizations', function(er, organizations){
 			if (er) { console.log(er); } console.log('in collection')
-			organizations.findOne({ "organization." + organization + ".Name" : organization }, function(error, result){
+			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
-				conn = result.organization.organization.oauth2
+				conn = result.organization.Development.oauth2
 				console.log(conn)
 				// conn.login()
 			})
