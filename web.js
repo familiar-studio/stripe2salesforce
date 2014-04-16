@@ -56,8 +56,6 @@ var stripeId2SalesContact = function(stripe_id){
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
 
-		// uncomment to witness the lies of javascript:
-
 		console.log(typeof customer.metadata, customer.metadata, customer.metadata.email)
 
 		if (customer.metadata.email == null){
