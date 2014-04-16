@@ -120,6 +120,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 	console.log("5. contact id", contract_id)
 	console.log("6. record type", client_ids.opportunityRecord)
 	if (contract_id){
+		console.log("I AM A SUB TRYING TO MAKE AN OPP")
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
@@ -136,6 +137,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		});
 
 	}else{
+		console.log("I AM A SINGLE OPP BEING MADE")
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
