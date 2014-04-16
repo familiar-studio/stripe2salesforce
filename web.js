@@ -341,6 +341,7 @@ var getLogins = function(organization){
 			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
 				console.log("THIS IS THE RESULT :", result)
 				conn = result.organization.Development.oauth2
+				
 				console.log(conn)
 				// conn.login()
 			})
