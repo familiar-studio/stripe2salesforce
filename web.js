@@ -247,6 +247,7 @@ var loginDevelopment = function(){
 
 app.post('/webhook', function(request, response) {
 
+	console.log('hello')
 	getLogins()
 
 	client_ids = {
@@ -331,6 +332,7 @@ var loginChangeMachine = function(){
 }
 
 var getLogins = function(organization){
+	console.log('hey!')
 	var deferred = q.defer()
 
 	mongo.Db.connect(mongoUri, function(err, db) {
