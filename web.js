@@ -67,6 +67,8 @@ var stripeId2SalesContact = function(stripe_id){
 			var name = customer.metadata.Name;
 		}
 		
+
+		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
