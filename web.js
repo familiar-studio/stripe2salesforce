@@ -86,8 +86,8 @@ var stripeId2SalesContact = function(stripe_id){
     				var sfContactId = res[0].Id
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
-	            FirstName : stripeCheckName(name).first_name,
-	            LastName: stripeCheckName(name).last_name,
+	            // FirstName : stripeCheckName(name).first_name,
+	            // LastName: stripeCheckName(name).last_name,
 	            Stripe_Customer_Id__c : stripe_id,
 	            RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
