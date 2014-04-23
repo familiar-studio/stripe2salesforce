@@ -435,7 +435,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-			getLogins('ChangeMachine').then(function(){
+			getChangeMachineLogins().then(function(){
 
 			console.log('EXECUTING SALES FORCE LOGIC')
 			
