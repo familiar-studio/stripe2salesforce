@@ -11,7 +11,6 @@ var moment = require('moment');
 
 // requires mongo db for logging transactions
 var mongo = require('mongodb');
-// sets link to mongodb on heroku (and localhost???)
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs';
 
 
@@ -404,12 +403,12 @@ var getLogins = function (client) {
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection('ChangeMachine', function (er, organizations) {
-			organizations.findOne({ 'Name' : 'ChangeMachine' }, function (error, result) {
-				console.log(result)
-			})
-		})
-	})
+		db.collection('ChangeMachine', function (er, organization) {
+			organization.find({ 'Name' : 'ChangeMachine' }, function (error, result) {
+				console.log(result);
+			});
+		});
+	});
 }
 
 app.post('/webhook/changeMachine', function(request, response) {
