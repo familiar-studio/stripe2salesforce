@@ -403,17 +403,28 @@ var getLogins = function (client) {
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection('ChangeMachine', function (er, organization) {
-			organization.find({ 'Name' : 'ChangeMachine' }, function (error, result) {
-				console.log(result);
+		db.collection(client, function (er, organization) {
+			organization.find({ 'Name' : client }, function (error, result) {
+
+				stripe = require("stripe")(
+				  result.stripe_api.secret_key
+				);
+
+				conn = new jsforce.Connection({
+					oauth2: result.oauth2
+				});
+
+				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
+					if (err) { return console.error("I AM BROKEN, YO", err); };
+					console.log("connected to", client);
+					deferred.resolve(res);
+				});
 			});
 		});
 	});
 }
 
 app.post('/webhook/changeMachine', function(request, response) {
-
-	getLogins()
 
 	client_ids = {
 		contactRecord : '012G000000127om',
@@ -423,7 +434,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-			getChangeMachineLogins().then(function(){
+			getLogins('ChangeMachine').then(function(){
 
 			console.log('EXECUTING SALES FORCE LOGIC')
 			
