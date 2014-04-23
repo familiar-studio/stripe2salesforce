@@ -184,7 +184,8 @@ var salesContact2Contract = function(chargeObj){
 
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id,
   					function(err, subscription) {
-  								var sub_name = subscription[0].name 
+  								var sub_name = subscription.name 
+  								console.log("______________THIS IS THE SUB OBJ", subscription)
 							    // asynchronously called
 							    console.log("SUB NAME", sub_name)
 							    console.log("ACCOUTN ID", res[0].AccountId)
