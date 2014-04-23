@@ -407,8 +407,8 @@ var getLogins = function (client) {
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection('Development', function (er, organization) {
-			organization.find({ 'Name' : 'Development' }, function (error, result) {
+		db.collection('ChangeMachine', function (er, organization) {
+			organization.find({ 'Name' : 'ChangeMachine' }, function (error, result) {
 
 				console.log(result);
 
@@ -422,7 +422,7 @@ var getLogins = function (client) {
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
 					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to", 'Development');
+					console.log("connected to", 'ChangeMachine');
 					defer.resolve(res);
 				});
 			});
