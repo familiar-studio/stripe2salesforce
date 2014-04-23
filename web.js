@@ -225,15 +225,6 @@ var stripe;
 
 app.post('/webhook', function(request, response) {
 
-	console.log('hello')
-	// getDevelopmentLogins()
-
-	// client_ids = {
-	// 	"contactRecord" : "012E00000005wuF",
-	// 	"contractRecord" : "012E00000005wsT",
-	// 	"opportunityRecord" : "012E00000005wqS"
-	// }
-
 	if (request.body.type === 'charge.succeeded' ) {
 
 		var chargeSucceeded = request.body
@@ -308,13 +299,7 @@ var getLogins = function (client) {
 	return defer.promise;
 }
 
-app.post('/webhook/changeMachine', function(request, response) {
-
-	// client_ids = {
-	// 	contactRecord : '012G000000127om',
-	// 	contractRecord : '012Z0000000D284',
-	// 	opportunityRecord : '012Z0000000D289'
-	// };
+app.post('/webhook/changeMachineTest', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
