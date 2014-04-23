@@ -228,11 +228,11 @@ app.post('/webhook', function(request, response) {
 	console.log('hello')
 	// getDevelopmentLogins()
 
-	client_ids = {
-		contactRecord : '012E00000005wuF',
-		contractRecord : '012E00000005wsT',
-		opportunityRecord : '012E00000005wqS'
-	}
+	// client_ids = {
+	// 	"contactRecord" : "012E00000005wuF",
+	// 	"contractRecord" : "012E00000005wsT",
+	// 	"opportunityRecord" : "012E00000005wqS"
+	// }
 
 	if (request.body.type === 'charge.succeeded' ) {
 
