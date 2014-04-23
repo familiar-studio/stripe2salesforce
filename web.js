@@ -396,8 +396,21 @@ var getChangeMachineLogins = function() {
 	return deferred.promise;
 }
 
+var getLogins = function (client) {
+	var defer = q.defer();
+
+	mongo.Db.connect(mongoUri, function (err, db) {
+		db.collection('ChangeMachine', function (er, organizations) {
+			organizations.findOne({ 'Name' : 'ChangeMachine' }, function (error, result) {
+				console.log(result)
+			})
+		})
+	})
+}
 
 app.post('/webhook/changeMachine', function(request, response) {
+
+	getLogins()
 
 	client_ids = {
 		contactRecord : '012G000000127om',
