@@ -130,7 +130,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
-			Name: "Old Subscription, new charge",
+			Name: "Stripe Charge",
 			StageName: "Closed Won",
 			CloseDate: date,
 			AccountId: account_id,
@@ -147,7 +147,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		conn.sobject("Opportunity").create({ 
 			Amount: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
-			Name: "single charge",
+			Name: "Stripe Charge",
 			StageName: "Closed Won",
 			CloseDate: date,
 			AccountId: account_id,
@@ -176,7 +176,9 @@ var salesContact2Contract = function(chargeObj){
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 				if (res.length === 0) {
+
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+	  			  console.log ("DATE", result[0].CreatedDate )
 	  			  conn.sobject('Contract').create({ 
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
