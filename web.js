@@ -183,7 +183,7 @@ var salesContact2Contract = function(chargeObj){
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
 	  			  	RecordTypeId: client_ids.contractRecord,
-	  			  	StartDate: result[0].CreatedDate
+	  				Description: "HELLLOOOOO TEST!"
 	  			  	 
 	  			  }, function(err, ret){
 	  			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
