@@ -168,7 +168,8 @@ var salesContact2Contract = function(chargeObj){
 	var stripe_id = chargeObj.customer;
 	var invoice = chargeObj.invoice;
 	var amount = chargeObj.amount;
-	var charge_id = chargeObj.charge_id; 
+	var charge_id = chargeObj.charge_id;
+	console.log("________________CHARGE OBJECT________________", chargeObj) 
 
 	if (invoice !== null) {
 		stripe.invoices.retrieve( invoice, function(err, response){
@@ -180,7 +181,8 @@ var salesContact2Contract = function(chargeObj){
 	  			  conn.sobject('Contract').create({ 
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
-	  			  	RecordTypeId: client_ids.contractRecord 
+	  			  	RecordTypeId: client_ids.contractRecord
+	  			  	 
 	  			  }, function(err, ret){
 	  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
 								var contract_id = result[0].Id;		  
