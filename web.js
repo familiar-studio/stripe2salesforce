@@ -169,7 +169,7 @@ var salesContact2Contract = function(chargeObj){
 	var invoice = chargeObj.invoice;
 	var amount = chargeObj.amount;
 	var charge_id = chargeObj.charge_id;
-	console.log("________________CHARGE OBJECT________________", chargeObj) 
+	 
 
 	if (invoice !== null) {
 		stripe.invoices.retrieve( invoice, function(err, response){
@@ -413,7 +413,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 			getChangeMachineLogins().then(function(){
 
-			console.log('EXECUTING SALES FORCE LOGIC')
+			console.log('_______________THIS IS THE OBJECT__________________', chargeSucceeded.data.object)
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
