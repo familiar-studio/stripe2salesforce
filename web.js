@@ -408,7 +408,7 @@ var getLogins = function (client) {
 
 	mongo.Db.connect(mongoUri, function (err, db) {
 		db.collection('ChangeMachine', function (er, organization) {
-			organization.find({ 'Name' : 'ChangeMachine' }, function (error, result) {
+			organization.findOne({ 'Name' : 'ChangeMachine' }, function (error, result) {
 
 				console.log("RESULT????", result);
 
