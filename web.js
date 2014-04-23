@@ -307,7 +307,7 @@ var getLogins = function (client) {
 	return defer.promise;
 }
 
-app.post('/webhook/changeMachineTest', function(request, response) {
+app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
