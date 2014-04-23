@@ -351,39 +351,40 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineLive').then(function(){
 
-			var chargeObj = {
-				customer: chargeSucceeded.data.object.customer,
-				invoice: chargeSucceeded.data.object.invoice,
-				amount: chargeSucceeded.data.object.amount,
-				charge_id: chargeSucceeded.data.object.id
-			};
+			chargeSucceededRouter(chargeSucceeded);	
+			// var chargeObj = {
+			// 	customer: chargeSucceeded.data.object.customer,
+			// 	invoice: chargeSucceeded.data.object.invoice,
+			// 	amount: chargeSucceeded.data.object.amount,
+			// 	charge_id: chargeSucceeded.data.object.id
+			// };
 
-			console.log('CHARGE OBJ:', chargeObj)
+			// console.log('CHARGE OBJ:', chargeObj)
 
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 
-				if (res.length === 0){
-					// var stripe_id = chargeSucceeded.data.object.customer;
+			// 	if (res.length === 0){
+			// 		// var stripe_id = chargeSucceeded.data.object.customer;
 
-					stripeId2SalesContact(chargeObj.customer).then(function(){
+			// 		stripeId2SalesContact(chargeObj.customer).then(function(){
 
-						salesContact2Contract(chargeObj);
+			// 			salesContact2Contract(chargeObj);
 
-					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
+			// 		});
+			// 	} else {
+			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+			// 	};
 
-			});
+			// });
 
-			mongo.Db.connect(mongoUri, function(err, db) {
-				// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 					console.log(err);
-	 				});
-				});
-			});
+			// mongo.Db.connect(mongoUri, function(err, db) {
+			// 	// may be viewed at bash$ heroku addons:open mongolab
+	 	// 		db.collection('stripeLogs', function(er, collection) {
+	 	// 			collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
+	 	// 				console.log(err);
+	 	// 			});
+			// 	});
+			// });
 		});
 	};
 
@@ -398,41 +399,41 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineTest').then(function(){
 
+			chargeSucceededRouter(chargeSucceeded);			
 			
-			
-			var chargeObj = {
-				customer: chargeSucceeded.data.object.customer,
-				invoice: chargeSucceeded.data.object.invoice,
-				amount: chargeSucceeded.data.object.amount,
-				charge_id: chargeSucceeded.data.object.id
-			};
+			// var chargeObj = {
+			// 	customer: chargeSucceeded.data.object.customer,
+			// 	invoice: chargeSucceeded.data.object.invoice,
+			// 	amount: chargeSucceeded.data.object.amount,
+			// 	charge_id: chargeSucceeded.data.object.id
+			// };
 
-			console.log('CHARGE OBJ:', chargeObj)
+			// console.log('CHARGE OBJ:', chargeObj)
 
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 
-				if (res.length === 0){
-					// var stripe_id = chargeSucceeded.data.object.customer;
+			// 	if (res.length === 0){
+			// 		// var stripe_id = chargeSucceeded.data.object.customer;
 
-					stripeId2SalesContact(chargeObj.customer).then(function(){
+			// 		stripeId2SalesContact(chargeObj.customer).then(function(){
 
-						salesContact2Contract(chargeObj);
+			// 			salesContact2Contract(chargeObj);
 
-					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
+			// 		});
+			// 	} else {
+			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+			// 	};
 
-			});
+			// });
 
-			mongo.Db.connect(mongoUri, function(err, db) {
-				// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 					console.log(err);
-	 				});
-				});
-			});
+			// mongo.Db.connect(mongoUri, function(err, db) {
+			// 	// may be viewed at bash$ heroku addons:open mongolab
+	 	// 		db.collection('stripeLogs', function(er, collection) {
+	 	// 			collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
+	 	// 				console.log(err);
+	 	// 			});
+			// 	});
+			// });
 		});
 	};
 
