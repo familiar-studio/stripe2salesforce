@@ -180,10 +180,11 @@ var salesContact2Contract = function(chargeObj){
 	  			  conn.sobject('Contract').create({ 
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
-	  			  	RecordTypeId: client_ids.contractRecord
+	  			  	RecordTypeId: client_ids.contractRecord,
+	  			  	StartDate: result[0].CreatedDate
 	  			  	 
 	  			  }, function(err, ret){
-	  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+	  			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
 								var contract_id = result[0].Id;		  
 								var account_id = result[0].AccountId;
 								var date = result[0].CreatedDate;
@@ -441,7 +442,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 			getChangeMachineLogins().then(function(){
 
-			console.log('_______________THIS IS THE OBJECT__________________', chargeSucceeded.data.object)
+			
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
