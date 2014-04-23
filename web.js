@@ -422,6 +422,7 @@ var getLogins = function (client) {
 			});
 		});
 	});
+	return defer.promise;
 }
 
 app.post('/webhook/changeMachine', function(request, response) {
