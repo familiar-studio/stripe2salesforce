@@ -285,8 +285,6 @@ var getLogins = function (client) {
 		db.collection(client, function (er, organization) {
 			organization.findOne({ 'Name' : client }, function (error, result) {
 
-				console.log("RESULT????", result);
-
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
 				);
@@ -316,7 +314,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-		getLogins('ChangeMachine').then(function(){
+		getLogins('ChangeMachineTest').then(function(){
 
 			
 			
