@@ -185,18 +185,18 @@ var salesContact2Contract = function(chargeObj){
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id,
   					function(err, subscription) {
   								var sub_name = subscription.plan.name 
-  								console.log("______________THIS IS THE SUB OBJ", subscription)
-							    // asynchronously called
+							    
 							    console.log("SUB NAME", sub_name)
 							    console.log("ACCOUTN ID", res[0].AccountId)
 							    console.log("SUB id", sub_id)
 							    console.log("record type", client_ids.contractRecord)
 							    console.log("date", res[0].CreatedDate)
+
 		      			  conn.sobject('Contract').create({ 
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
 		      			  	RecordTypeId: client_ids.contractRecord,
-		      				Description: sub_name, 
+		      					Description: "HEY!", 
 		      				StartDate: res[0].CreatedDate
 		      			  	 
 		      			  }, function(err, ret){
