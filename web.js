@@ -42,13 +42,6 @@ var stripeCheckName = function(name){
 			};
 		}
 	} 
-
-	// else {
-	// 	return {
-	// 		first_name: 'no first name listed',
-	// 		last_name: 'no last name listed'
-	// 	};
-	// };
 }
 
 
@@ -232,65 +225,15 @@ var salesContact2Contract = function(chargeObj){
 	};
 }
 
-// ========================================
-//                   DEV
-// ========================================
-
+// =======================
+//     GLOBAL LOGINS
 var conn;
 var client_ids;
 var stripe;
-
-app.post('/webhook', function(request, response) {
-
-	if (request.body.type === 'charge.succeeded' ) {
-
-		var chargeSucceeded = request.body
-
-		getLogins('Development').then(function(){
-
-			chargeSucceededRouter(chargeSucceeded);
-			
-			// var chargeObj = {
-			// 	customer: chargeSucceeded.data.object.customer,
-			// 	invoice: chargeSucceeded.data.object.invoice,
-			// 	amount: chargeSucceeded.data.object.amount,
-			// 	charge_id: chargeSucceeded.data.object.id
-			// };
-
-			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-			// 	if (res.length === 0){
-
-			// 		stripeId2SalesContact(chargeObj.customer).then(function(){
-
-			// 			salesContact2Contract(chargeObj);
-
-			// 		});
-			// 	} else {
-			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE')
-			// 	};
-
-			// });
-
-			// mongo.Db.connect(mongoUri, function(err, db) {
-			// 	// may be viewed at bash$ heroku addons:open mongolab
-	 	// 		db.collection('stripeLogs', function(er, collection) {
-	 	// 			collection.insert({'stripeReq':chargeSucceeded}, function(err, result){
-	 	// 				console.log(err);
-
-	 	// 			});
-			// 	});
-			// });
-		});
-	};
-//log error back to stripe
-	response.send('OK');
-	response.end();
-});
+// =======================
 
 var getLogins = function (client) {
-
 	var defer = q.defer();
-
 	mongo.Db.connect(mongoUri, function (err, db) {
 		db.collection(client, function (er, organization) {
 			organization.findOne({ 'Name' : client }, function (error, result) {
@@ -319,80 +262,50 @@ var getLogins = function (client) {
 
 
 var chargeSucceededRouter = function(chargeSucceeded){
-			var chargeObj = {
-				customer: chargeSucceeded.data.object.customer,
-				invoice: chargeSucceeded.data.object.invoice,
-				amount: chargeSucceeded.data.object.amount,
-				charge_id: chargeSucceeded.data.object.id
-			};
+	var chargeObj = {
+		customer: chargeSucceeded.data.object.customer,
+		invoice: chargeSucceeded.data.object.invoice,
+		amount: chargeSucceeded.data.object.amount,
+		charge_id: chargeSucceeded.data.object.id
+	};
 
-			console.log('CHARGE OBJ:', chargeObj)
-
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-
-				if (res.length === 0){
-					// var stripe_id = chargeSucceeded.data.object.customer;
-
-					stripeId2SalesContact(chargeObj.customer).then(function(){
-
-						salesContact2Contract(chargeObj);
-
-					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
-
+	conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+		if (res.length === 0){
+			stripeId2SalesContact(chargeObj.customer).then(function(){
+				salesContact2Contract(chargeObj);
 			});
+		} else {
+			console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+		};
+	});
 
-			mongo.Db.connect(mongoUri, function(err, db) {
-				// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 					console.log(err);
-	 				});
+	mongo.Db.connect(mongoUri, function(err, db) {
+		// may be viewed at bash$ heroku addons:open mongolab
+			db.collection('stripeLogs', function(er, collection) {
+				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
+					console.log(err);
 				});
-			});
+		});
+	});
 }
+
+app.post('/webhook', function(request, response) {
+	if (request.body.type === 'charge.succeeded' ) {
+		var chargeSucceeded = request.body
+		getLogins('Development').then(function(){
+			chargeSucceededRouter(chargeSucceeded);
+		});
+	};
+
+	response.send('OK');
+	response.end();
+});
 
 app.post('/webhook/changeMachineLive', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineLive').then(function(){
-
 			chargeSucceededRouter(chargeSucceeded);	
-			// var chargeObj = {
-			// 	customer: chargeSucceeded.data.object.customer,
-			// 	invoice: chargeSucceeded.data.object.invoice,
-			// 	amount: chargeSucceeded.data.object.amount,
-			// 	charge_id: chargeSucceeded.data.object.id
-			// };
-
-			// console.log('CHARGE OBJ:', chargeObj)
-
-			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-
-			// 	if (res.length === 0){
-			// 		// var stripe_id = chargeSucceeded.data.object.customer;
-
-			// 		stripeId2SalesContact(chargeObj.customer).then(function(){
-
-			// 			salesContact2Contract(chargeObj);
-
-			// 		});
-			// 	} else {
-			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-			// 	};
-
-			// });
-
-			// mongo.Db.connect(mongoUri, function(err, db) {
-			// 	// may be viewed at bash$ heroku addons:open mongolab
-	 	// 		db.collection('stripeLogs', function(er, collection) {
-	 	// 			collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 	// 				console.log(err);
-	 	// 			});
-			// 	});
-			// });
 		});
 	};
 
@@ -400,49 +313,11 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 	response.end();
 })
 
-
-
 app.post('/webhook/changeMachine', function(request, response) {
-
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineTest').then(function(){
-
 			chargeSucceededRouter(chargeSucceeded);			
-			
-			// var chargeObj = {
-			// 	customer: chargeSucceeded.data.object.customer,
-			// 	invoice: chargeSucceeded.data.object.invoice,
-			// 	amount: chargeSucceeded.data.object.amount,
-			// 	charge_id: chargeSucceeded.data.object.id
-			// };
-
-			// console.log('CHARGE OBJ:', chargeObj)
-
-			// conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-
-			// 	if (res.length === 0){
-			// 		// var stripe_id = chargeSucceeded.data.object.customer;
-
-			// 		stripeId2SalesContact(chargeObj.customer).then(function(){
-
-			// 			salesContact2Contract(chargeObj);
-
-			// 		});
-			// 	} else {
-			// 		console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-			// 	};
-
-			// });
-
-			// mongo.Db.connect(mongoUri, function(err, db) {
-			// 	// may be viewed at bash$ heroku addons:open mongolab
-	 	// 		db.collection('stripeLogs', function(er, collection) {
-	 	// 			collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 	// 				console.log(err);
-	 	// 			});
-			// 	});
-			// });
 		});
 	};
 
