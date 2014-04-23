@@ -41,12 +41,14 @@ var stripeCheckName = function(name){
 				last_name: name_array[name_array.length - 1]
 			};
 		}
-	} else {
-		return {
-			first_name: 'no first name listed',
-			last_name: 'no last name listed'
-		};
-	};
+	} 
+
+	// else {
+	// 	return {
+	// 		first_name: 'no first name listed',
+	// 		last_name: 'no last name listed'
+	// 	};
+	// };
 }
 
 
