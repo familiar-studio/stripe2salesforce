@@ -250,8 +250,6 @@ var stripe;
 
 app.post('/webhook', function(request, response) {
 
-	getLogins('Development')
-
 	console.log('hello')
 	// getDevelopmentLogins()
 
@@ -265,7 +263,7 @@ app.post('/webhook', function(request, response) {
 
 		var chargeSucceeded = request.body
 
-		getDevelopmentLogins().then(function(){
+		getLogins('Development').then(function(){
 
 			
 			var chargeObj = {
@@ -407,8 +405,8 @@ var getLogins = function (client) {
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection('ChangeMachine', function (er, organization) {
-			organization.findOne({ 'Name' : 'ChangeMachine' }, function (error, result) {
+		db.collection(client, function (er, organization) {
+			organization.findOne({ 'Name' : client }, function (error, result) {
 
 				console.log("RESULT????", result);
 
@@ -422,7 +420,7 @@ var getLogins = function (client) {
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
 					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to", 'ChangeMachine');
+					console.log("connected to", client);
 					defer.resolve(res);
 				});
 			});
