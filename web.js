@@ -440,7 +440,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-			getChangeMachineLogins().then(function(){
+		getLogins('ChangeMachine').then(function(){
 
 			
 			
