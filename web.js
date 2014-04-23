@@ -67,6 +67,8 @@ var stripeId2SalesContact = function(stripe_id){
 			var name = customer.metadata.Name;
 		}
 		
+
+		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
@@ -86,8 +88,8 @@ var stripeId2SalesContact = function(stripe_id){
     				var sfContactId = res[0].Id
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
-	            FirstName : stripeCheckName(name).first_name,
-	            LastName: stripeCheckName(name).last_name,
+	            // FirstName : stripeCheckName(name).first_name,
+	            // LastName: stripeCheckName(name).last_name,
 	            Stripe_Customer_Id__c : stripe_id,
 	            RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
@@ -166,7 +168,8 @@ var salesContact2Contract = function(chargeObj){
 	var stripe_id = chargeObj.customer;
 	var invoice = chargeObj.invoice;
 	var amount = chargeObj.amount;
-	var charge_id = chargeObj.charge_id; 
+	var charge_id = chargeObj.charge_id;
+	console.log("________________CHARGE OBJECT________________", chargeObj) 
 
 	if (invoice !== null) {
 		stripe.invoices.retrieve( invoice, function(err, response){
@@ -178,7 +181,8 @@ var salesContact2Contract = function(chargeObj){
 	  			  conn.sobject('Contract').create({ 
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
-	  			  	RecordTypeId: client_ids.contractRecord 
+	  			  	RecordTypeId: client_ids.contractRecord
+	  			  	 
 	  			  }, function(err, ret){
 	  			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
 								var contract_id = result[0].Id;		  
