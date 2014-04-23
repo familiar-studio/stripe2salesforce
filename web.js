@@ -441,7 +441,7 @@ app.post('/webhook/changeMachine', function(request, response) {
 		var chargeSucceeded = request.body;
 			getChangeMachineLogins().then(function(){
 
-			console.log('_______________THIS IS THE OBJECT__________________', chargeSucceeded.data)
+			console.log('_______________THIS IS THE OBJECT__________________', chargeSucceeded.data.object)
 			
 			var chargeObj = {
 				customer: chargeSucceeded.data.object.customer,
