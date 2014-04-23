@@ -279,7 +279,6 @@ app.post('/webhook', function(request, response) {
 });
 
 var getLogins = function (client) {
-	console.log("CLIENT ", client)
 
 	var defer = q.defer();
 
@@ -300,6 +299,9 @@ var getLogins = function (client) {
 					console.log("connected to", client);
 					defer.resolve(res);
 				});
+
+				client_ids = result.client_ids;
+
 			});
 		});
 	});
@@ -308,11 +310,11 @@ var getLogins = function (client) {
 
 app.post('/webhook/changeMachine', function(request, response) {
 
-	client_ids = {
-		contactRecord : '012G000000127om',
-		contractRecord : '012Z0000000D284',
-		opportunityRecord : '012Z0000000D289'
-	};
+	// client_ids = {
+	// 	contactRecord : '012G000000127om',
+	// 	contractRecord : '012Z0000000D284',
+	// 	opportunityRecord : '012Z0000000D289'
+	// };
 
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
