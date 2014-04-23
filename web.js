@@ -221,34 +221,6 @@ var conn;
 var client_ids;
 var stripe;
 
-// var loginDevelopment = function(){	
-// 	var deferred = q.defer()
-
-// 	stripe = require("stripe")(
-// 	 "sk_test_bY22es5dN0RpWmJoJ5VlBQ5E"
-// 	);
-
-// 	conn = new jsforce.Connection({
-// 	  oauth2 : {
-// 	    clientId : '3MVG9y6x0357HleeZ5WRMCv.Ih7Uxos6mg6Y.7N3RdXzC15h..L4jxBOwzB79dpcRSxwpV3.OgbNXSSJiobQQ',
-// 	    clientSecret : '8923954381316425368',
-// 	    redirectUri : 'https://stripe2salesforce.herokuapp.com',
-// 	    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-
-// 	  },
-// 	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-// 	})
-
-// 	conn.login('keith@familiar-studio.com', 'mNc67LcijiPhjWp5Mot26qP5mZAKlkZCyTIXSIE4', function(err, res) {
-// 	  if (err) { return console.error("I AM BROKEN, YO"); } 
-// 	  console.log("connected to DEVELOPMENT")
-// 	  deferred.resolve(res)
-// 	})
-// 	return deferred.promise;
-// }
-
-
-
 app.post('/webhook', function(request, response) {
 
 	console.log('hello')
@@ -303,102 +275,6 @@ app.post('/webhook', function(request, response) {
 	response.send('OK');
 	response.end();
 });
-
-// ========================================
-//              CHANGE MACHINE
-// ========================================
-
-// var loginChangeMachine = function(){
-// 	var deferred = q.defer()
-
-// 	stripe = require("stripe")(
-// 	 "sk_test_GrcQGm7NZntXmQh2X2o9Krrf"
-// 	);
-
-// 	conn = new jsforce.Connection({
-// 	  oauth2 : {
-// 	    clientId : '3MVG9GiqKapCZBwGoBHg5mgHLOya8ZmSFbD__GwluFQ_oPkcjmNWdNClzSMTfxZIey7ZWtKMF3xGm5X3fqg2H',
-// 	    clientSecret : '6117747355402425276',
-// 	    redirectUri : 'https://stripe2salesforce.herokuapp.com',
-// 	    loginUrl : 'https://test.salesforce.com',
-// 	    //proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-
-// 	  },
-// 	//  proxyUrl: 'https://pure-bastion-9629.herokuapp.com/proxy'
-// 	})
-
-// 	conn.login('keith+changemachine@familiar-studio.com.change', 'eEyfN6Yr8t2GEcATmMirLMR9TxZbPYnJ8X4', function(err, res) {
-// 	  if (err) { return console.error("I AM BROKEN, YO", err); };
-// 	  console.log("connected to CHANGE MACHINE");
-// 	  deferred.resolve(res);
-// 	})
-// 	return deferred.promise;
-// }
-
-var getDevelopmentLogins = function(organization){
-	console.log('hey!')
-	var deferred = q.defer()
-
-	mongo.Db.connect(mongoUri, function(err, db) {
-		db.collection('Organizations', function(er, organizations){
-			if (er) { console.log(er); } console.log('in collection')
-			organizations.findOne({ "organization.Development.Name" : "Development" }, function(error, result){
-				console.log("THIS IS THE RESULT :", result)
-
-					stripe = require("stripe")(
-				 result.organization.Development.stripe_api.secret_key
-				);
-
-				conn = new jsforce.Connection({ 
-				oauth2: {
-					clientId: result.organization.Development.oauth2.clientId,
-					clientSecret : result.organization.Development.oauth2.clientSecret,
-	    		redirectUri : result.organization.Development.oauth2.redirectUri,
-	    		loginUrl : result.organization.Development.oauth2.loginUrl,
-				},
-				  }) 
-				console.log("IS THIS THE RIGHT PASSCODE:", result.organization.Development.sf_login.password )
-				console.log("IS THIS THE RIGHT NAME:", result.organization.Development.sf_login.username )
-				conn.login(result.organization.Development.sf_login.username , result.organization.Development.sf_login.password, function(err, res) {
-				  if (err) { return console.error("I AM BROKEN, YO", err); };
-				  console.log("connected to DEVELOPMENT");
-				  deferred.resolve(res);
-				})
-
-				
-			})
-		})
-	})
-return deferred.promise;
-}
-
-var getChangeMachineLogins = function() {
-	var deferred = q.defer();
-
-	mongo.Db.connect(mongoUri, function(err, db) {
-		db.collection('Organizations', function(er, organizations){
-			organizations.findOne({ "organization.ChangeMachine.Name" : "ChangeMachine" }, function(error, result){
-
-				var res = result.organization.ChangeMachine;
-
-				stripe = require("stripe")(
-				  res.stripe_api.secret_key
-				);
-
-				conn = new jsforce.Connection({
-					oauth2: res.oauth2
-				});
-
-				conn.login( res.sf_login.username, res.sf_login.password, function(err, res) {
-					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to CHANGE MACHINE");
-					deferred.resolve(res);
-				});
-			});
-		});
-	});
-	return deferred.promise;
-}
 
 var getLogins = function (client) {
 	console.log("CLIENT ", client)
