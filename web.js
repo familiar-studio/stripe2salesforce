@@ -410,21 +410,21 @@ var getLogins = function (client) {
 		db.collection('ChangeMachine', function (er, organization) {
 			organization.find({ 'Name' : 'ChangeMachine' }, function (error, result) {
 
-				console.log(result);
+				console.log("RESULT????", result);
 
-				stripe = require("stripe")(
-				  result.stripe_api.secret_key
-				);
+				// stripe = require("stripe")(
+				//   result.stripe_api.secret_key
+				// );
 
-				conn = new jsforce.Connection({
-					oauth2: result.oauth2
-				});
+				// conn = new jsforce.Connection({
+				// 	oauth2: result.oauth2
+				// });
 
-				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to", 'ChangeMachine');
-					defer.resolve(res);
-				});
+				// conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
+				// 	if (err) { return console.error("I AM BROKEN, YO", err); };
+				// 	console.log("connected to", 'ChangeMachine');
+				// 	defer.resolve(res);
+				// });
 			});
 		});
 	});
