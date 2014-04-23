@@ -11,7 +11,6 @@ var moment = require('moment');
 
 // requires mongo db for logging transactions
 var mongo = require('mongodb');
-// sets link to mongodb on heroku (and localhost???)
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:5000/stripeLogs';
 
 
@@ -251,6 +250,8 @@ var stripe;
 
 app.post('/webhook', function(request, response) {
 
+	getLogins('Development')
+
 	console.log('hello')
 	// getDevelopmentLogins()
 
@@ -400,6 +401,33 @@ var getChangeMachineLogins = function() {
 	return deferred.promise;
 }
 
+var getLogins = function (client) {
+	var defer = q.defer();
+
+	mongo.Db.connect(mongoUri, function (err, db) {
+		db.collection(client, function (er, organization) {
+			organization.find({ 'Name' : client }, function (error, result) {
+
+				console.log(result);
+
+				stripe = require("stripe")(
+				  result.stripe_api.secret_key
+				);
+
+				conn = new jsforce.Connection({
+					oauth2: result.oauth2
+				});
+
+				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
+					if (err) { return console.error("I AM BROKEN, YO", err); };
+					console.log("connected to", client);
+					defer.resolve(res);
+				});
+			});
+		});
+	});
+	return defer.promise;
+}
 
 app.post('/webhook/changeMachine', function(request, response) {
 
