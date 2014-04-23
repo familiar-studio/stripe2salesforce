@@ -180,12 +180,18 @@ var salesContact2Contract = function(chargeObj){
 				if (res.length === 0) {
 
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-	  			  console.log ("DATE", res[0].CreatedDate )
+	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id,
+  					function(err, subscription) {
+  								console.log("This is the subscription object", subscription)
+							    // asynchronously called
+							  }
+							);
 	  			  conn.sobject('Contract').create({ 
 	  			  	AccountId : res[0].AccountId, 
 	  			  	Stripe_Subscription_Id__c : sub_id,
 	  			  	RecordTypeId: client_ids.contractRecord,
-	  				Description: "HELLLOOOOO TEST!"
+	  				Description: "SUBSCRIPTION NAME GOES HERE!", 
+	  				StartDate: res[0].CreatedDate
 	  			  	 
 	  			  }, function(err, ret){
 	  			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
