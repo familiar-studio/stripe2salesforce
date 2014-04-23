@@ -182,7 +182,7 @@ var salesContact2Contract = function(chargeObj){
 							    // console.log("SUB id", sub_id)
 							    // console.log("record type", client_ids.contractRecord)
 							    // console.log("date", res[0].CreatedDate)
-
+							   	//THIS IS BROKEN-- TRIED TO ADD SUB LOGIC TO 
 		      			 
 							  }
 							);
@@ -191,8 +191,8 @@ var salesContact2Contract = function(chargeObj){
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
 		      			  	RecordTypeId: client_ids.contractRecord,
-		      					Description: "HEY!", 
-		      					StartDate: res[0].CreatedDate 
+		      					Description: "HEY!" 
+		      					
 
 		      			  	 
 		      			  }, function(err, ret){
