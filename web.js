@@ -403,13 +403,15 @@ var getChangeMachineLogins = function() {
 }
 
 var getLogins = function (client) {
+	console.log("CLIENT ", client)
+
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection(client, function (er, organization) {
-			organization.find({ 'Name' : client }, function (error, result) {
+		db.collection('ChangeMachine', function (er, organization) {
+			organization.findOne({ 'Name' : 'ChangeMachine' }, function (error, result) {
 
-				console.log(result);
+				console.log("RESULT????", result);
 
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
@@ -421,7 +423,7 @@ var getLogins = function (client) {
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
 					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to", client);
+					console.log("connected to", 'ChangeMachine');
 					defer.resolve(res);
 				});
 			});
