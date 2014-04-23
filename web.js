@@ -180,30 +180,33 @@ var salesContact2Contract = function(chargeObj){
 				if (res.length === 0) {
 
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+	  			  
+
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id,
   					function(err, subscription) {
   								var sub_name = subscription.name 
 							    // asynchronously called
-				      			  conn.sobject('Contract').create({ 
-				      			  	AccountId : res[0].AccountId, 
-				      			  	Stripe_Subscription_Id__c : sub_id,
-				      			  	RecordTypeId: client_ids.contractRecord,
-				      				Description: sub_name, 
-				      				StartDate: res[0].CreatedDate
-				      			  	 
-				      			  }, function(err, ret){
-				      			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-				    							var contract_id = result[0].Id;		  
-				    							var account_id = result[0].AccountId;
-				    							var date = result[0].CreatedDate;
+		      			  conn.sobject('Contract').create({ 
+		      			  	AccountId : res[0].AccountId, 
+		      			  	Stripe_Subscription_Id__c : sub_id,
+		      			  	RecordTypeId: client_ids.contractRecord,
+		      				Description: sub_name, 
+		      				StartDate: res[0].CreatedDate
+		      			  	 
+		      			  }, function(err, ret){
+		      			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+		    							var contract_id = result[0].Id;		  
+		    							var account_id = result[0].AccountId;
+		    							var date = result[0].CreatedDate;
 
-				    							createOpp(amount, charge_id, date, account_id, contract_id)
-				      			  	});
-				      			  });
-				      			});
+		    							createOpp(amount, charge_id, date, account_id, contract_id)
+		      			  	});
+		      			  });
 							  }
 							);
-	  			 
+
+	  			  
+	  			});
 				} else {
 					var contract_id = res[0].Id;
 					var account_id = res[0].AccountId;
@@ -279,14 +282,12 @@ app.post('/webhook', function(request, response) {
 });
 
 var getLogins = function (client) {
-	console.log('CLIENT: ', client)
+
 	var defer = q.defer();
 
 	mongo.Db.connect(mongoUri, function (err, db) {
 		db.collection(client, function (er, organization) {
 			organization.findOne({ 'Name' : client }, function (error, result) {
-
-				console.log("RESULT:", result)
 
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
@@ -309,54 +310,6 @@ var getLogins = function (client) {
 	});
 	return defer.promise;
 }
-
-app.post('/webhook/changeMachineLive', function (request, response) {
-	if (request.body.type === 'charge.succeeded' ) {
-		var chargeSucceeded = request.body;
-		getLogins('ChangeMachineLive').then(function(){
-
-			
-			
-			var chargeObj = {
-				customer: chargeSucceeded.data.object.customer,
-				invoice: chargeSucceeded.data.object.invoice,
-				amount: chargeSucceeded.data.object.amount,
-				charge_id: chargeSucceeded.data.object.id
-			};
-
-			console.log('CHARGE OBJ:', chargeObj)
-
-			conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-
-				if (res.length === 0){
-					// var stripe_id = chargeSucceeded.data.object.customer;
-
-					stripeId2SalesContact(chargeObj.customer).then(function(){
-
-						salesContact2Contract(chargeObj);
-
-					});
-				} else {
-					console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
-				};
-
-			});
-
-			mongo.Db.connect(mongoUri, function(err, db) {
-				// may be viewed at bash$ heroku addons:open mongolab
-	 			db.collection('stripeLogs', function(er, collection) {
-	 				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-	 					console.log(err);
-	 				});
-				});
-			});
-		});
-	};
-
-	response.send('OK');
-	response.end();
-})
-
 
 app.post('/webhook/changeMachine', function(request, response) {
 
