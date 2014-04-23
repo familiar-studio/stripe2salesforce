@@ -250,6 +250,8 @@ var stripe;
 
 app.post('/webhook', function(request, response) {
 
+	getLogins('Development')
+
 	console.log('hello')
 	// getDevelopmentLogins()
 
@@ -406,6 +408,8 @@ var getLogins = function (client) {
 		db.collection(client, function (er, organization) {
 			organization.find({ 'Name' : client }, function (error, result) {
 
+				console.log(result);
+
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
 				);
@@ -417,7 +421,7 @@ var getLogins = function (client) {
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
 					if (err) { return console.error("I AM BROKEN, YO", err); };
 					console.log("connected to", client);
-					deferred.resolve(res);
+					defer.resolve(res);
 				});
 			});
 		});
