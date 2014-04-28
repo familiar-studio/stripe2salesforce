@@ -62,23 +62,23 @@ var stripeId2SalesContact = function(stripe_id){
 
 		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+			if (err || !res.success) { postResponse.send('ERR'); }
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
+    			if (err || !res.success) { postResponse.send('ERR'); }
     			if (res.length == 0){
   					conn.sobject("Contact").create({ 
-  						FirstName : stripeCheckName(name).first_Name, 
-  						LastName: stripeCheckName(name).last_Name,
+  						FirstName : stripeCheckName(name).first_name, 
+  						LastName: stripeCheckName(name).last_name,
   						Stripe_Customer_Id__c: stripe_id, 
   						Email: customer.email,
   						RecordTypeId: client_ids.contactRecord 
-  						// ISAAC BREAKS THE FUNCTION HERE ^^^^^ NEEDS CAPS 'R' 
   					}, function(err, ret) {
   						console.log('hi')
   				    if (err) { 
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
-  				    	postResponse.send('ERR')
+  				    	postResponse.send('ERR in contact creation');
   				    }
-  				    // console.log(responseError.logResponse())
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
 				  	});
@@ -89,7 +89,7 @@ var stripeId2SalesContact = function(stripe_id){
 	            Stripe_Customer_Id__c : stripe_id,
 	            RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
-	            if (error || !ret.success) { return console.error(error, ret); }
+	            if (error || !ret.success) { postResponse.send('ERR in contact update'); }
 	            console.log('Updated Customer found by Email:' + customer.email);
 	            deferred.resolve(ret); 
 		        });
@@ -102,7 +102,7 @@ var stripeId2SalesContact = function(stripe_id){
 	        Email: customer.email,
 	        RecordTypeId: client_ids.contactRecord
 	      }, function(error, ret){
-					if (error || !ret.success) { return console.error(err, ret); }
+					if (error || !ret.success) { postResponse.send('ERR in existing contact update') }
 					console.log('Updated Contact found by customer_id to:' + customer.email);
 					deferred.resolve(ret);
 	      });
@@ -134,7 +134,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 			Contract__c: contract_id,
 			RecordTypeId: client_ids.opportunityRecord
 		}, function(error, ret){
-			if (error || !ret.success) { return console.error(error, ret); }
+			if (error || !ret.success) { postResponse.send('ERR in sub opportunity creation'); }
 			console.log('new opportunity created from new contract')
 
 			response.send('OK');
@@ -154,7 +154,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 
 		
 		}, function(error, ret){
-			if (err || !ret.success) { return console.error(err, ret); }
+			if (error || !ret.success) { postResponse.send('ERR in single opportunity creation'); }
 			console.log('single charge opportunity created')
 
 			response.send('OK');
@@ -177,6 +177,7 @@ var salesContact2Contract = function(chargeObj){
 			var sub_id = response.subscription 
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
+				if (err || !res.success) { postResponse.send('ERR'); }
 				if (res.length === 0) {
 					
 
@@ -200,7 +201,9 @@ var salesContact2Contract = function(chargeObj){
       					StartDate: res[0].CreatedDate
       					
       			  }, function(err, ret){
+      			  	if (err || !ret.success) { postResponse.send('ERR'); }
       			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+      			  		if (err || !result.success) { postResponse.send('ERR'); }
     							var contract_id = result[0].Id;		  
     							var account_id = result[0].AccountId;
     							var date = result[0].CreatedDate;
@@ -222,6 +225,7 @@ var salesContact2Contract = function(chargeObj){
 
 	} else {
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+			if (err || !res.success) { postResponse.send('ERR'); }
 	    var account_id = res[0].AccountId;
 	   	var date = res[0].CreatedDate;
 
@@ -247,6 +251,7 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	};
 
 	conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+		if (err) { postResponse.send('ERR router'); }
 		if (res.length === 0){
 			stripeId2SalesContact(chargeObj.customer).then(function(){
 				salesContact2Contract(chargeObj);
@@ -281,7 +286,7 @@ var getLogins = function (client) {
 				});
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) { return console.error("I AM BROKEN, YO", err); };
+					if (err) { postResponse.send('ERR conn login'); }
 					console.log("connected to", client);
 					defer.resolve(res);
 				});
@@ -304,7 +309,7 @@ app.post('/webhook', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 });
 
 app.post('/webhook/changeMachineLive', function (request, response) {
@@ -317,7 +322,7 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 })
 
 // misleading webhook name - this is sandbox
