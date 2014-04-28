@@ -183,14 +183,8 @@ var salesContact2Contract = function(chargeObj){
 							    console.log("SUB id", sub_id)
 							    console.log("record type", client_ids.contractRecord)
 							    console.log("date", res[0].CreatedDate)
-							   	
 
-							   	 
-							  }
-							)
-	  			    
-
-	  			   conn.sobject('Contract').create({ 
+							   	   conn.sobject('Contract').create({ 
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
 		      			  	RecordTypeId: client_ids.contractRecord,
@@ -210,7 +204,14 @@ var salesContact2Contract = function(chargeObj){
 		      			  });
 
 
-	  			});
+	  			})
+
+							   	 
+							  }
+							)
+	  			    
+
+	  			
 				} else {
 					var contract_id = res[0].Id;
 					var account_id = res[0].AccountId;
