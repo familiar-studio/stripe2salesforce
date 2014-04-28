@@ -178,16 +178,13 @@ var salesContact2Contract = function(chargeObj){
   								var sub_name = subscription.plan.name 
 
 							    console.log("SUB NAME", sub_name)
-							    // console.log("ACCOUTN ID", res[0].AccountId)
-							    // console.log("SUB id", sub_id)
-							    // console.log("record type", client_ids.contractRecord)
-							    // console.log("date", res[0].CreatedDate)
-							   	//THIS IS BROKEN-- TRIED TO ADD SUB LOGIC TO 
-		      			 
-							  }
-							);
+							    console.log("ACCOUTN ID", res[0].AccountId)
+							    console.log("SUB id", sub_id)
+							    console.log("record type", client_ids.contractRecord)
+							    console.log("date", res[0].CreatedDate)
+							   	
 
-	  			   conn.sobject('Contract').create({ 
+							   	 conn.sobject('Contract').create({ 
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
 		      			  	RecordTypeId: client_ids.contractRecord,
@@ -204,6 +201,9 @@ var salesContact2Contract = function(chargeObj){
 		    							createOpp(amount, charge_id, date, account_id, contract_id)
 		      			  	});
 		      			  });
+		      			 
+							  }
+							);
 	  			  
 	  			});
 				} else {
