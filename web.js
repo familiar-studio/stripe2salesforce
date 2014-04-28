@@ -255,6 +255,7 @@ var chargeSucceededRouter = function(chargeSucceeded){
 }
 
 var getLogins = function (client) {
+	console.log(client)
 	var defer = q.defer();
 	mongo.Db.connect(mongoUri, function (err, db) {
 		db.collection(client, function (er, organization) {
