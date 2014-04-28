@@ -67,12 +67,16 @@ var stripeId2SalesContact = function(stripe_id){
     			if (res.length == 0){
   					conn.sobject("Contact").create({ 
   						FirstName : stripeCheckName(name).first_name, 
-  						LastName: stripeCheckName(name).last_name,  
+  						LastName: stripeCheckName(name).last_name,
   						Stripe_Customer_Id__c: stripe_id, 
   						Email: customer.email,
-  						RecordTypeId: client_ids.contactRecord,  
+  						RecordTypeId: client_ids.contactrecord, 
+  						// ISAAC BREAKS THE FUNCTION HERE ^^^^^ NEEDS CAPS 'R' 
   					}, function(err, ret) {
-  				    if (err || !ret.success) { return console.error(err, ret); }
+  				    if (err || !ret.success) { 
+  				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
+  				    	console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
+  				    }
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
 				  	});
@@ -80,8 +84,6 @@ var stripeId2SalesContact = function(stripe_id){
     				var sfContactId = res[0].Id
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
-	            // FirstName : stripeCheckName(name).first_name,
-	            // LastName: stripeCheckName(name).last_name,
 	            Stripe_Customer_Id__c : stripe_id,
 	            RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
@@ -227,7 +229,6 @@ var stripe;
 // =======================
 
 var chargeSucceededRouter = function(chargeSucceeded){
-	console.log("UNSCOPED RESPONSE", response)
 	console.log(chargeSucceeded)
 	var chargeObj = {
 		customer: chargeSucceeded.data.object.customer,
@@ -284,7 +285,15 @@ var getLogins = function (client) {
 	return defer.promise;
 }
 
-app.post('/webhook', function(request, response) {
+var responseError = function (response) {
+	return {
+		logResponse: function () {
+			return response;
+		};
+	};
+}
+
+app.post('/webhook', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body
 		getLogins('Development').then(function(){
@@ -309,15 +318,15 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 })
 
 // misleading webhook name - this is sandbox
-app.post('/webhook/changeMachine', function(request, response) {
-	console.log("WEBHOOK SCOPED RESPONSE", response)
-
+app.post('/webhook/changeMachine', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineTest').then(function(){
 			chargeSucceededRouter(chargeSucceeded);			
 		});
 	};
+
+	responseError(response)
 
 	response.send('OK');
 	response.end();
