@@ -306,10 +306,10 @@ app.post('/webhook', function (request, response) {
 		getLogins('Development').then(function(){
 			chargeSucceededRouter(chargeSucceeded);
 		});
+	} else {
+		response.send('OK');
+		response.end();
 	};
-
-	// response.send('OK');
-	// response.end();
 });
 
 app.post('/webhook/changeMachineLive', function (request, response) {
@@ -319,10 +319,10 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 		getLogins('ChangeMachineLive').then(function(){
 			chargeSucceededRouter(chargeSucceeded);	
 		});
+	} else {
+		response.send('OK');
+		response.end();
 	};
-
-	// response.send('OK');
-	// response.end();
 })
 
 // misleading webhook name - this is sandbox
@@ -334,10 +334,10 @@ app.post('/webhook/changeMachine', function (request, response) {
 			chargeSucceededRouter(chargeSucceeded);			
 		});
 
+	} else {
+		response.send('OK');
+		response.end();
 	};
-
-	// response.send('OK');
-	// response.end();
 })
 
 
