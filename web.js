@@ -188,7 +188,8 @@ var salesContact2Contract = function(chargeObj){
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
 		      			  	RecordTypeId: client_ids.contractRecord,
-		      					Description: "HEY!" 
+		      					Description: "HEY!",
+		      					StartDate: res[0].CreatedDate 
 		      					
 
 		      			  	 
