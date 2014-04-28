@@ -171,7 +171,7 @@ var salesContact2Contract = function(chargeObj){
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 				if (res.length === 0) {
-					console.log("this is the sub object?__________________", res)
+					
 
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
