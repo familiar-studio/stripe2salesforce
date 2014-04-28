@@ -136,6 +136,8 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		}, function(error, ret){
 			if (error || !ret.success) { return console.error(error, ret); }
 			console.log('new opportunity created from new contract')
+
+			response.send('OK');
 		});
 
 	}else{
@@ -153,6 +155,8 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 		}, function(error, ret){
 			if (err || !ret.success) { return console.error(err, ret); }
 			console.log('single charge opportunity created')
+
+			response.send('OK');
 		});
 	};
 }
@@ -297,7 +301,7 @@ app.post('/webhook', function (request, response) {
 		});
 	};
 
-	response.send('OK');
+	// response.send('OK');
 	response.end();
 });
 
@@ -310,7 +314,7 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 		});
 	};
 
-	response.send('OK');
+	// response.send('OK');
 	response.end();
 })
 
@@ -325,7 +329,7 @@ app.post('/webhook/changeMachine', function (request, response) {
 
 	};
 
-	response.send('OK');
+	// response.send('OK');
 	response.end();
 })
 
