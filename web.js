@@ -177,7 +177,7 @@ var salesContact2Contract = function(chargeObj){
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
 							var sub_name = subscription.plan.name 
-							console.log("client id object ____________", client_i)
+							console.log("client id object ____________", client_ids)
 					    console.log("SUB NAME", sub_name)
 					    console.log("ACCOUTN ID", res[0].AccountId)
 					    console.log("SUB id", sub_id)
