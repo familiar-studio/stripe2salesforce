@@ -171,12 +171,13 @@ var salesContact2Contract = function(chargeObj){
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 				if (res.length === 0) {
+					console.log("this is the sub object?__________________", res)
 
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
   								var sub_name = subscription.plan.name 
-
+  								console.log("client id object ____________", client_ids)
 							    console.log("SUB NAME", sub_name)
 							    console.log("ACCOUTN ID", res[0].AccountId)
 							    console.log("SUB id", sub_id)
@@ -184,16 +185,11 @@ var salesContact2Contract = function(chargeObj){
 							    console.log("date", res[0].CreatedDate)
 							   	
 
-							   	
-		      			 
+							   	 
 							  }
-							);
-	  			    console.log("SUB NAME", sub_name)
-							    console.log("ACCOUTN ID", res[0].AccountId)
-							    console.log("SUB id", sub_id)
-							    console.log("record type", client_ids.contractRecord)
-							    console.log("date", res[0].CreatedDate)
-							    
+							)
+	  			    
+
 	  			   conn.sobject('Contract').create({ 
 		      			  	AccountId : res[0].AccountId, 
 		      			  	Stripe_Subscription_Id__c : sub_id,
