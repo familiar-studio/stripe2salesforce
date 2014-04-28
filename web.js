@@ -323,9 +323,11 @@ app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
 
 	console.log(request.param('eventId'), request.param('clientName'))
 
-	stripe.events.retrieve(request.param('eventId'), function (err, res) {
-		console.log(res)
-	})
+	getLogins(request.param('clientName')).then(function(){
+		stripe.events.retrieve(request.param('eventId'), function (err, res) {
+			console.log(res)
+		})
+	});
 
 })
 
