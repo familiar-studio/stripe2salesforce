@@ -227,6 +227,7 @@ var stripe;
 // =======================
 
 var chargeSucceededRouter = function(chargeSucceeded){
+	console.log(chargeSucceeded)
 	var chargeObj = {
 		customer: chargeSucceeded.data.object.customer,
 		invoice: chargeSucceeded.data.object.invoice,
@@ -255,7 +256,6 @@ var chargeSucceededRouter = function(chargeSucceeded){
 }
 
 var getLogins = function (client) {
-	console.log(client)
 	var defer = q.defer();
 	mongo.Db.connect(mongoUri, function (err, db) {
 		db.collection(client, function (er, organization) {
@@ -327,8 +327,8 @@ app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
 	getLogins(request.param('clientName')).then(function(){
 		stripe.events.retrieve(request.param('eventId'), function (err, res) {
 			console.log(res)
-			if (res.body.type === 'charge.succeeded') {
-				chargeSucceededRouter(request.body);
+			if (res.type === 'charge.succeeded') {
+				chargeSucceededRouter(res);
 			};
 		});
 	});
