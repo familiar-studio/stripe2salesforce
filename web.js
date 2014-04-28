@@ -76,7 +76,7 @@ var stripeId2SalesContact = function(stripe_id){
   						console.log('hi')
   				    if (err) { 
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
-  				    	// console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
+  				    	postResponse.send('ERR')
   				    }
   				    // console.log(responseError.logResponse())
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
@@ -224,12 +224,13 @@ var salesContact2Contract = function(chargeObj){
 	};
 }
 
-// =======================
-//     GLOBAL LOGINS
+// ========================
+//     GLOBAL VARIABLES
 var conn;
 var client_ids;
 var stripe;
-// =======================
+var postResponse;
+// ========================
 
 var chargeSucceededRouter = function(chargeSucceeded){
 	var chargeObj = {
@@ -287,18 +288,10 @@ var getLogins = function (client) {
 	return defer.promise;
 }
 
-var responseError = function (response) {
-	console.log('response error logged')
-	return {
-		logResponse: function () {
-			return response;
-		}
-	};
-};
-
 app.post('/webhook', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body
+		postResponse = response
 		getLogins('Development').then(function(){
 			chargeSucceededRouter(chargeSucceeded);
 		});
@@ -311,6 +304,7 @@ app.post('/webhook', function (request, response) {
 app.post('/webhook/changeMachineLive', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
+		postResponse = response
 		getLogins('ChangeMachineLive').then(function(){
 			chargeSucceededRouter(chargeSucceeded);	
 		});
@@ -324,11 +318,11 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 app.post('/webhook/changeMachine', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
+		postResponse = response
 		getLogins('ChangeMachineTest').then(function(){
 			chargeSucceededRouter(chargeSucceeded);			
 		});
 
-		responseError(response)
 	};
 
 	response.send('OK');
