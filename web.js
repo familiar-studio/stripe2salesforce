@@ -309,7 +309,7 @@ app.post('/webhook', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 });
 
 app.post('/webhook/changeMachineLive', function (request, response) {
@@ -322,7 +322,7 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 })
 
 // misleading webhook name - this is sandbox
@@ -337,7 +337,7 @@ app.post('/webhook/changeMachine', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 })
 
 
