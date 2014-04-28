@@ -70,12 +70,13 @@ var stripeId2SalesContact = function(stripe_id){
   						LastName: stripeCheckName(name).last_name,
   						Stripe_Customer_Id__c: stripe_id, 
   						Email: customer.email,
-  						RecordTypeId: client_ids.contactrecord, 
+  						RecordTypeId: client_ids.contactrecord 
   						// ISAAC BREAKS THE FUNCTION HERE ^^^^^ NEEDS CAPS 'R' 
   					}, function(err, ret) {
+  						console.log('hi')
   				    if (err || !ret.success) { 
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
-  				    	console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
+  				    	console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse()
   				    }
   				    console.log(responseError.logResponse())
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
@@ -287,6 +288,7 @@ var getLogins = function (client) {
 }
 
 var responseError = function (response) {
+	console.log('response error logged')
 	return {
 		logResponse: function () {
 			return response;
