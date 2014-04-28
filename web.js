@@ -319,8 +319,14 @@ app.post('/webhook/changeMachine', function(request, response) {
 	response.end();
 })
 
-app.get('/webhook/retry/changemachine/:eventId', function (request, response) {
-	console.log(request.param('eventId'))
+app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
+
+	console.log(request.param('eventId'), request.param('clientName'))
+
+	stripe.events.retrieve(request.param('eventId'), function (err, res) {
+		console.log(res)
+	})
+
 })
 
 
