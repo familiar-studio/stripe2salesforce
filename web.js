@@ -138,6 +138,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 			console.log('new opportunity created from new contract')
 
 			response.send('OK');
+			response.end()
 		});
 
 	}else{
@@ -157,6 +158,7 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 			console.log('single charge opportunity created')
 
 			response.send('OK');
+			response.end()
 		});
 	};
 }
@@ -330,7 +332,7 @@ app.post('/webhook/changeMachine', function (request, response) {
 	};
 
 	// response.send('OK');
-	response.end();
+	// response.end();
 })
 
 
