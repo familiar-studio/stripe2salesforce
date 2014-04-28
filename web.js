@@ -74,11 +74,11 @@ var stripeId2SalesContact = function(stripe_id){
   						// ISAAC BREAKS THE FUNCTION HERE ^^^^^ NEEDS CAPS 'R' 
   					}, function(err, ret) {
   						console.log('hi')
-  				    if (err || !ret.success) { 
+  				    if (err) { 
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
-  				    	console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
+  				    	// console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
   				    }
-  				    console.log(responseError.logResponse())
+  				    // console.log(responseError.logResponse())
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
 				  	});
@@ -89,7 +89,7 @@ var stripeId2SalesContact = function(stripe_id){
 	            Stripe_Customer_Id__c : stripe_id,
 	            RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
-	            if (error || !ret.success) { return console.error(err, ret); }
+	            if (error || !ret.success) { return console.error(error, ret); }
 	            console.log('Updated Customer found by Email:' + customer.email);
 	            deferred.resolve(ret); 
 		        });
@@ -327,9 +327,9 @@ app.post('/webhook/changeMachine', function (request, response) {
 		getLogins('ChangeMachineTest').then(function(){
 			chargeSucceededRouter(chargeSucceeded);			
 		});
-	};
 
-	responseError(response)
+		responseError(response)
+	};
 
 	response.send('OK');
 	response.end();
