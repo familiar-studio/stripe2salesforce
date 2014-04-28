@@ -77,6 +77,7 @@ var stripeId2SalesContact = function(stripe_id){
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
   				    	console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
   				    }
+  				    responseError.logResponse().send('HI')
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
 				  	});
@@ -131,10 +132,9 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 			AccountId: account_id,
 			Contract__c: contract_id,
 			RecordTypeId: client_ids.opportunityRecord
-
 		}, function(error, ret){
-			if (err || !ret.success) { return console.error(err, ret); }
-			console.log('new opportunity created from new contract: ', ret.id)
+			if (error || !ret.success) { return console.error(error, ret); }
+			console.log('new opportunity created from new contract')
 		});
 
 	}else{
@@ -231,7 +231,6 @@ var stripe;
 // =======================
 
 var chargeSucceededRouter = function(chargeSucceeded){
-	console.log(chargeSucceeded)
 	var chargeObj = {
 		customer: chargeSucceeded.data.object.customer,
 		invoice: chargeSucceeded.data.object.invoice,
