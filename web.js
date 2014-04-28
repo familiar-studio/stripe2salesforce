@@ -291,9 +291,9 @@ var responseError = function (response) {
 	return {
 		logResponse: function () {
 			return response;
-		};
+		}
 	};
-}
+};
 
 app.post('/webhook', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
