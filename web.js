@@ -78,7 +78,7 @@ var stripeId2SalesContact = function(stripe_id){
   				    	console.log("INTENTIONAL ERROR IN CONTACT CREATION <<<<<<<<<<<<<") 
   				    	// console.log(">>>>>>>>>>> RESPONSE OBJ", responseError.logResponse())
   				    }
-  				    // console.log(responseError.logResponse())
+  				    console.log(responseError.logResponse())
   				    console.log("Created Contact With ID: " + ret.id, 'And Email:' + customer.email);
   				    deferred.resolve(ret);
 				  	});
