@@ -227,6 +227,7 @@ var stripe;
 // =======================
 
 var chargeSucceededRouter = function(chargeSucceeded){
+	console.log("UNSCOPED RESPONSE", response)
 	console.log(chargeSucceeded)
 	var chargeObj = {
 		customer: chargeSucceeded.data.object.customer,
@@ -309,6 +310,8 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 
 // misleading webhook name - this is sandbox
 app.post('/webhook/changeMachine', function(request, response) {
+	console.log("WEBHOOK SCOPED RESPONSE", response)
+
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
 		getLogins('ChangeMachineTest').then(function(){
@@ -320,13 +323,12 @@ app.post('/webhook/changeMachine', function(request, response) {
 	response.end();
 })
 
+
+// if a webhook breaks, pass company name and Stripe event ID of charge.succeeded obj to this url:
 app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
-
-	console.log(request.param('eventId'), request.param('clientName'))
-
+// CHANGE MACHINE: ChangeMachineLive / ChangeMachineTest
 	getLogins(request.param('clientName')).then(function(){
 		stripe.events.retrieve(request.param('eventId'), function (err, res) {
-			console.log(res)
 			if (res.type === 'charge.succeeded') {
 				chargeSucceededRouter(res);
 			};
