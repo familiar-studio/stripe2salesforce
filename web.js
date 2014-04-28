@@ -175,36 +175,30 @@ var salesContact2Contract = function(chargeObj){
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
-  								var sub_name = subscription.plan.name 
+							var sub_name = subscription.plan.name 
 
-							    console.log("SUB NAME", sub_name)
-							    console.log("ACCOUTN ID", res[0].AccountId)
-							    console.log("SUB id", sub_id)
-							    console.log("record type", client_ids.contractRecord)
-							    console.log("date", res[0].CreatedDate)
-							   	
+					    console.log("SUB NAME", sub_name)
+					    console.log("ACCOUTN ID", res[0].AccountId)
+					    console.log("SUB id", sub_id)
+					    console.log("record type", client_ids.contractRecord)
+					    console.log("date", res[0].CreatedDate)
+					   	
 
-							   	 conn.sobject('Contract').create({ 
-		      			  	AccountId : res[0].AccountId, 
-		      			  	Stripe_Subscription_Id__c : sub_id,
-		      			  	RecordTypeId: client_ids.contractRecord,
-		      					Description: "HEY!" 
-		      					
+					   	conn.sobject('Contract').create({ 
+      			  	AccountId : res[0].AccountId, 
+      			  	Stripe_Subscription_Id__c : sub_id,
+      			  	RecordTypeId: client_ids.contractRecord,
+      					Description: "HEY!" 
+      			  }, function(err, ret){
+      			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+    							var contract_id = result[0].Id;		  
+    							var account_id = result[0].AccountId;
+    							var date = result[0].CreatedDate;
 
-		      			  	 
-		      			  }, function(err, ret){
-		      			  conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-		    							var contract_id = result[0].Id;		  
-		    							var account_id = result[0].AccountId;
-		    							var date = result[0].CreatedDate;
-
-		    							createOpp(amount, charge_id, date, account_id, contract_id)
-		      			  	});
-		      			  });
-		      			 
-							  }
-							);
-	  			  
+    							createOpp(amount, charge_id, date, account_id, contract_id)
+      			  	});
+      			  });
+					  });
 	  			});
 				} else {
 					var contract_id = res[0].Id;
@@ -232,35 +226,6 @@ var conn;
 var client_ids;
 var stripe;
 // =======================
-
-var getLogins = function (client) {
-	var defer = q.defer();
-	mongo.Db.connect(mongoUri, function (err, db) {
-		db.collection(client, function (er, organization) {
-			organization.findOne({ 'Name' : client }, function (error, result) {
-
-				stripe = require("stripe")(
-				  result.stripe_api.secret_key
-				);
-
-				conn = new jsforce.Connection({
-					oauth2: result.oauth2
-				});
-
-				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) { return console.error("I AM BROKEN, YO", err); };
-					console.log("connected to", client);
-					defer.resolve(res);
-				});
-
-				client_ids = result.client_ids;
-
-			});
-		});
-	});
-	return defer.promise;
-}
-
 
 var chargeSucceededRouter = function(chargeSucceeded){
 	var chargeObj = {
@@ -290,6 +255,34 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	});
 }
 
+var getLogins = function (client) {
+	var defer = q.defer();
+	mongo.Db.connect(mongoUri, function (err, db) {
+		db.collection(client, function (er, organization) {
+			organization.findOne({ 'Name' : client }, function (error, result) {
+
+				stripe = require("stripe")(
+				  result.stripe_api.secret_key
+				);
+
+				conn = new jsforce.Connection({
+					oauth2: result.oauth2
+				});
+
+				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
+					if (err) { return console.error("I AM BROKEN, YO", err); };
+					console.log("connected to", client);
+					defer.resolve(res);
+				});
+
+				client_ids = result.client_ids;
+
+			});
+		});
+	});
+	return defer.promise;
+}
+
 app.post('/webhook', function(request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body
@@ -314,6 +307,7 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 	response.end();
 })
 
+// misleading webhook name - this is sandbox
 app.post('/webhook/changeMachine', function(request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
