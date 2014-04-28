@@ -52,9 +52,7 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
-		console.log("NAME", customer.metadata.Name )
-		console.log("DATA", customer.metadata )
-		console.log("Email", customer.metadata.Email )
+	
 		if (customer.metadata.Name == null){
 			var name = 'anonymous';
 		} else {
@@ -171,12 +169,13 @@ var salesContact2Contract = function(chargeObj){
 
 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
 				if (res.length === 0) {
+					console.log("this is the sub object?__________________", res)
 
 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
 							var sub_name = subscription.plan.name 
-
+							console.log("client id object ____________", client_ids)
 					    console.log("SUB NAME", sub_name)
 					    console.log("ACCOUTN ID", res[0].AccountId)
 					    console.log("SUB id", sub_id)
@@ -199,6 +198,24 @@ var salesContact2Contract = function(chargeObj){
       			  	});
       			  });
 					  });
+
+					   	conn.sobject('Contract').create({ 
+	    			  	AccountId : res[0].AccountId, 
+	    			  	Stripe_Subscription_Id__c : sub_id,
+	    			  	RecordTypeId: client_ids.contractRecord,
+	    					Description: sub_name,
+	    					StartDate: res[0].CreatedDate 
+	    			  	 
+	    			  }, function(err, ret){
+	    			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+	  							var contract_id = result[0].Id;		  
+	  							var account_id = result[0].AccountId;
+	  							var date = result[0].CreatedDate;
+
+	  							createOpp(amount, charge_id, date, account_id, contract_id)
+	    			  	});
+	    			  }); 
+					  })
 	  			});
 				} else {
 					var contract_id = res[0].Id;
@@ -318,6 +335,10 @@ app.post('/webhook/changeMachine', function(request, response) {
 
 	response.send('OK');
 	response.end();
+})
+
+app.get('/webhook/retry/changemachine/:eventId', function (request, response) {
+	console.log(request.param('eventId'))
 })
 
 
