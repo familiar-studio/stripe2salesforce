@@ -211,7 +211,7 @@ var salesContact2Contract = function(chargeObj){
 					var account_id = res[0].AccountId;
 					var date = res[0].CreatedDate;
 
-					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a tthe moment
+					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a the moment
 	  		};
 	  	});
 		});
