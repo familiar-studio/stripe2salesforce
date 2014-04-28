@@ -202,10 +202,6 @@ var salesContact2Contract = function(chargeObj){
 	    			  }); 
 					  })
 	  			    
-
-	  			
-
-
 	  			});
 				} else {
 					var contract_id = res[0].Id;
