@@ -163,6 +163,56 @@ var createOpp = function(amount, charge_id, date, account_id, contract_id){
 	};
 }
 
+var buildSFOpportunity = function (chargeObj) {
+	var stripe_id = chargeObj.customer;
+	var invoice = chargeObj.invoice;
+	var amount = chargeObj.amount;
+	var charge_id = chargeObj.charge_id;
+
+	if (invoice !== null) { 
+		stripe.invoice.retrieve( invoice, function (err, response) {
+			var sub_id = response.subscription;
+
+			conn.sobject('Opportunity').find({ 'Stripe_Subscription_Id__c' : sub_id }).limit(1).execute( function (err, response) { // finds opportunity existence
+				if (err || !res.success) { postResponse.send('ERR'); }
+				if (res.length === 0) { // opportunity does not exist, build opportunity, then send id to payment
+					conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute( function (err, res) {
+						stripe.customers.retrieveSubscription(stripe_id, sub_id, function (err, subscription) {
+							var sub_name = subscription.plan.name;
+
+							conn.sobject('Opportunity').create({
+								Name : 'Stripe Charge',
+								Stripe_Subscription_Id__c : ,
+								RecordTypeId : client_ids.opportunityRecord,
+								CloseDate : res[0].CreatedDate,
+								StageName : 'Posted' // hard coded, not sure if this will change
+							}, function (err, ret) {
+								if (err || !ret.success) { postResponse.send('ERR'); }
+								conn.sobject('Opportunity').find({ 'Id' : ret.id }).limit(1).execute( function (err, result) {
+									if (err || !result.success) { postResponse.send }
+									var opportunity_id = result[0].Id;
+									var account_id = result[0].AccountId;
+									var date = result[0].CreatedDate;
+								});
+							});
+						});
+					});
+				} else {
+					// create payment? -- not sure what to do here.
+				}
+			})
+		});
+	} else {
+		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+			if (err || !res.success) { postResponse.send('ERR'); }
+	    var account_id = res[0].AccountId;
+	   	var date = res[0].CreatedDate;
+
+	   	// do something here
+		});
+	}
+};
+
 	
 var salesContact2Contract = function(chargeObj){
 	console.log('MOVING FROM CONTACT TO CONTRACT')
@@ -185,13 +235,6 @@ var salesContact2Contract = function(chargeObj){
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
 							var sub_name = subscription.plan.name 
-							// console.log("client id object ____________", client_ids)
-					  //   console.log("SUB NAME", sub_name)
-					  //   console.log("ACCOUTN ID", res[0].AccountId)
-					  //   console.log("SUB id", sub_id)
-					  //   console.log("record type", client_ids.contractRecord)
-					  //   console.log("date", res[0].CreatedDate)
-					   	
 
 					   	conn.sobject('Contract').create({ 
       			  	AccountId : res[0].AccountId, 
