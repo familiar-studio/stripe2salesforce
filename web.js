@@ -159,7 +159,7 @@ var buildSFOpportunity = function (chargeObj) {
 					conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute( function (err, contact) {
 						stripe.customers.retrieveSubscription(stripe_id, sub_id, function (err, subscription) {
 							var sub_name = subscription.plan.name;
-							console.log('SUBSCRIPTION FROM STRIPE:' subscription)
+							console.log('SUBSCRIPTION FROM STRIPE:', subscription)
 
 							conn.sobject('Opportunity').create({
 								AccountId : contact[0].AccountId,
