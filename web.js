@@ -347,7 +347,7 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		if (err) { postResponse.send('ERR router'); }
 		console.log('HEEEY!!!! res', res)
 
-		if (res.length === 0 || res === undefined){
+		if (res.length === 0 || res == undefined){
 			console.log('PAYMENT DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
 				buildSFOpportunity(chargeObj);
