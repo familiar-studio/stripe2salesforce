@@ -176,7 +176,7 @@ var buildSFOpportunity = function (chargeObj) {
 								CloseDate : contact[0].CreatedDate,
 								StageName : 'Posted' // hard coded, not sure if this will change
 							}, function (err, ret) {
-								if (err || !ret.success) { postResponse.send('ERR'); console.log(err) console.log('ERROR IN OPP CREATION', err) }
+								if (err || !ret.success) { postResponse.send('ERR'); console.log('ERROR IN OPP CREATION', err) }
 								conn.sobject('Opportunity').find({ 'Id' : ret.id }).limit(1).execute( function (err, result) {
 									if (err || !result.success) { postResponse.send }
 									var opportunity_id = result[0].Id;
