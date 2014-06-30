@@ -387,8 +387,6 @@ var getLogins = function (client) {
 
 				client_ids = result.client_ids;
 
-				console.log('global variables:',stripe, conn, client_ids);
-
 			});
 		});
 	});
