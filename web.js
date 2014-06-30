@@ -358,9 +358,9 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		
 		if (res == undefined || res == null || res == false || res.length == 0){
 			console.log('PAYMENT DOES NOT EXIST')
-			stripeId2SalesContact(chargeObj.customer).then(function(){
-				buildSFOpportunity(chargeObj);
-			});
+			// stripeId2SalesContact(chargeObj.customer).then(function(){
+			// 	buildSFOpportunity(chargeObj);
+			// });
 		} else {
 			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
 		};
