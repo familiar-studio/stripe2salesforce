@@ -346,6 +346,8 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 		console.log("inside this func!")
 		if (err) { postResponse.send('ERR router'); }
+		console.log('HEEEY!!!! res', res)
+
 		if (res.length === 0){
 			console.log('OPPORTUNITY DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
