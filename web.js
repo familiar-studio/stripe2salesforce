@@ -113,55 +113,87 @@ var stripeId2SalesContact = function(stripe_id){
 }
 
 
-var createOpp = function(amount, charge_id, date, account_id, contract_id){
-	console.log('CREATING OPPORTUNITY')
+var createPayment = function( amount, charge_id, date, account_id, opportunity_id){
+	console.log('CREATING PAYMENT')
 	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
 	console.log("1. amount", amount)
 	console.log("2. stripe charge id", charge_id)
 	console.log("3. date", date)
 	console.log("4. account id", account_id)
-	console.log("5. contact id", contract_id)
-	console.log("6. record type", client_ids.opportunityRecord)
-	if (contract_id){
-		console.log("I AM A SUB TRYING TO MAKE AN OPP")
-		conn.sobject("Opportunity").create({ 
-			Amount: (amount/100), 
+	console.log("5. OPP id", opportunity_id)
+	console.log("6. record type", client_ids.paymentRecord )
+
+	console.log("I AM A PAYMENT BEING MADE")
+		conn.sobject("Payment").create({ 
+			npe01__Payment_Amount__c: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
 			Name: "Stripe Charge",
 			StageName: "Closed Won",
 			CloseDate: date,
-			AccountId: account_id,
-			Contract__c: contract_id,
-			RecordTypeId: client_ids.opportunityRecord
-		}, function(error, ret){
-			if (error || !ret.success) { postResponse.send('ERR in sub opportunity creation'); }
-			console.log('new opportunity created from new contract')
-
-			response.send('OK');
-			response.end()
-		});
-
-	}else{
-		console.log("I AM A SINGLE OPP BEING MADE")
-		conn.sobject("Opportunity").create({ 
-			Amount: (amount/100), 
-			Stripe_Charge_Id__c: charge_id, 
-			Name: "Stripe Charge",
-			StageName: "Closed Won",
-			CloseDate: date,
-			AccountId: account_id,
-			RecordTypeId: client_ids.opportunityRecord 
+			CreatedById: account_id,
+			npe01__Opportunity__c: opportunity_id,
+			RecordTypeId: client_ids.paymentRecord //??
 
 		
 		}, function(error, ret){
-			if (error || !ret.success) { postResponse.send('ERR in single opportunity creation'); }
-			console.log('single charge opportunity created')
+			if (error || !ret.success) { postResponse.send('ERR in payment creation'); }
+			console.log('payment opportunity created!!!!')
 
 			response.send('OK');
 			response.end()
 		});
-	};
+
 }
+
+// var createOpp = function(amount, charge_id, date, account_id, contract_id){
+// 	console.log('CREATING OPPORTUNITY')
+// 	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
+// 	console.log("1. amount", amount)
+// 	console.log("2. stripe charge id", charge_id)
+// 	console.log("3. date", date)
+// 	console.log("4. account id", account_id)
+// 	console.log("5. contact id", contract_id)
+// 	console.log("6. record type", client_ids.opportunityRecord)
+// 	if (contract_id){
+// 		console.log("I AM A SUB TRYING TO MAKE AN OPP")
+// 		conn.sobject("Opportunity").create({ 
+// 			Amount: (amount/100), 
+// 			Stripe_Charge_Id__c: charge_id, 
+// 			Name: "Stripe Charge",
+// 			StageName: "Closed Won",
+// 			CloseDate: date,
+// 			AccountId: account_id,
+// 			Contract__c: contract_id,
+// 			RecordTypeId: client_ids.opportunityRecord
+// 		}, function(error, ret){
+// 			if (error || !ret.success) { postResponse.send('ERR in sub opportunity creation'); }
+// 			console.log('new opportunity created from new contract')
+
+// 			response.send('OK');
+// 			response.end()
+// 		});
+
+// 	}else{
+// 		console.log("I AM A SINGLE OPP BEING MADE")
+// 		conn.sobject("Opportunity").create({ 
+// 			Amount: (amount/100), 
+// 			Stripe_Charge_Id__c: charge_id, 
+// 			Name: "Stripe Charge",
+// 			StageName: "Closed Won",
+// 			CloseDate: date,
+// 			AccountId: account_id,
+// 			RecordTypeId: client_ids.opportunityRecord 
+
+		
+// 		}, function(error, ret){
+// 			if (error || !ret.success) { postResponse.send('ERR in single opportunity creation'); }
+// 			console.log('single charge opportunity created')
+
+// 			response.send('OK');
+// 			response.end()
+// 		});
+// 	};
+// }
 
 	
 var salesContact2Contract = function(chargeObj){
