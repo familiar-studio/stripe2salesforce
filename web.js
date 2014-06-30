@@ -391,6 +391,7 @@ var getLogins = function (client) {
 		db.collection(client, function (er, organization) {
 			console.log('mongo collection')
 			organization.findOne({ 'Name' : client }, function (error, result) {
+				console.log("result from mongo", result)
 				console.log('mongo collection organization')
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
@@ -438,6 +439,7 @@ app.post('/webhook/UrbanGlassSandbox', function (request, response) {
 		console.log('REQUEST BODY - CHARGE SUCCEEDED', chargeSucceeded)
 		postResponse = response;
 		getLogins('UrbanGlassSandbox').then(function () {
+
 			chargeSucceededRouter(chargeSucceeded);
 		});
 	} else {
