@@ -60,7 +60,7 @@ var stripeId2SalesContact = function(stripe_id){
 		} else {
 			var name = customer.metadata.Name;
 		}
-		--debug		
+		
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 
