@@ -351,18 +351,22 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	// console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
 	// console.log('CHARGE OBJ', chargeObj, 'FINDING PAYMENT');
 
-	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-		if (err) { postResponse.send('ERR router'); }
+	// conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+
+	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_Id }).execute(function (err, res) {
+		console.log('UPDATED QUERY', res)
+	})
+	// 	if (err) { postResponse.send('ERR router'); }
 		
-		if (res == undefined || res == null || res == false || res.length == 0){
-			console.log('PAYMENT DOES NOT EXIST')
-			// stripeId2SalesContact(chargeObj.customer).then(function(){
-			// 	buildSFOpportunity(chargeObj);
-			// });
-		} else {
-			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
-		};
-	});
+	// 	if (res == undefined || res == null || res == false || res.length == 0){
+	// 		console.log('PAYMENT DOES NOT EXIST')
+	// 		// stripeId2SalesContact(chargeObj.customer).then(function(){
+	// 		// 	buildSFOpportunity(chargeObj);
+	// 		// });
+	// 	} else {
+	// 		console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
+	// 	};
+	// });
 
 	mongo.Db.connect(mongoUri, function(err, db) {
 		// may be viewed at bash$ heroku addons:open mongolab
