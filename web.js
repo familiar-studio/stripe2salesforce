@@ -340,10 +340,11 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		amount: chargeSucceeded.data.object.amount,
 		charge_id: chargeSucceeded.data.object.id
 	};
-
+		console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
 	console.log('CHARGE OBJ', chargeObj, 'FINDING OPPORTUNITY');
 
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+		console.log("inside this func!")
 		if (err) { postResponse.send('ERR router'); }
 		if (res.length === 0){
 			console.log('OPPORTUNITY DOES NOT EXIST')
