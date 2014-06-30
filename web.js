@@ -201,12 +201,12 @@ var buildSFOpportunity = function (chargeObj) {
 			})
 		});
 	} else {
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
-	    var account_id = res[0].AccountId;
-	   	var date = res[0].CreatedDate;
+		// conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+		// 	if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
+	 //    var account_id = res[0].AccountId;
+	 //   	var date = res[0].CreatedDate;
 
-	   	conn.sobject('Opportunity').find({ '' })
+	 //   	conn.sobject('Opportunity').find({ '' })
 
 	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id? this is contingent on a subscription existing
 		});
