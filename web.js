@@ -58,9 +58,7 @@ var stripeId2SalesContact = function(stripe_id){
 		} else {
 			var name = customer.metadata.Name;
 		}
-		
-
-		
+				
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			if (err || !res.success) { postResponse.send('ERR'); }
 	    if (res.length == 0) {
