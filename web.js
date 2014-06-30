@@ -61,24 +61,24 @@ var stripeId2SalesContact = function(stripe_id){
 			var name = customer.metadata.Name;
 		}
 
-		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) { // <---- correct syntax
 			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 
 			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
-	    if (res == undefined || res == null || res == false || res.length == 0) {
+	    if (res.length == 0) {
 
-    		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
+    		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) { // <----- query correct
 
     			console.log('CONTACT FOUND BY EMAIL', res)
 
     			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
-    			if (res == undefined || res == null || res == false || res.length == 0){
+    			if (res.length == 0) {
   					conn.sobject("Contact").create({ 
   						FirstName : stripeCheckName(name).first_name, 
   						LastName: stripeCheckName(name).last_name,
   						Stripe_Customer_Id__c: stripe_id, 
   						Email: customer.email,
-  						RecordTypeId: client_ids.contactRecord 
+  						RecordTypeId: client_ids.contactRecord // <---- no field recordtype Id on UrbanGlass SalesForce
   					}, function(err, ret) {
   						console.log('hi')
   				    if (err) { 
@@ -93,7 +93,7 @@ var stripeId2SalesContact = function(stripe_id){
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
 	            Stripe_Customer_Id__c : stripe_id,
-	            RecordTypeId: client_ids.contactRecord
+	            RecordTypeId: client_ids.contactRecord // <---- no recordTypeId field
 		        }, function(error, ret){
 	            if (error || !ret.success) { postResponse.send('ERR in contact update'); }
 	            console.log('Updated Customer found by Email:' + customer.email);
@@ -107,7 +107,7 @@ var stripeId2SalesContact = function(stripe_id){
 	    	conn.sobject('Contact').update({
 	        Id: sfExistingId,
 	        Email: customer.email,
-	        RecordTypeId: client_ids.contactRecord
+	        RecordTypeId: client_ids.contactRecord // <----- hey! see above
 	      }, function(error, ret){
 					if (error || !ret.success) { postResponse.send('ERR in existing contact update') }
 					console.log('Updated Contact found by customer_id to:' + customer.email);
@@ -154,7 +154,8 @@ var buildSFOpportunity = function (chargeObj) {
 	var amount = chargeObj.amount;
 	var charge_id = chargeObj.charge_id;
 
-	if (invoice !== null) { 
+	if (invoice !== null) { // <---- question about this, right now invoice is sent as null. will this always be the case?
+		// if invoice was not null, we priorly made subscriptions, if invoice did not exist, it was a single charge. is this still the case?
 		console.log('INVOICE EXISTS, FINDING OPPORTUNITY W/ STRIPE SUB ID')
 		stripe.invoice.retrieve( invoice, function (err, response) {
 			var sub_id = response.subscription;
@@ -205,7 +206,9 @@ var buildSFOpportunity = function (chargeObj) {
 	    var account_id = res[0].AccountId;
 	   	var date = res[0].CreatedDate;
 
-	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id?
+	   	conn.sobject('Opportunity').find({ '' })
+
+	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id? this is contingent on a subscription existing
 		});
 	}
 };
