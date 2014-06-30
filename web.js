@@ -77,8 +77,8 @@ var stripeId2SalesContact = function(stripe_id){
   						FirstName : stripeCheckName(name).first_name, 
   						LastName: stripeCheckName(name).last_name,
   						Stripe_Customer_Id__c: stripe_id, 
-  						Email: customer.email,
-  						RecordTypeId: client_ids.contactRecord 
+  						Email: customer.email
+  						// RecordTypeId: client_ids.contactRecord 
   					}, function(err, ret) {
   						console.log('hi')
   				    if (err) { 
@@ -92,8 +92,8 @@ var stripeId2SalesContact = function(stripe_id){
     				var sfContactId = res[0].Id
 			    	conn.sobject('Contact').update({
 	            Id: sfContactId,
-	            Stripe_Customer_Id__c : stripe_id,
-	            RecordTypeId: client_ids.contactRecord
+	            Stripe_Customer_Id__c : stripe_id
+	            // RecordTypeId: client_ids.contactRecord
 		        }, function(error, ret){
 	            if (error || !ret.success) { postResponse.send('ERR in contact update'); }
 	            console.log('Updated Customer found by Email:' + customer.email);
