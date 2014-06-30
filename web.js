@@ -121,7 +121,7 @@ var createPayment = function( amount, charge_id, date, opportunity_id){
 	console.log("6. record type", client_ids.paymentRecord )
 
 	console.log("I AM A PAYMENT BEING MADE")
-		conn.sobject("npe01__OppPayment__c").create({ 
+		conn.sobject("Payment").create({ 
 			npe01__Payment_Amount__c: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
 			Name: "Stripe Charge",
@@ -341,14 +341,17 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		charge_id: chargeSucceeded.data.object.id
 	};
 
+	console.log('CHARGE OBJ', chargeObj, 'FINDING OPPORTUNITY');
+
 	conn.sobject('Opportunity').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 		if (err) { postResponse.send('ERR router'); }
 		if (res.length === 0){
+			console.log('OPPORTUNITY DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
-				buildSFOpportunity(chargeObj);
+				salesContact2Contract(chargeObj);
 			});
 		} else {
-			console.log('CHARGE ALREADY EXISTS IN SALES FORCE');
+			console.log('OPPORTUNITY ALREADY EXISTS IN SALES FORCE');
 		};
 	});
 
