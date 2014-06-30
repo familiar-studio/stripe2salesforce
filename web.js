@@ -353,6 +353,8 @@ var chargeSucceededRouter = function(chargeSucceeded){
 
 	// conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 
+	console.log(chargeObj.charge_Id)
+
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_Id }).execute(function (err, res) {
 		console.log('UPDATED QUERY', res)
 	})
