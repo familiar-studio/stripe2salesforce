@@ -185,12 +185,12 @@ var salesContact2Contract = function(chargeObj){
 	  			  
 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
 							var sub_name = subscription.plan.name 
-							console.log("client id object ____________", client_ids)
-					    console.log("SUB NAME", sub_name)
-					    console.log("ACCOUTN ID", res[0].AccountId)
-					    console.log("SUB id", sub_id)
-					    console.log("record type", client_ids.contractRecord)
-					    console.log("date", res[0].CreatedDate)
+							// console.log("client id object ____________", client_ids)
+					  //   console.log("SUB NAME", sub_name)
+					  //   console.log("ACCOUTN ID", res[0].AccountId)
+					  //   console.log("SUB id", sub_id)
+					  //   console.log("record type", client_ids.contractRecord)
+					  //   console.log("date", res[0].CreatedDate)
 					   	
 
 					   	conn.sobject('Contract').create({ 
@@ -272,14 +272,10 @@ var chargeSucceededRouter = function(chargeSucceeded){
 }
 
 var getLogins = function (client) {
-	console.log('in login w/:',client);
 	var defer = q.defer();
 	mongo.Db.connect(mongoUri, function (err, db) {
-		console.log('connected to mongo')
 		db.collection(client, function (er, organization) {
-			console.log('mongo collection')
 			organization.findOne({ 'Name' : client }, function (error, result) {
-				console.log('mongo collection organization')
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
 				);
@@ -289,14 +285,15 @@ var getLogins = function (client) {
 				});
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) { postResponse.send('ERR conn login'); }
-					console.log("connected to", client);
-					defer.resolve(res);
+					if (err) {
+						postResponse.send('ERR conn login'); 
+					} else {
+						console.log("connected to", client);
+						defer.resolve(res);
+					}
 				});
 
 				client_ids = result.client_ids;
-
-				console.log('global variables:',stripe, conn, client_ids);
 
 			});
 		});
@@ -320,9 +317,7 @@ app.post('/webhook', function (request, response) {
 
 // UrbanGlass sandbox
 app.post('/webhook/UrbanGlassSandbox', function (request, response) {
-	console.log('webhook hit!')
 	if (request.body.type === 'charge.succeeded') {
-		console.log('charge succeeded, proceeding')
 		var chargeSucceeded = request.body;
 		postResponse = response;
 		getLogins('UrbanGlassSandbox').then(function () {
