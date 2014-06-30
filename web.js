@@ -65,7 +65,7 @@ var stripeId2SalesContact = function(stripe_id){
 			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 
 			if (err || !res.success) { postResponse.send('ERR'); }
-	    // if (res == undefined || res == null || res == false || res.length == 0) {
+	    if (res == undefined || res == null || res == false || res.length == 0) {
 
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			console.log('CONTACT FOUND BY EMAIL', res)
@@ -99,19 +99,19 @@ var stripeId2SalesContact = function(stripe_id){
 		        });
     			};
 				});			            	
-	    // } else {
-	    // 	console.log('CUSTOMER EXISTS, UPDATING CONTACT TO MATCH EMAIL')
-	    // 	var sfExistingId = res[0].Id
-	    // 	conn.sobject('Contact').update({
-	    //     Id: sfExistingId,
-	    //     Email: customer.email,
-	    //     RecordTypeId: client_ids.contactRecord
-	    //   }, function(error, ret){
-					// if (error || !ret.success) { postResponse.send('ERR in existing contact update') }
-					// console.log('Updated Contact found by customer_id to:' + customer.email);
-					// deferred.resolve(ret);
-	    //   });
-	    // };
+	    } else {
+	    	console.log('CUSTOMER EXISTS, UPDATING CONTACT TO MATCH EMAIL')
+	    	var sfExistingId = res[0].Id
+	    	conn.sobject('Contact').update({
+	        Id: sfExistingId,
+	        Email: customer.email,
+	        RecordTypeId: client_ids.contactRecord
+	      }, function(error, ret){
+					if (error || !ret.success) { postResponse.send('ERR in existing contact update') }
+					console.log('Updated Contact found by customer_id to:' + customer.email);
+					deferred.resolve(ret);
+	      });
+	    };
 	  });
   });
 	return deferred.promise;
@@ -353,18 +353,15 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		console.log("inside this func!")
 		if (err) { postResponse.send('ERR router'); }
 		console.log('HEEEY!!!! res', res)
-		if (res == undefined || res == null || res == false || res.length == 0) {
-			console.log('TEEEEEEEEESSSSSSSST')
-		}
-
-		// if (res == undefined){
+		
+		if (res == undefined || res == null || res == false || res.length == 0){
 			console.log('PAYMENT DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
 				buildSFOpportunity(chargeObj);
 			});
-		// } else {
-		// 	console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
-		// };
+		} else {
+			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
+		};
 	});
 
 	mongo.Db.connect(mongoUri, function(err, db) {
