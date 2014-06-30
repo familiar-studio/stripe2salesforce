@@ -356,6 +356,9 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	console.log(chargeObj.charge_Id)
 
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_Id }).execute(function (err, res) {
+		if (err) {
+			console.log(err);
+		}
 		console.log('UPDATED QUERY', res)
 	})
 	// 	if (err) { postResponse.send('ERR router'); }
@@ -431,6 +434,8 @@ app.post('/webhook/UrbanGlassSandbox', function (request, response) {
 	if (request.body.type === 'charge.succeeded') {
 		console.log('charge succeeded, proceeding')
 		var chargeSucceeded = request.body;
+
+		console.log('REQUEST BODY - CHARGE SUCCEEDED', chargeSucceeded)
 		postResponse = response;
 		getLogins('UrbanGlassSandbox').then(function () {
 			chargeSucceededRouter(chargeSucceeded);
