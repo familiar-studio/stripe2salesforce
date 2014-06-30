@@ -272,11 +272,14 @@ var chargeSucceededRouter = function(chargeSucceeded){
 }
 
 var getLogins = function (client) {
+	console.log('in login w/:',client);
 	var defer = q.defer();
 	mongo.Db.connect(mongoUri, function (err, db) {
+		console.log('connected to mongo')
 		db.collection(client, function (er, organization) {
+			console.log('mongo collection')
 			organization.findOne({ 'Name' : client }, function (error, result) {
-
+				console.log('mongo collection organization')
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
 				);
@@ -293,6 +296,8 @@ var getLogins = function (client) {
 
 				client_ids = result.client_ids;
 
+				console.log('global variables:',stripe, conn, client_ids);
+
 			});
 		});
 	});
@@ -302,7 +307,7 @@ var getLogins = function (client) {
 app.post('/webhook', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body
-		postResponse = response
+		postResponse = response;
 		getLogins('Development').then(function(){
 			chargeSucceededRouter(chargeSucceeded);
 		});
@@ -312,10 +317,27 @@ app.post('/webhook', function (request, response) {
 	};
 });
 
+
+// UrbanGlass sandbox
+app.post('/webhook/UrbanGlassSandbox', function (request, response) {
+	console.log('webhook hit!')
+	if (request.body.type === 'charge.succeeded') {
+		console.log('charge succeeded, proceeding')
+		var chargeSucceeded = request.body;
+		postResponse = response;
+		getLogins('UrbanGlassSandbox').then(function () {
+			chargeSucceededRouter(chargeSucceeded);
+		});
+	} else {
+		response.send('OK');
+		response.end();
+	}
+});
+
 app.post('/webhook/changeMachineLive', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-		postResponse = response
+		postResponse = response;
 		getLogins('ChangeMachineLive').then(function(){
 			chargeSucceededRouter(chargeSucceeded);	
 		});
@@ -325,11 +347,11 @@ app.post('/webhook/changeMachineLive', function (request, response) {
 	};
 })
 
-// misleading webhook name - this is sandbox
+// misleading webhook name - this is sandbox!!
 app.post('/webhook/changeMachine', function (request, response) {
 	if (request.body.type === 'charge.succeeded' ) {
 		var chargeSucceeded = request.body;
-		postResponse = response
+		postResponse = response;
 		getLogins('ChangeMachineTest').then(function(){
 			chargeSucceededRouter(chargeSucceeded);			
 		});
