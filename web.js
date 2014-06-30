@@ -154,7 +154,7 @@ var buildSFOpportunity = function (chargeObj) {
 	var amount = chargeObj.amount;
 	var charge_id = chargeObj.charge_id;
 
-	if (invoice !== null) { // <---- question about this, right now invoice is sent as null. will this always be the case?
+	if (invoice == null) { // <---- question about this, right now invoice is sent as null. will this always be the case?
 		// if invoice was not null, we priorly made subscriptions, if invoice did not exist, it was a single charge. is this still the case?
 		console.log('INVOICE EXISTS, FINDING OPPORTUNITY W/ STRIPE SUB ID')
 		stripe.invoice.retrieve( invoice, function (err, response) {
@@ -201,6 +201,7 @@ var buildSFOpportunity = function (chargeObj) {
 			})
 		});
 	} else {
+		console.log('INVOICE DOES NOT EXIST')
 		// conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 		// 	if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 	 //    var account_id = res[0].AccountId;
@@ -209,7 +210,7 @@ var buildSFOpportunity = function (chargeObj) {
 	 //   	conn.sobject('Opportunity').find({ '' })
 
 	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id? this is contingent on a subscription existing
-		});
+		// });
 	}
 };
 
