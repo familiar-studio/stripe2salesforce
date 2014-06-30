@@ -64,12 +64,14 @@ var stripeId2SalesContact = function(stripe_id){
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 
-			if (err || !res.success) { postResponse.send('ERR'); }
+			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 	    if (res == undefined || res == null || res == false || res.length == 0) {
 
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
+
     			console.log('CONTACT FOUND BY EMAIL', res)
-    			if (err || !res.success) { postResponse.send('ERR'); }
+
+    			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
     			if (res == undefined || res == null || res == false || res.length == 0){
   					conn.sobject("Contact").create({ 
   						FirstName : stripeCheckName(name).first_name, 
@@ -158,7 +160,7 @@ var buildSFOpportunity = function (chargeObj) {
 			var sub_id = response.subscription;
 
 			conn.sobject('Opportunity').find({ 'Stripe_Subscription_Id__c' : sub_id }).limit(1).execute( function (err, opportunity) { // finds opportunity existence
-				if (err || !opportunity.success) { postResponse.send('ERR'); }
+				if (err || !opportunity.success) { postResponse.send('ERR'); console.log(err) }
 				if (opportunity.length === 0) { // opportunity does not exist, build opportunity, then send id to payment
 					console.log('OPPORTUNITY DOES NOT EXIST - CREATING')
 					conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute( function (err, contact) {
@@ -174,7 +176,7 @@ var buildSFOpportunity = function (chargeObj) {
 								CloseDate : contact[0].CreatedDate,
 								StageName : 'Posted' // hard coded, not sure if this will change
 							}, function (err, ret) {
-								if (err || !ret.success) { postResponse.send('ERR'); console.log('ERROR IN OPP CREATION', err) }
+								if (err || !ret.success) { postResponse.send('ERR'); console.log(err) console.log('ERROR IN OPP CREATION', err) }
 								conn.sobject('Opportunity').find({ 'Id' : ret.id }).limit(1).execute( function (err, result) {
 									if (err || !result.success) { postResponse.send }
 									var opportunity_id = result[0].Id;
@@ -199,7 +201,7 @@ var buildSFOpportunity = function (chargeObj) {
 		});
 	} else {
 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			if (err || !res.success) { postResponse.send('ERR'); }
+			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 	    var account_id = res[0].AccountId;
 	   	var date = res[0].CreatedDate;
 
@@ -273,7 +275,7 @@ var buildSFOpportunity = function (chargeObj) {
 // 			var sub_id = response.subscription 
 
 // 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
-// 				if (err || !res.success) { postResponse.send('ERR'); }
+// 				if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 // 				if (res.length === 0) {
 					
 
@@ -297,9 +299,9 @@ var buildSFOpportunity = function (chargeObj) {
       	// 				StartDate: res[0].CreatedDate
       					
 //       			  }, function(err, ret){
-//       			  	if (err || !ret.success) { postResponse.send('ERR'); }
+//       			  	if (err || !ret.success) { postResponse.send('ERR'); console.log(err) }
 //       			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-//       			  		if (err || !result.success) { postResponse.send('ERR'); }
+//       			  		if (err || !result.success) { postResponse.send('ERR'); console.log(err) }
 //     							var contract_id = result[0].Id;		  
 //     							var account_id = result[0].AccountId;
 //     							var date = result[0].CreatedDate;
@@ -321,7 +323,7 @@ var buildSFOpportunity = function (chargeObj) {
 
 // 	} else {
 // 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-// 			if (err || !res.success) { postResponse.send('ERR'); }
+// 			if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 // 	    var account_id = res[0].AccountId;
 // 	   	var date = res[0].CreatedDate;
 
