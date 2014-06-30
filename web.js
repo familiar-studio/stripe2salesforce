@@ -70,7 +70,7 @@ var stripeId2SalesContact = function(stripe_id){
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
     			console.log('CONTACT FOUND BY EMAIL', res)
     			if (err || !res.success) { postResponse.send('ERR'); }
-    			if (res.length == 0){
+    			if (res == undefined || res == null || res == false || res.length == 0){
   					conn.sobject("Contact").create({ 
   						FirstName : stripeCheckName(name).first_name, 
   						LastName: stripeCheckName(name).last_name,
