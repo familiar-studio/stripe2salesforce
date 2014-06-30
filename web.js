@@ -214,6 +214,162 @@ var buildSFOpportunity = function (chargeObj) {
 	// }
 };
 
+// ========================
+//     GLOBAL VARIABLES
+var conn;
+var client_ids;
+var stripe;
+var postResponse;
+// ========================
+
+var chargeSucceededRouter = function(chargeSucceeded){
+	var chargeObj = {
+		customer: chargeSucceeded.data.object.customer,
+		invoice: chargeSucceeded.data.object.invoice,
+		amount: chargeSucceeded.data.object.amount,
+		charge_id: chargeSucceeded.data.object.id
+	};
+	
+	// console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
+	// console.log('CHARGE OBJ', chargeObj, 'FINDING PAYMENT');
+
+	// conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
+
+	console.log(chargeSucceeded.data.object.id)
+
+	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res) {
+		if (err) { postResponse.send('ERR'); }
+
+		console.log(''res)
+		
+		if (res.length == 0){
+			console.log('PAYMENT DOES NOT EXIST')
+			stripeId2SalesContact(chargeObj.customer).then(function(){
+				buildSFOpportunity(chargeObj);
+			});
+		} else {
+			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
+		};
+	});
+
+	mongo.Db.connect(mongoUri, function(err, db) {
+		// may be viewed at bash$ heroku addons:open mongolab
+			db.collection('stripeLogs', function(er, collection) {
+				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
+					console.log(err);
+				});
+		});
+	});
+}
+
+var getLogins = function (client) {
+	var defer = q.defer();
+	mongo.Db.connect(mongoUri, function (err, db) {
+		db.collection(client, function (er, organization) {
+			organization.findOne({ 'Name' : client }, function (error, result) {
+				stripe = require("stripe")(
+				  result.stripe_api.secret_key
+				);
+
+				conn = new jsforce.Connection({
+					oauth2: result.oauth2
+				});
+
+				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
+					if (err) { postResponse.send('ERR conn login'); }
+					console.log("connected to", client);
+					defer.resolve(res);
+				});
+
+				client_ids = result.client_ids;
+
+			});
+		});
+	});
+	return defer.promise;
+}
+
+app.post('/webhook', function (request, response) {
+	if (request.body.type === 'charge.succeeded' ) {
+		var chargeSucceeded = request.body
+		postResponse = response;
+		getLogins('Development').then(function(){
+			chargeSucceededRouter(chargeSucceeded);
+		});
+	} else {
+		response.send('OK');
+		response.end();
+	};
+});
+
+
+// UrbanGlass sandbox
+app.post('/webhook/UrbanGlassSandbox', function (request, response) {
+	console.log('webhook hit!')
+	if (request.body.type === 'charge.succeeded') {
+		console.log('charge succeeded, proceeding')
+		var chargeSucceeded = request.body;
+
+		postResponse = response;
+		getLogins('UrbanGlassSandbox').then(function () {
+			chargeSucceededRouter(chargeSucceeded);
+		});
+	} else {
+		response.send('OK');
+		response.end();
+	}
+});
+
+app.post('/webhook/changeMachineLive', function (request, response) {
+	if (request.body.type === 'charge.succeeded' ) {
+		var chargeSucceeded = request.body;
+		postResponse = response;
+		getLogins('ChangeMachineLive').then(function(){
+			chargeSucceededRouter(chargeSucceeded);	
+		});
+	} else {
+		response.send('OK');
+		response.end();
+	};
+})
+
+// misleading webhook name - this is sandbox!!
+app.post('/webhook/changeMachine', function (request, response) {
+	if (request.body.type === 'charge.succeeded' ) {
+		var chargeSucceeded = request.body;
+		postResponse = response;
+		getLogins('ChangeMachineTest').then(function(){
+			chargeSucceededRouter(chargeSucceeded);			
+		});
+
+	} else {
+		response.send('OK');
+		response.end();
+	};
+})
+
+
+// if a webhook breaks, pass company name and Stripe event ID of charge.succeeded obj to this url:
+app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
+// CHANGE MACHINE: ChangeMachineLive / ChangeMachineTest
+	getLogins(request.param('clientName')).then(function(){
+		stripe.events.retrieve(request.param('eventId'), function (err, res) {
+			if (res.type === 'charge.succeeded') {
+				chargeSucceededRouter(res);
+			};
+		});
+	});
+
+})
+
+
+
+
+var port = Number(process.env.PORT || 5000);
+app.listen(port, function()
+{  console.log("Listening on " + port);
+});
+
 // var createOpp = function(amount, charge_id, date, account_id, contract_id){
 // 	console.log('CREATING OPPORTUNITY')
 // 	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
@@ -335,164 +491,3 @@ var buildSFOpportunity = function (chargeObj) {
 // 		});
 // 	};
 // }
-
-// ========================
-//     GLOBAL VARIABLES
-var conn;
-var client_ids;
-var stripe;
-var postResponse;
-// ========================
-
-var chargeSucceededRouter = function(chargeSucceeded){
-	var chargeObj = {
-		customer: chargeSucceeded.data.object.customer,
-		invoice: chargeSucceeded.data.object.invoice,
-		amount: chargeSucceeded.data.object.amount,
-		charge_id: chargeSucceeded.data.object.id
-	};
-	
-	// console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
-	// console.log('CHARGE OBJ', chargeObj, 'FINDING PAYMENT');
-
-	// conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-
-	console.log(chargeSucceeded.data.object.id)
-
-	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res) {
-		if (err) { postResponse.send('ERR'); }
-		
-		if (res.length == 0){
-			console.log('PAYMENT DOES NOT EXIST')
-			stripeId2SalesContact(chargeObj.customer).then(function(){
-				buildSFOpportunity(chargeObj);
-			});
-		} else {
-			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
-		};
-	});
-
-	mongo.Db.connect(mongoUri, function(err, db) {
-		// may be viewed at bash$ heroku addons:open mongolab
-			db.collection('stripeLogs', function(er, collection) {
-				collection.insert({ 'stripeReq' : chargeSucceeded }, function(err, result){
-					console.log(err);
-				});
-		});
-	});
-}
-
-var getLogins = function (client) {
-	console.log('in login w/:',client);
-	var defer = q.defer();
-	mongo.Db.connect(mongoUri, function (err, db) {
-		console.log('connected to mongo')
-		db.collection(client, function (er, organization) {
-			console.log('mongo collection')
-			organization.findOne({ 'Name' : client }, function (error, result) {
-				console.log("result from mongo", result)
-				console.log('mongo collection organization')
-				stripe = require("stripe")(
-				  result.stripe_api.secret_key
-				);
-
-				conn = new jsforce.Connection({
-					oauth2: result.oauth2
-				});
-
-				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) { postResponse.send('ERR conn login'); }
-					console.log("connected to", client);
-					defer.resolve(res);
-				});
-
-				client_ids = result.client_ids;
-
-			});
-		});
-	});
-	return defer.promise;
-}
-
-app.post('/webhook', function (request, response) {
-	if (request.body.type === 'charge.succeeded' ) {
-		var chargeSucceeded = request.body
-		postResponse = response;
-		getLogins('Development').then(function(){
-			chargeSucceededRouter(chargeSucceeded);
-		});
-	} else {
-		response.send('OK');
-		response.end();
-	};
-});
-
-
-// UrbanGlass sandbox
-app.post('/webhook/UrbanGlassSandbox', function (request, response) {
-	console.log('webhook hit!')
-	if (request.body.type === 'charge.succeeded') {
-		console.log('charge succeeded, proceeding')
-		var chargeSucceeded = request.body;
-
-		console.log('REQUEST BODY - CHARGE SUCCEEDED', chargeSucceeded)
-		postResponse = response;
-		getLogins('UrbanGlassSandbox').then(function () {
-
-			chargeSucceededRouter(chargeSucceeded);
-		});
-	} else {
-		response.send('OK');
-		response.end();
-	}
-});
-
-app.post('/webhook/changeMachineLive', function (request, response) {
-	if (request.body.type === 'charge.succeeded' ) {
-		var chargeSucceeded = request.body;
-		postResponse = response;
-		getLogins('ChangeMachineLive').then(function(){
-			chargeSucceededRouter(chargeSucceeded);	
-		});
-	} else {
-		response.send('OK');
-		response.end();
-	};
-})
-
-// misleading webhook name - this is sandbox!!
-app.post('/webhook/changeMachine', function (request, response) {
-	if (request.body.type === 'charge.succeeded' ) {
-		var chargeSucceeded = request.body;
-		postResponse = response;
-		getLogins('ChangeMachineTest').then(function(){
-			chargeSucceededRouter(chargeSucceeded);			
-		});
-
-	} else {
-		response.send('OK');
-		response.end();
-	};
-})
-
-
-// if a webhook breaks, pass company name and Stripe event ID of charge.succeeded obj to this url:
-app.get('/webhook/retry/:clientName/:eventId', function (request, response) {
-// CHANGE MACHINE: ChangeMachineLive / ChangeMachineTest
-	getLogins(request.param('clientName')).then(function(){
-		stripe.events.retrieve(request.param('eventId'), function (err, res) {
-			if (res.type === 'charge.succeeded') {
-				chargeSucceededRouter(res);
-			};
-		});
-	});
-
-})
-
-
-
-
-var port = Number(process.env.PORT || 5000);
-app.listen(port, function()
-{  console.log("Listening on " + port);
-});
