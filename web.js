@@ -340,7 +340,8 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		amount: chargeSucceeded.data.object.amount,
 		charge_id: chargeSucceeded.data.object.id
 	};
-		console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
+	
+	console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
 	console.log('CHARGE OBJ', chargeObj, 'FINDING OPPORTUNITY');
 
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
@@ -348,13 +349,13 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		if (err) { postResponse.send('ERR router'); }
 		console.log('HEEEY!!!! res', res)
 
-		if (res.length === 0){
-			console.log('OPPORTUNITY DOES NOT EXIST')
+		if (res.length === 0 || res === undefined){
+			console.log('PAYMENT DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
 				buildSFOpportunity(chargeObj);
 			});
 		} else {
-			console.log('OPPORTUNITY ALREADY EXISTS IN SALES FORCE');
+			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
 		};
 	});
 
