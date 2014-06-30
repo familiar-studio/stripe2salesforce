@@ -352,9 +352,7 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	// console.log('CHARGE OBJ', chargeObj, 'FINDING PAYMENT');
 
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
-		console.log("inside this func!")
 		if (err) { postResponse.send('ERR router'); }
-		console.log('HEEEY!!!! res', res)
 		
 		if (res == undefined || res == null || res == false || res.length == 0){
 			console.log('PAYMENT DOES NOT EXIST')
