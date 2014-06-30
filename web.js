@@ -347,14 +347,14 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		if (err) { postResponse.send('ERR router'); }
 		console.log('HEEEY!!!! res', res)
 
-		if (res == undefined){
+		// if (res == undefined){
 			console.log('PAYMENT DOES NOT EXIST')
 			stripeId2SalesContact(chargeObj.customer).then(function(){
 				buildSFOpportunity(chargeObj);
 			});
-		} else {
-			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
-		};
+		// } else {
+		// 	console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
+		// };
 	});
 
 	mongo.Db.connect(mongoUri, function(err, db) {
