@@ -113,13 +113,10 @@ var stripeId2SalesContact = function(stripe_id){
 }
 
 
-var createPayment = function( amount, charge_id, date, account_id, opportunity_id){
+var createPayment = function( amount, charge_id, date, opportunity_id){
 	console.log('CREATING PAYMENT')
-	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
 	console.log("1. amount", amount)
 	console.log("2. stripe charge id", charge_id)
-	console.log("3. date", date)
-	console.log("4. account id", account_id)
 	console.log("5. OPP id", opportunity_id)
 	console.log("6. record type", client_ids.paymentRecord )
 
@@ -128,11 +125,10 @@ var createPayment = function( amount, charge_id, date, account_id, opportunity_i
 			npe01__Payment_Amount__c: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
 			Name: "Stripe Charge",
-			StageName: "Closed Won",
-			CloseDate: date,
-			CreatedById: account_id,
+			npe01__Payment_Method__c: "Credit Card",
+			npe01__Payment_Date__c: date,
 			npe01__Opportunity__c: opportunity_id,
-			RecordTypeId: client_ids.paymentRecord //??
+			RecordTypeId: client_ids.paymentRecord 
 
 		
 		}, function(error, ret){
@@ -278,15 +274,22 @@ var buildSFOpportunity = function (chargeObj) {
 
 // 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
-// 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
-// 							var sub_name = subscription.plan.name 
+	  			 //  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
+							// var sub_name = subscription.plan.name 
+							// console.log("client id object ____________", client_ids)
+					  //   console.log("SUB NAME", sub_name)
+					  //   console.log("ACCOUTN ID", res[0].AccountId)
+					  //   console.log("SUB id", sub_id)
+					  //   console.log("record type", client_ids.contractRecord)
+					  //   console.log("date", res[0].CreatedDate)
+					   	
 
-// 					   	conn.sobject('Contract').create({ 
-//       			  	AccountId : res[0].AccountId, 
-//       			  	Stripe_Subscription_Id__c : sub_id,
-//       			  	RecordTypeId: client_ids.contractRecord,
-//       					Description: sub_name,
-//       					StartDate: res[0].CreatedDate
+					  //  	conn.sobject('Contract').create({ 
+      	// 		  	AccountId : res[0].AccountId, 
+      	// 		  	Stripe_Subscription_Id__c : sub_id,
+      	// 		  	RecordTypeId: client_ids.contractRecord,
+      	// 				Description: sub_name,
+      	// 				StartDate: res[0].CreatedDate
       					
 //       			  }, function(err, ret){
 //       			  	if (err || !ret.success) { postResponse.send('ERR'); }
@@ -360,10 +363,14 @@ var chargeSucceededRouter = function(chargeSucceeded){
 }
 
 var getLogins = function (client) {
+	console.log('in login w/:',client);
 	var defer = q.defer();
 	mongo.Db.connect(mongoUri, function (err, db) {
+		console.log('connected to mongo')
 		db.collection(client, function (er, organization) {
+			console.log('mongo collection')
 			organization.findOne({ 'Name' : client }, function (error, result) {
+				console.log('mongo collection organization')
 				stripe = require("stripe")(
 				  result.stripe_api.secret_key
 				);
@@ -373,15 +380,14 @@ var getLogins = function (client) {
 				});
 
 				conn.login( result.sf_login.username, result.sf_login.password, function(err, res) {
-					if (err) {
-						postResponse.send('ERR conn login'); 
-					} else {
-						console.log("connected to", client);
-						defer.resolve(res);
-					}
+					if (err) { postResponse.send('ERR conn login'); }
+					console.log("connected to", client);
+					defer.resolve(res);
 				});
 
 				client_ids = result.client_ids;
+
+				console.log('global variables:',stripe, conn, client_ids);
 
 			});
 		});
@@ -405,7 +411,9 @@ app.post('/webhook', function (request, response) {
 
 // UrbanGlass sandbox
 app.post('/webhook/UrbanGlassSandbox', function (request, response) {
+	console.log('webhook hit!')
 	if (request.body.type === 'charge.succeeded') {
+		console.log('charge succeeded, proceeding')
 		var chargeSucceeded = request.body;
 		postResponse = response;
 		getLogins('UrbanGlassSandbox').then(function () {
