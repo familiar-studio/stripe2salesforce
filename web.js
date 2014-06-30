@@ -358,23 +358,18 @@ var chargeSucceededRouter = function(chargeSucceeded){
 
 	console.log(chargeSucceeded.data.object.id)
 
-	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res) {
-		if (err) {
-			console.log(err);
-		}
-		console.log('UPDATED QUERY', res)
-	})
-	// 	if (err) { postResponse.send('ERR router'); }
+	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res
+		if (err) { postResponse.send('ERR router'); }
 		
-	// 	if (res == undefined || res == null || res == false || res.length == 0){
-	// 		console.log('PAYMENT DOES NOT EXIST')
-	// 		// stripeId2SalesContact(chargeObj.customer).then(function(){
-	// 		// 	buildSFOpportunity(chargeObj);
-	// 		// });
-	// 	} else {
-	// 		console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
-	// 	};
-	// });
+		if (res.length == 0){
+			console.log('PAYMENT DOES NOT EXIST')
+			stripeId2SalesContact(chargeObj.customer).then(function(){
+				buildSFOpportunity(chargeObj);
+			});
+		} else {
+			console.log('PAYMENT ALREADY EXISTS IN SALES FORCE');
+		};
+	});
 
 	mongo.Db.connect(mongoUri, function(err, db) {
 		// may be viewed at bash$ heroku addons:open mongolab
