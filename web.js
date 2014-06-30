@@ -154,7 +154,7 @@ var buildSFOpportunity = function (chargeObj) {
 	var amount = chargeObj.amount;
 	var charge_id = chargeObj.charge_id;
 
-	if (invoice == null) { // <---- question about this, right now invoice is sent as null. will this always be the case?
+	// if (invoice == null) { // <---- question about this, right now invoice is sent as null. will this always be the case?
 		// if invoice was not null, we priorly made subscriptions, if invoice did not exist, it was a single charge. is this still the case?
 		console.log('INVOICE EXISTS, FINDING OPPORTUNITY W/ STRIPE SUB ID')
 		stripe.invoice.retrieve( invoice, function (err, response) {
@@ -200,8 +200,8 @@ var buildSFOpportunity = function (chargeObj) {
 				}
 			})
 		});
-	} else {
-		console.log('INVOICE DOES NOT EXIST')
+	// } else {
+		// console.log('INVOICE DOES NOT EXIST')
 		// conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 		// 	if (err || !res.success) { postResponse.send('ERR'); console.log(err) }
 	 //    var account_id = res[0].AccountId;
@@ -211,7 +211,7 @@ var buildSFOpportunity = function (chargeObj) {
 
 	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id? this is contingent on a subscription existing
 		// });
-	}
+	// }
 };
 
 // var createOpp = function(amount, charge_id, date, account_id, contract_id){
@@ -359,8 +359,8 @@ var chargeSucceededRouter = function(chargeSucceeded){
 
 	console.log(chargeSucceeded.data.object.id)
 
-	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res
-		if (err) { postResponse.send('ERR router'); }
+	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeSucceeded.data.object.id }).execute(function (err, res) {
+		if (err) { postResponse.send('ERR'); }
 		
 		if (res.length == 0){
 			console.log('PAYMENT DOES NOT EXIST')
