@@ -113,54 +113,36 @@ var stripeId2SalesContact = function(stripe_id){
 }
 
 
-var createOpp = function(amount, charge_id, date, account_id, contract_id){
-	console.log('CREATING OPPORTUNITY')
+var createPayment = function( amount, charge_id, date, account_id, opportunity_id){
+	console.log('CREATING PAYMENT')
 	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
 	console.log("1. amount", amount)
 	console.log("2. stripe charge id", charge_id)
 	console.log("3. date", date)
 	console.log("4. account id", account_id)
-	console.log("5. contact id", contract_id)
-	console.log("6. record type", client_ids.opportunityRecord)
-	if (contract_id){
-		console.log("I AM A SUB TRYING TO MAKE AN OPP")
-		conn.sobject("Opportunity").create({ 
-			Amount: (amount/100), 
+	console.log("5. OPP id", opportunity_id)
+	console.log("6. record type", client_ids.paymentRecord )
+
+	console.log("I AM A PAYMENT BEING MADE")
+		conn.sobject("Payment").create({ 
+			npe01__Payment_Amount__c: (amount/100), 
 			Stripe_Charge_Id__c: charge_id, 
 			Name: "Stripe Charge",
 			StageName: "Closed Won",
 			CloseDate: date,
-			AccountId: account_id,
-			Contract__c: contract_id,
-			RecordTypeId: client_ids.opportunityRecord
-		}, function(error, ret){
-			if (error || !ret.success) { postResponse.send('ERR in sub opportunity creation'); }
-			console.log('new opportunity created from new contract')
-
-			response.send('OK');
-			response.end()
-		});
-
-	}else{
-		console.log("I AM A SINGLE OPP BEING MADE")
-		conn.sobject("Opportunity").create({ 
-			Amount: (amount/100), 
-			Stripe_Charge_Id__c: charge_id, 
-			Name: "Stripe Charge",
-			StageName: "Closed Won",
-			CloseDate: date,
-			AccountId: account_id,
-			RecordTypeId: client_ids.opportunityRecord 
+			CreatedById: account_id,
+			npe01__Opportunity__c: opportunity_id,
+			RecordTypeId: client_ids.paymentRecord //??
 
 		
 		}, function(error, ret){
-			if (error || !ret.success) { postResponse.send('ERR in single opportunity creation'); }
-			console.log('single charge opportunity created')
+			if (error || !ret.success) { postResponse.send('ERR in payment creation'); }
+			console.log('payment opportunity created!!!!')
 
 			response.send('OK');
 			response.end()
 		});
-	};
+
 }
 
 var buildSFOpportunity = function (chargeObj) {
@@ -170,35 +152,47 @@ var buildSFOpportunity = function (chargeObj) {
 	var charge_id = chargeObj.charge_id;
 
 	if (invoice !== null) { 
+		console.log('INVOICE EXISTS, FINDING OPPORTUNITY W/ STRIPE SUB ID')
 		stripe.invoice.retrieve( invoice, function (err, response) {
 			var sub_id = response.subscription;
 
-			conn.sobject('Opportunity').find({ 'Stripe_Subscription_Id__c' : sub_id }).limit(1).execute( function (err, response) { // finds opportunity existence
-				if (err || !res.success) { postResponse.send('ERR'); }
-				if (res.length === 0) { // opportunity does not exist, build opportunity, then send id to payment
-					conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute( function (err, res) {
+			conn.sobject('Opportunity').find({ 'Stripe_Subscription_Id__c' : sub_id }).limit(1).execute( function (err, opportunity) { // finds opportunity existence
+				if (err || !opportunity.success) { postResponse.send('ERR'); }
+				if (opportunity.length === 0) { // opportunity does not exist, build opportunity, then send id to payment
+					console.log('OPPORTUNITY DOES NOT EXIST - CREATING')
+					conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute( function (err, contact) {
 						stripe.customers.retrieveSubscription(stripe_id, sub_id, function (err, subscription) {
 							var sub_name = subscription.plan.name;
+							console.log('SUBSCRIPTION FROM STRIPE:' subscription)
 
 							conn.sobject('Opportunity').create({
-								Name : 'Stripe Charge',
-								Stripe_Subscription_Id__c : ,
+								AccountId : contact[0].AccountId,
+								Name : 'Magazine Subscription',
+								Stripe_Subscription_Id__c : sub_id,
 								RecordTypeId : client_ids.opportunityRecord,
-								CloseDate : res[0].CreatedDate,
+								CloseDate : contact[0].CreatedDate,
 								StageName : 'Posted' // hard coded, not sure if this will change
 							}, function (err, ret) {
-								if (err || !ret.success) { postResponse.send('ERR'); }
+								if (err || !ret.success) { postResponse.send('ERR'); console.log('ERROR IN OPP CREATION', err) }
 								conn.sobject('Opportunity').find({ 'Id' : ret.id }).limit(1).execute( function (err, result) {
 									if (err || !result.success) { postResponse.send }
 									var opportunity_id = result[0].Id;
 									var account_id = result[0].AccountId;
 									var date = result[0].CreatedDate;
+
+									// create payment
+									console.log('OPPORTUNITY CREATED, MOVING TO PAYMENT CREATION');
+									createPayment(amount, charge_id, date ,account_id, opportunity_id);
 								});
 							});
 						});
 					});
-				} else {
-					// create payment? -- not sure what to do here.
+				} else { // opportunity already exists, create payment:
+					var opportunity_id = opportunity[0].Id;
+					var account_id = opportunity[0].AccountId;
+					var date = opportunity[0].CreatedDate;
+
+					createPayment(amount, charge_id, date ,account_id, opportunity_id);
 				}
 			})
 		});
@@ -208,74 +202,125 @@ var buildSFOpportunity = function (chargeObj) {
 	    var account_id = res[0].AccountId;
 	   	var date = res[0].CreatedDate;
 
-	   	// do something here
+	   	// createPayment(amount, charge_id, date, account_id, opportunity_id); // where is opportunity id?
 		});
 	}
 };
 
+// var createOpp = function(amount, charge_id, date, account_id, contract_id){
+// 	console.log('CREATING OPPORTUNITY')
+// 	console.log("THIS IS THE CONTRACT ID SENT FROM SUB", contract_id)
+// 	console.log("1. amount", amount)
+// 	console.log("2. stripe charge id", charge_id)
+// 	console.log("3. date", date)
+// 	console.log("4. account id", account_id)
+// 	console.log("5. contact id", contract_id)
+// 	console.log("6. record type", client_ids.opportunityRecord)
+// 	if (contract_id){
+// 		console.log("I AM A SUB TRYING TO MAKE AN OPP")
+// 		conn.sobject("Opportunity").create({ 
+// 			Amount: (amount/100), 
+// 			Stripe_Charge_Id__c: charge_id, 
+// 			Name: "Stripe Charge",
+// 			StageName: "Closed Won",
+// 			CloseDate: date,
+// 			AccountId: account_id,
+// 			Contract__c: contract_id,
+// 			RecordTypeId: client_ids.opportunityRecord
+// 		}, function(error, ret){
+// 			if (error || !ret.success) { postResponse.send('ERR in sub opportunity creation'); }
+// 			console.log('new opportunity created from new contract')
+
+// 			response.send('OK');
+// 			response.end()
+// 		});
+
+// 	}else{
+// 		console.log("I AM A SINGLE OPP BEING MADE")
+// 		conn.sobject("Opportunity").create({ 
+// 			Amount: (amount/100), 
+// 			Stripe_Charge_Id__c: charge_id, 
+// 			Name: "Stripe Charge",
+// 			StageName: "Closed Won",
+// 			CloseDate: date,
+// 			AccountId: account_id,
+// 			RecordTypeId: client_ids.opportunityRecord 
+
+		
+// 		}, function(error, ret){
+// 			if (error || !ret.success) { postResponse.send('ERR in single opportunity creation'); }
+// 			console.log('single charge opportunity created')
+
+// 			response.send('OK');
+// 			response.end()
+// 		});
+// 	};
+// }
+
+
 	
-var salesContact2Contract = function(chargeObj){
-	console.log('MOVING FROM CONTACT TO CONTRACT')
-	var stripe_id = chargeObj.customer;
-	var invoice = chargeObj.invoice;
-	var amount = chargeObj.amount;
-	var charge_id = chargeObj.charge_id;
+// var salesContact2Contract = function(chargeObj){
+// 	console.log('MOVING FROM CONTACT TO CONTRACT')
+// 	var stripe_id = chargeObj.customer;
+// 	var invoice = chargeObj.invoice;
+// 	var amount = chargeObj.amount;
+// 	var charge_id = chargeObj.charge_id;
 	 
 
-	if (invoice !== null) {
-		stripe.invoices.retrieve( invoice, function(err, response){
-			var sub_id = response.subscription 
+// 	if (invoice !== null) {
+// 		stripe.invoices.retrieve( invoice, function(err, response){
+// 			var sub_id = response.subscription 
 
-			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
-				if (err || !res.success) { postResponse.send('ERR'); }
-				if (res.length === 0) {
+// 			conn.sobject('Contract').find({ Stripe_Subscription_Id__c : sub_id }).limit(1).execute(function(err, res){
+// 				if (err || !res.success) { postResponse.send('ERR'); }
+// 				if (res.length === 0) {
 					
 
-	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+// 	  			conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
 	  			  
-	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
-							var sub_name = subscription.plan.name 
+// 	  			  stripe.customers.retrieveSubscription(stripe_id, sub_id, function(err, subscription) {
+// 							var sub_name = subscription.plan.name 
 
-					   	conn.sobject('Contract').create({ 
-      			  	AccountId : res[0].AccountId, 
-      			  	Stripe_Subscription_Id__c : sub_id,
-      			  	RecordTypeId: client_ids.contractRecord,
-      					Description: sub_name,
-      					StartDate: res[0].CreatedDate
+// 					   	conn.sobject('Contract').create({ 
+//       			  	AccountId : res[0].AccountId, 
+//       			  	Stripe_Subscription_Id__c : sub_id,
+//       			  	RecordTypeId: client_ids.contractRecord,
+//       					Description: sub_name,
+//       					StartDate: res[0].CreatedDate
       					
-      			  }, function(err, ret){
-      			  	if (err || !ret.success) { postResponse.send('ERR'); }
-      			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
-      			  		if (err || !result.success) { postResponse.send('ERR'); }
-    							var contract_id = result[0].Id;		  
-    							var account_id = result[0].AccountId;
-    							var date = result[0].CreatedDate;
+//       			  }, function(err, ret){
+//       			  	if (err || !ret.success) { postResponse.send('ERR'); }
+//       			  	conn.sobject('Contract').find({ 'Id' : ret.id }).limit(1).execute(function(err, result) { 
+//       			  		if (err || !result.success) { postResponse.send('ERR'); }
+//     							var contract_id = result[0].Id;		  
+//     							var account_id = result[0].AccountId;
+//     							var date = result[0].CreatedDate;
 
-    							createOpp(amount, charge_id, date, account_id, contract_id)
-      			  	});
-      			  });
-					  });
-	  			});
-				} else {
-					var contract_id = res[0].Id;
-					var account_id = res[0].AccountId;
-					var date = res[0].CreatedDate;
+//     							createOpp(amount, charge_id, date, account_id, contract_id)
+//       			  	});
+//       			  });
+// 					  });
+// 	  			});
+// 				} else {
+// 					var contract_id = res[0].Id;
+// 					var account_id = res[0].AccountId;
+// 					var date = res[0].CreatedDate;
 
-					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a the moment
-	  		};
-	  	});
-		});
+// 					createOpp(amount, charge_id, date, account_id, contract_id) //this is untestable a the moment
+// 	  		};
+// 	  	});
+// 		});
 
-	} else {
-		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
-			if (err || !res.success) { postResponse.send('ERR'); }
-	    var account_id = res[0].AccountId;
-	   	var date = res[0].CreatedDate;
+// 	} else {
+// 		conn.sobject('Contact').find({ 'Stripe_Customer_Id__c' : stripe_id }).limit(1).execute(function(err, res) {
+// 			if (err || !res.success) { postResponse.send('ERR'); }
+// 	    var account_id = res[0].AccountId;
+// 	   	var date = res[0].CreatedDate;
 
-	   	createOpp(amount, charge_id, date, account_id);
-		});
-	};
-}
+// 	   	createOpp(amount, charge_id, date, account_id);
+// 		});
+// 	};
+// }
 
 // ========================
 //     GLOBAL VARIABLES
