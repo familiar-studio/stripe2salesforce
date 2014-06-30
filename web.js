@@ -52,6 +52,8 @@ var stripeId2SalesContact = function(stripe_id){
 	var deferred = q.defer();
 
 	stripe.customers.retrieve(stripe_id, function(err, customer){
+
+		console.log('THIS IS THE STRIPE CUSTOMER', customer)
 	
 		if (customer.metadata.Name == null){
 			var name = 'anonymous';
@@ -60,9 +62,11 @@ var stripeId2SalesContact = function(stripe_id){
 		}
 				
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
+			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 			if (err || !res.success) { postResponse.send('ERR'); }
 	    if (res.length == 0) {
     		conn.sobject('Contact').find({ Email : customer.email }).limit(1).execute(function(err, res) {
+    			console.log('CONTACT FOUND BY EMAIL', res)
     			if (err || !res.success) { postResponse.send('ERR'); }
     			if (res.length == 0){
   					conn.sobject("Contact").create({ 
@@ -340,7 +344,7 @@ var chargeSucceededRouter = function(chargeSucceeded){
 	};
 	
 	console.log("NEW CHARGE OBJECT----------------------------------", chargeSucceeded.data.object)
-	console.log('CHARGE OBJ', chargeObj, 'FINDING OPPORTUNITY');
+	console.log('CHARGE OBJ', chargeObj, 'FINDING PAYMENT');
 
 	conn.sobject('npe01__OppPayment__c').find({ 'Stripe_Charge_Id__c' : chargeObj.charge_id }).limit(1).execute(function(err, res) {
 		console.log("inside this func!")
