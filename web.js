@@ -60,7 +60,7 @@ var stripeId2SalesContact = function(stripe_id){
 		} else {
 			var name = customer.metadata.Name;
 		}
-		
+
 		conn.sobject('Contact').find({ Stripe_Customer_Id__c : stripe_id }).limit(1).execute(function(err, res) {
 			console.log('CUSTOMER FOUND BY STRIPE ID : ', res)
 
@@ -353,6 +353,9 @@ var chargeSucceededRouter = function(chargeSucceeded){
 		console.log("inside this func!")
 		if (err) { postResponse.send('ERR router'); }
 		console.log('HEEEY!!!! res', res)
+		if (res == undefined || res == null || res == false || res.length == 0) {
+			console.log('TEEEEEEEEESSSSSSSST')
+		}
 
 		// if (res == undefined){
 			console.log('PAYMENT DOES NOT EXIST')
